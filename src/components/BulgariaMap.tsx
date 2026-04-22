@@ -10,6 +10,9 @@ type OblastProps = { slug: string; nameBg?: string; name?: string }
 
 type OblastFeature = Feature<Geometry, OblastProps>
 
+let cachedGeoJson: FeatureCollection | null = null
+let geoJsonRequest: Promise<FeatureCollection> | null = null
+
 type Props = {
   id?: string
   /** По-малка височина за вграждане в начална страница */
@@ -21,18 +24,28 @@ export function BulgariaMap({ id = 'map', compact = false }: Props) {
   const navigate = useNavigate()
   const wrapRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: 900, h: 520 })
-  const [fc, setFc] = useState<FeatureCollection | null>(null)
+  const [fc, setFc] = useState<FeatureCollection | null>(cachedGeoJson)
   const [hovered, setHovered] = useState<string | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    fetch('/data/bulgaria-oblasti.geojson')
+    if (cachedGeoJson) {
+      setFc(cachedGeoJson)
+      return () => {
+        cancelled = true
+      }
+    }
+
+    geoJsonRequest ??= fetch('/data/bulgaria-oblasti.geojson')
       .then((r) => {
         if (!r.ok) throw new Error('HTTP')
         return r.json() as Promise<FeatureCollection>
       })
+
+    geoJsonRequest
       .then((data) => {
+        cachedGeoJson = data
         if (!cancelled) setFc(data)
       })
       .catch(() => {

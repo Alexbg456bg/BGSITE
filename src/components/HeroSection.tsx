@@ -1,16 +1,23 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
+const heroImage =
+  'https://commons.wikimedia.org/wiki/Special:FilePath/View%20from%20Seven%20Rila%20Lakes.jpg?width=2200'
+
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden">
-      <div
-        className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center"
+    <section className="relative min-h-[520px] overflow-hidden">
+      <motion.div
+        initial={{ scale: 1.04 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 1.2, ease: 'easeOut' }}
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${heroImage})` }}
         aria-hidden
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--forest-deep)]/92 via-[var(--forest)]/80 to-[var(--sky-deep)]/75" />
-      <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-[var(--sky)]/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[var(--forest-deep)]/82 via-[var(--forest-deep)]/42 to-[var(--sky-deep)]/18" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/35 via-transparent to-black/20" />
+      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[var(--bg)] to-transparent" />
 
       <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 md:pb-28 md:pt-24">
         <motion.p
@@ -46,13 +53,13 @@ export function HeroSection() {
         >
           <Link
             to="/map"
-            className="inline-flex rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-[var(--forest-deep)] shadow-lg transition hover:bg-[var(--mist)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="inline-flex rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-[var(--forest-deep)] shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--mist)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             Разгледай картата
           </Link>
           <Link
             to="/destinations"
-            className="inline-flex rounded-full border border-white/40 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+            className="inline-flex rounded-full border border-white/40 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/20"
           >
             Всички дестинации
           </Link>

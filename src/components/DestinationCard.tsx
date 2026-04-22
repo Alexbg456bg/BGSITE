@@ -22,9 +22,10 @@ export function DestinationCard({
     <motion.article
       initial={{ opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
       viewport={{ once: true, margin: '-30px' }}
-      transition={{ delay: index * 0.04 }}
-      className="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:shadow-md"
+      transition={{ delay: index * 0.04, duration: 0.24 }}
+      className="content-card flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:shadow-md"
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         <img
@@ -32,7 +33,7 @@ export function DestinationCard({
           alt={d.name}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover transition duration-500 hover:scale-105"
+          className="h-full w-full object-cover transition duration-700 hover:scale-105"
         />
         <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-medium text-[var(--forest-deep)] shadow-sm backdrop-blur">
           {CATEGORY_LABELS[d.category]}

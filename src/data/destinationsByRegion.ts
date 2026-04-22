@@ -1,7 +1,10 @@
 import type { Destination } from '../types'
 
 const u = (photoId: string) =>
-  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1200&q=80`
+  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=900&q=72`
+
+const wiki = (fileName: string) =>
+  `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=900`
 
 /** Дестинации по slug на област — покрива всички 28 области. */
 export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
@@ -85,6 +88,17 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       coords: { lat: 42.45, lng: 23.42 },
       mapsUrl: 'https://maps.google.com/?q=Kokalyane+Monastery',
     },
+    {
+      id: 'dest-koprivshtitsa',
+      name: 'Копривщица',
+      category: 'historical',
+      shortDescription:
+        'Възрожденски град-музей с цветни къщи, калдъръмени улици и ключова роля в Априлското въстание.',
+      location: 'Копривщица',
+      image: wiki('Koprivshtitsa.jpg'),
+      coords: { lat: 42.6375, lng: 24.357 },
+      mapsUrl: 'https://maps.google.com/?q=Koprivshtitsa+Bulgaria',
+    },
   ],
   blagoevgrad: [
     {
@@ -141,6 +155,17 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       image: u('photo-1565008576549-57569a49371d'),
       coords: { lat: 42.1333, lng: 23.3403 },
       mapsUrl: 'https://maps.google.com/?q=Rila+Monastery',
+    },
+    {
+      id: 'dest-melnik-pyramids',
+      name: 'Мелнишки пирамиди',
+      category: 'natural',
+      shortDescription:
+        'Пясъчни скални форми над Мелник и Рожен, с панорамни пътеки и един от най-разпознаваемите пейзажи в Пиринския край.',
+      location: 'Мелник',
+      image: wiki('Melnik pyramids TodorBozhinov (22).JPG'),
+      coords: { lat: 41.52556, lng: 23.39472 },
+      mapsUrl: 'https://maps.google.com/?q=Melnik+Pyramids',
     },
   ],
   plovdiv: [
@@ -199,6 +224,28 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       coords: { lat: 42.35, lng: 24.75 },
       mapsUrl: 'https://maps.google.com/?q=Narechenski+Bani',
     },
+    {
+      id: 'dest-red-church-perushtitsa',
+      name: 'Червената църква край Перущица',
+      category: 'historical',
+      shortDescription:
+        'Раннохристиянски храм от късната античност с характерна червена тухлена зидария и силует сред полето край Перущица.',
+      location: 'Перущица',
+      image: wiki('Redchurchperushtitsa.jpg'),
+      coords: { lat: 42.07417, lng: 24.55612 },
+      mapsUrl: 'https://maps.google.com/?q=Red+Church+Perushtitsa',
+    },
+    {
+      id: 'dest-hisarya-roman-thermae',
+      name: 'Римски терми в Хисаря',
+      category: 'historical',
+      shortDescription:
+        'Останки от античния Диоклецианополис с термални бани, крепостни стени и минерални извори в северната част на областта.',
+      location: 'Хисаря',
+      image: wiki('Diocletianopolis thermae 1.jpg'),
+      coords: { lat: 42.50033, lng: 24.70363 },
+      mapsUrl: 'https://maps.google.com/?q=Roman+Thermae+Hisarya',
+    },
   ],
   varna: [
     {
@@ -255,6 +302,28 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       image: u('photo-1470071459604-3b5ec3a7fe05'),
       coords: { lat: 43.2333, lng: 27.7167 },
       mapsUrl: 'https://maps.google.com/?q=Pobiti+Kamani',
+    },
+    {
+      id: 'dest-varna-cathedral',
+      name: 'Катедрален храм „Успение Богородично“',
+      category: 'monument',
+      shortDescription:
+        'Един от най-разпознаваемите символи на Варна с богато изписан интериор и силно присъствие в центъра на града.',
+      location: 'Варна',
+      image: wiki('Varna Cathedral - 2.jpg'),
+      coords: { lat: 43.204744, lng: 27.909394 },
+      mapsUrl: 'https://maps.google.com/?q=Varna+Cathedral',
+    },
+    {
+      id: 'dest-euxinograd',
+      name: 'Дворец „Евксиноград“',
+      category: 'historical',
+      shortDescription:
+        'Крайморска царска резиденция с парк, архитектурни детайли и гледки към северното Черноморие.',
+      location: 'край Варна',
+      image: wiki('Euxinograd Palace - view 1.jpg'),
+      coords: { lat: 43.2283, lng: 28.0105 },
+      mapsUrl: 'https://maps.google.com/?q=Euxinograd+Palace',
     },
   ],
   burgas: [
@@ -313,6 +382,28 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       coords: { lat: 42.45, lng: 27.45 },
       mapsUrl: 'https://maps.google.com/?q=Burgas+Lakes',
     },
+    {
+      id: 'dest-beglik-tash',
+      name: 'Тракийско светилище Бегликташ',
+      category: 'historical',
+      shortDescription:
+        'Мегалитен култов комплекс в горите над Приморско, близо до резерват Ропотамо и южното море.',
+      location: 'Приморско',
+      image: wiki('Beglik Tash 045.jpg'),
+      coords: { lat: 42.3092, lng: 27.7339 },
+      mapsUrl: 'https://maps.google.com/?q=Beglik+Tash',
+    },
+    {
+      id: 'dest-aquae-calidae',
+      name: 'Акве Калиде',
+      category: 'historical',
+      shortDescription:
+        'Археологически комплекс с древни минерални бани и възстановена баня на Сюлейман Великолепни край Бургас.',
+      location: 'кв. Ветрен, Бургас',
+      image: wiki('Aquae Calidae.jpg'),
+      coords: { lat: 42.61149, lng: 27.39381 },
+      mapsUrl: 'https://maps.google.com/?q=Aquae+Calidae+Burgas',
+    },
   ],
   'veliko-tarnovo': [
     {
@@ -333,8 +424,8 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       shortDescription:
         'Архитектурен резерват с къщи-музеи и църкви с уникални стенописи.',
       location: 'Арбанаси',
-      image: u('photo-1506905925346-21bda4d32df4'),
-      coords: { lat: 43.1, lng: 25.6667 },
+      image: wiki('Arbanasi. Bulgaria.jpg'),
+      coords: { lat: 43.098, lng: 25.668 },
       mapsUrl: 'https://maps.google.com/?q=Arbanasi+Bulgaria',
     },
     {
@@ -358,6 +449,17 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       image: u('photo-1432405972618-c60b0225b8f9'),
       coords: { lat: 43.25, lng: 25.5167 },
       mapsUrl: 'https://maps.google.com/?q=Emen+Canyon',
+    },
+    {
+      id: 'dest-hotnitsa-waterfall',
+      name: 'Хотнишки водопад „Кая Бунар“',
+      category: 'waterfall',
+      shortDescription:
+        'Къса, но много ефектна екопътека с тюркоазен водопад край село Хотница, близо до Велико Търново.',
+      location: 'Хотница',
+      image: wiki('Hotnitsa Bulgaria.JPG'),
+      coords: { lat: 43.144, lng: 25.558 },
+      mapsUrl: 'https://maps.google.com/?q=Hotnitsa+waterfall',
     },
   ],
   smolyan: [
@@ -416,6 +518,17 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       coords: { lat: 41.6564, lng: 24.6953 },
       mapsUrl: 'https://maps.google.com/?q=Pamporovo',
     },
+    {
+      id: 'dest-wonderful-bridges',
+      name: 'Чудните мостове',
+      category: 'natural',
+      shortDescription:
+        'Скални арки в Западните Родопи, оформени от ерозията на река Еркюприя, с кратки пешеходни маршрути.',
+      location: 'Забърдо',
+      image: u('photo-1469474968028-56623f02e42e'),
+      coords: { lat: 41.818, lng: 24.582 },
+      mapsUrl: 'https://maps.google.com/?q=Wonderful+Bridges+Bulgaria',
+    },
   ],
   gabrovo: [
     {
@@ -462,6 +575,17 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       coords: { lat: 42.7667, lng: 25.2333 },
       mapsUrl: 'https://maps.google.com/?q=Uzana+Bulgaria',
     },
+    {
+      id: 'dest-tryavna',
+      name: 'Трявна',
+      category: 'historical',
+      shortDescription:
+        'Град на резбарската школа, часовниковата кула и възрожденските улици в полите на Стара планина.',
+      location: 'Трявна',
+      image: wiki('Tryavna, Bulgaria - panoramio.jpg'),
+      coords: { lat: 42.8667, lng: 25.4919 },
+      mapsUrl: 'https://maps.google.com/?q=Tryavna+Bulgaria',
+    },
   ],
   ruse: [
     {
@@ -507,6 +631,17 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       image: u('photo-1505765050516-f72dcac9c60e'),
       coords: { lat: 43.85, lng: 25.97 },
       mapsUrl: 'https://maps.google.com/?q=Ruse+Danube+Park',
+    },
+    {
+      id: 'dest-orlova-chuka',
+      name: 'Пещера „Орлова чука“',
+      category: 'cave',
+      shortDescription:
+        'Една от най-дългите пещери в България, разположена в Русенски Лом, с просторни галерии и подземни форми.',
+      location: 'Две могили',
+      image: wiki('Orlova Chuka Cave 3.jpg'),
+      coords: { lat: 43.5899, lng: 25.9603 },
+      mapsUrl: 'https://maps.google.com/?q=Orlova+Chuka+Cave',
     },
   ],
   'stara-zagora': [
@@ -574,7 +709,7 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       shortDescription:
         'Червеникави скални форми и крепост „Калето“ — една от емблемите на Северозапада.',
       location: 'Белоградчик',
-      image: u('photo-1470071459604-3b5ec3a7fe05'),
+      image: wiki('Belogradchik rocks 2009.jpg'),
       coords: { lat: 43.6236, lng: 22.685 },
       mapsUrl: 'https://maps.google.com/?q=Belogradchik+Rocks',
     },
@@ -695,6 +830,28 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       image: u('photo-1509316785289-025f5b846b35'),
       coords: { lat: 43.241, lng: 24.872 },
       mapsUrl: 'https://maps.google.com/?q=Devetashka+cave',
+    },
+    {
+      id: 'dest-prohodna-cave',
+      name: 'Пещера „Проходна“',
+      category: 'cave',
+      shortDescription:
+        'Карстова пещера край Карлуково, известна с „Очите на Бога“ и огромните си естествени отвори в свода.',
+      location: 'Карлуково',
+      image: wiki('Prohodna Cave.jpg'),
+      coords: { lat: 43.1777, lng: 24.0769 },
+      mapsUrl: 'https://maps.google.com/?q=Prohodna+Cave',
+    },
+    {
+      id: 'dest-krushuna-waterfalls',
+      name: 'Крушунски водопади',
+      category: 'waterfall',
+      shortDescription:
+        'Каскада от варовикови тераси, тюркоазени води и кратки пътеки в Деветашкото плато.',
+      location: 'Крушуна',
+      image: wiki('Cascade-Krushuna - panoramio.jpg'),
+      coords: { lat: 43.2431, lng: 25.0333 },
+      mapsUrl: 'https://maps.google.com/?q=Krushuna+waterfalls',
     },
   ],
   dobrich: [
@@ -898,6 +1055,17 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       image: u('photo-1540555700478-4be289fbecef'),
       coords: { lat: 42.283, lng: 22.691 },
       mapsUrl: 'https://maps.google.com/?q=Kyustendil+spa',
+    },
+    {
+      id: 'dest-seven-rila-lakes',
+      name: 'Седемте рилски езера',
+      category: 'natural',
+      shortDescription:
+        'Ледникови езера високо в Рила с класически панорамен маршрут над хижа „Рилски езера“.',
+      location: 'Рила, над Паничище',
+      image: wiki('View from Seven Rila Lakes.jpg'),
+      coords: { lat: 42.2046, lng: 23.3206 },
+      mapsUrl: 'https://maps.google.com/?q=Seven+Rila+Lakes',
     },
   ],
   pazardzhik: [

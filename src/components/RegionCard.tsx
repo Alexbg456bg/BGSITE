@@ -12,9 +12,10 @@ export function RegionCard({ region, index = 0 }: Props) {
     <motion.article
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5 }}
       viewport={{ once: true, margin: '-40px' }}
-      transition={{ delay: index * 0.06 }}
-      className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+      transition={{ delay: index * 0.06, duration: 0.24 }}
+      className="content-card group overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:shadow-lg"
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         <img
@@ -22,7 +23,7 @@ export function RegionCard({ region, index = 0 }: Props) {
           alt={region.name}
           loading="lazy"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/88 via-[var(--forest-deep)]/20 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-end p-5">

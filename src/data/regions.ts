@@ -3,7 +3,7 @@ import { OBLASTI_META } from './oblastiMeta'
 import { DESTINATIONS_BY_SLUG } from './destinationsByRegion'
 
 const u = (photoId: string) =>
-  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1200&q=80`
+  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=900&q=72`
 
 export const regions: Region[] = OBLASTI_META.map((m) => ({
   id: `reg-${m.slug}`,
