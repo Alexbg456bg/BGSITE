@@ -1,6 +1,7 @@
 import type { Destination, Region } from '../types'
 import { OBLASTI_META } from './oblastiMeta'
 import { DESTINATIONS_BY_SLUG } from './destinationsByRegion'
+import { LOCAL_REGION_BANNERS, LOCAL_REGION_GALLERIES } from './localRegionImages'
 
 const wiki = (fileName: string) =>
   `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(
@@ -62,14 +63,20 @@ export const regions: Region[] = OBLASTI_META.map((m) => {
   const destinations = (DESTINATIONS_BY_SLUG[m.slug] ?? []).map(
     withRealDestinationImages,
   )
+  const localBanner = LOCAL_REGION_BANNERS[m.slug]
+  const localGallery = LOCAL_REGION_GALLERIES[m.slug]
   const bannerOverride = REGION_BANNER_OVERRIDE[m.slug]
   const bannerFromDestination =
     destinations.find((d) => isWikimediaImage(d.image))?.image ??
     destinations.find((d) => d.image)?.image
   const bannerImage =
+    localBanner ??
     (bannerOverride ? wiki(bannerOverride) : null) ??
     bannerFromDestination ??
     regionImageUrl(m.banner)
+  const images =
+    localGallery ??
+    (m.images ? m.images.map(regionImageUrl) : undefined)
 
   return {
     id: `reg-${m.slug}`,
@@ -77,7 +84,7 @@ export const regions: Region[] = OBLASTI_META.map((m) => {
     slug: m.slug,
     description: m.description,
     bannerImage,
-    images: m.images ? m.images.map(regionImageUrl) : undefined,
+    images,
     highlights: [...m.highlights],
     destinations,
   }

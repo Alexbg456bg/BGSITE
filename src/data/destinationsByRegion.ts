@@ -1,4 +1,5 @@
 import type { Destination } from '../types'
+import { LOCAL_DESTINATION_IMAGES } from './localDestinationImages'
 
 const u = (photoId: string) =>
   `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1600&q=82`
@@ -7,7 +8,7 @@ const wiki = (fileName: string) =>
   `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=1600`
 
 /** Дестинации по slug на област — покрива всички 28 области. */
-export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
+const RAW_DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
   'sofia-grad': [
     {
       id: 'dest-aleksander-nevski',
@@ -1265,3 +1266,159 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
     },
   ],
 }
+
+const WIKI_SEARCH_PREFIX = 'wiki-search:'
+
+const isUnsplashImage = (url?: string) =>
+  Boolean(url && url.includes('images.unsplash.com/'))
+
+const searchToken = (query: string) => `${WIKI_SEARCH_PREFIX}${query.trim()}`
+
+const mapsQuery = (mapsUrl?: string) => {
+  if (!mapsUrl) return ''
+
+  try {
+    const parsed = new URL(mapsUrl)
+    return decodeURIComponent(parsed.searchParams.get('q') ?? '').replace(/\+/g, ' ')
+  } catch {
+    return ''
+  }
+}
+
+const DESTINATION_IMAGE_SEARCH_QUERY: Record<string, string> = {
+  'dest-aleksander-nevski': 'Alexander Nevsky Cathedral Sofia',
+  'dest-boyana-church': 'Boyana Church Sofia',
+  'dest-nhm': 'National History Museum Sofia',
+  'dest-archaeological-sofia': 'National Archaeological Museum Sofia',
+  'dest-vitosha': 'Vitosha Nature Park Bulgaria',
+  'dest-iskar-gorge': 'Iskar Gorge Bulgaria',
+  'dest-kokalyane': 'Kokalyane Monastery Bulgaria',
+  'dest-vihren': 'Vihren Peak Bulgaria',
+  'dest-banderitsa': 'Banderitsa Hut Pirin',
+  'dest-rozhen': 'Rozhen Monastery Bulgaria',
+  'dest-bansko': 'Bansko Bulgaria',
+  'dest-rila-monastery-bg': 'Rila Monastery Bulgaria',
+  'dest-plovdiv-old': 'Ancient Theatre Plovdiv',
+  'dest-bachkovo': 'Bachkovo Monastery Bulgaria',
+  'dest-asen-fortress': "Asen's Fortress Bulgaria",
+  'dest-museum-plovdiv': 'Plovdiv Ethnographic Museum',
+  'dest-narechen': 'Narechenski Bani Bulgaria',
+  'dest-varna-sea': 'Sea Garden Varna',
+  'dest-aladja': 'Aladzha Monastery Bulgaria',
+  'dest-roman-baths': 'Roman Baths Varna',
+  'dest-arch-museum-varna': 'Varna Archaeological Museum',
+  'dest-pobiti-kamani': 'Pobiti Kamani Bulgaria',
+  'dest-nessebar': 'Nessebar Old Town Bulgaria',
+  'dest-strandzha': 'Strandzha Nature Park Bulgaria',
+  'dest-ropotamo': 'Ropotamo Reserve Bulgaria',
+  'dest-sozopol': 'Sozopol Bulgaria',
+  'dest-burgas-lakes': 'Burgas Lakes Bulgaria',
+  'dest-poda-burgas': 'Poda Protected Area Burgas',
+  'dest-sinemorets': 'Sinemorets Veleka Bulgaria',
+  'dest-tsarevets': 'Tsarevets Fortress Veliko Tarnovo',
+  'dest-preobrazhenski': 'Preobrazhenski Monastery Bulgaria',
+  'dest-emen-canyon': 'Emen Canyon Bulgaria',
+  'dest-devil-throat': "Devil's Throat Cave Bulgaria",
+  'dest-shiroka-laka': 'Shiroka Laka Bulgaria',
+  'dest-orpheus-peaks': 'Orpheus Cliffs Smolyan',
+  'dest-dospat': 'Dospat Dam Bulgaria',
+  'dest-pamporovo': 'Pamporovo Bulgaria',
+  'dest-wonderful-bridges': 'Wonderful Bridges Bulgaria',
+  'dest-yagodinska-cave': 'Yagodina Cave Bulgaria',
+  'dest-smolyan-lakes': 'Smolyan Lakes Bulgaria',
+  'dest-etar': 'Etar Open Air Museum Bulgaria',
+  'dest-bozhentsi': 'Bozhentsi Bulgaria',
+  'dest-shipka': 'Shipka Monument Bulgaria',
+  'dest-usha-waterfall': 'Uzana Bulgaria',
+  'dest-dryanovo-monastery': 'Dryanovo Monastery Bulgaria',
+  'dest-ruse-center': 'Ruse Bulgaria',
+  'dest-basarbovo': 'Basarbovo Rock Monastery Bulgaria',
+  'dest-ivanovo': 'Rock Hewn Churches of Ivanovo',
+  'dest-danube-park': 'Danube Park Ruse',
+  'dest-rusenski-lom': 'Rusenski Lom Nature Park',
+  'dest-starosel': 'Starosel Thracian Temple Bulgaria',
+  'dest-neolithic': 'Neolithic Dwellings Stara Zagora',
+  'dest-bedechka': 'Bedechka Park Stara Zagora',
+  'dest-zagorka': 'Stara Zagora Bulgaria',
+  'dest-baba-vida': 'Baba Vida Fortress Bulgaria',
+  'dest-magura': 'Magura Cave Bulgaria',
+  'dest-ledenika': 'Ledenika Cave Bulgaria',
+  'dest-vratsa-balkan': 'Vrachanski Balkan Nature Park',
+  'dest-okolchitsa': 'Okolchitsa Bulgaria',
+  'dest-chiprovtsi': 'Chiprovtsi Bulgaria',
+  'dest-lopushanski': 'Lopushanski Monastery Bulgaria',
+  'dest-pleven-panorama': 'Pleven Panorama Bulgaria',
+  'dest-kaylaka': 'Kaylaka Park Pleven',
+  'dest-lovech-bridge': 'Covered Bridge Lovech Bulgaria',
+  'dest-devetashka': 'Devetashka Cave Bulgaria',
+  'dest-lovech-fortress': 'Hisarya Fortress Lovech',
+  'dest-saeva-dupka': 'Saeva Dupka Cave Bulgaria',
+  'dest-balchik': 'Balchik Palace Bulgaria',
+  'dest-kaliakra': 'Cape Kaliakra Bulgaria',
+  'dest-madara': 'Madara Rider Bulgaria',
+  'dest-pliska': 'Pliska Bulgaria',
+  'dest-preslav': 'Veliki Preslav Bulgaria',
+  'dest-silistra-fort': 'Durostorum Silistra Bulgaria',
+  'dest-srebarna': 'Srebarna Nature Reserve Bulgaria',
+  'dest-blue-rocks': 'Blue Stones Sliven Bulgaria',
+  'dest-karandila': 'Karandila Bulgaria',
+  'dest-kabile': 'Kabile Bulgaria',
+  'dest-tundzha': 'Tundzha river Bulgaria',
+  'dest-aleksandrovo': 'Aleksandrovo Thracian tomb Bulgaria',
+  'dest-statue-monuments': 'Dimitrovgrad Bulgaria',
+  'dest-perperikon': 'Perperikon Bulgaria',
+  'dest-stone-mushrooms': 'Stone Mushrooms Bulgaria',
+  'dest-hisarlaka': 'Hisarlaka Kyustendil Bulgaria',
+  'dest-kyustendil-spa': 'Kyustendil Bulgaria',
+  'dest-batak': 'Batak Bulgaria',
+  'dest-velingrad': 'Velingrad Bulgaria',
+  'dest-surva': 'Surva Pernik Bulgaria',
+  'dest-ruen-pernik': 'Ruen peak Osogovo Bulgaria',
+  'dest-sveshtari': 'Sveshtari Thracian tomb Bulgaria',
+  'dest-ludogorie': 'Ludogorie Bulgaria',
+  'dest-museum-tg': 'Targovishte Museum Bulgaria',
+  'dest-prescribed-nature': 'Targovishte Bulgaria',
+}
+
+const hasReadableLatin = (value?: string) => /[A-Za-z]{3,}/.test(value ?? '')
+
+const buildDestinationSearchQuery = (destination: Destination) => {
+  const explicit = DESTINATION_IMAGE_SEARCH_QUERY[destination.id]
+  if (explicit) return explicit
+
+  const mapBased = mapsQuery(destination.mapsUrl)
+  if (hasReadableLatin(mapBased)) return mapBased
+
+  const fallbackParts = [destination.name, destination.location]
+    .map((part) => part?.trim())
+    .filter(Boolean)
+
+  return fallbackParts.join(' ')
+}
+
+const withRealInternetImages = (destination: Destination): Destination => {
+  const local = LOCAL_DESTINATION_IMAGES[destination.id]
+  if (local) {
+    return {
+      ...destination,
+      image: local.image,
+      images: local.images,
+    }
+  }
+
+  const query = searchToken(buildDestinationSearchQuery(destination))
+  const replaceImage = (url: string) => (isUnsplashImage(url) ? query : url)
+
+  return {
+    ...destination,
+    image: replaceImage(destination.image),
+    images: destination.images?.map(replaceImage),
+  }
+}
+
+export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = Object.fromEntries(
+  Object.entries(RAW_DESTINATIONS_BY_SLUG).map(([slug, destinations]) => [
+    slug,
+    destinations.map(withRealInternetImages),
+  ]),
+)
