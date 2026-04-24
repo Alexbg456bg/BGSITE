@@ -17,6 +17,7 @@ export interface Destination {
   shortDescription: string
   location: string
   image: string
+  images?: string[]
   coords?: { lat: number; lng: number }
   mapsUrl?: string
 }
@@ -27,6 +28,7 @@ export interface Region {
   slug: string
   description: string
   bannerImage: string
+  images?: string[]
   /** Кратки акценти за hero на областта */
   highlights: string[]
   destinations: Destination[]

@@ -6,6 +6,7 @@ export type OblastMeta = {
   highlights: [string, string, string]
   /** Unsplash photo id без домейн */
   banner: string
+  images?: string[]
 }
 
 export const OBLASTI_META: OblastMeta[] = [
@@ -15,7 +16,13 @@ export const OBLASTI_META: OblastMeta[] = [
     description:
       'Пирин и Рила на едно място — ски, алпийски езера, минерални извори и богата кухня.',
     highlights: ['Пирин', 'Банско', 'Струма'],
-    banner: 'photo-1454496520488-517a0b98a496',
+    banner: 'Pirin - Vihren peak.JPG',
+    images: [
+      'Pirin - Vihren peak.JPG',
+      'Bansko old town.jpg',
+      'photo-1506905925346-21bda4d32df4',
+      'photo-1551632811-561732d1e306',
+    ],
   },
   {
     slug: 'burgas',
@@ -23,7 +30,7 @@ export const OBLASTI_META: OblastMeta[] = [
     description:
       'Южното Черноморие, лагуни и Странджа — море, птици и древни градове.',
     highlights: ['Несебър', 'Странджа', 'Атанасовско езеро'],
-    banner: 'photo-1505142468610-359e7d2be982',
+    banner: 'Nessebar, Bulgaria (9330455202).jpg',
   },
   {
     slug: 'varna',
@@ -31,7 +38,7 @@ export const OBLASTI_META: OblastMeta[] = [
     description:
       'Морската столица с римски бани, паркове по брега и близки природни резервати.',
     highlights: ['Морска градина', 'Археология', 'Златни пясъци'],
-    banner: 'photo-1507525428034-b723cf961d3e',
+    banner: 'Varna Sea Garden 1.jpg',
   },
   {
     slug: 'veliko-tarnovo',
@@ -183,7 +190,7 @@ export const OBLASTI_META: OblastMeta[] = [
     description:
       'Европейска столица с музеи, паркове, театри и живописен център под Витоша.',
     highlights: ['Музеи', 'Култура', 'Градски паркове'],
-    banner: 'photo-1526481280695-3c687fd643ed',
+    banner: 'Alexander Nevsky Cathedral, Sofia (by Pudelek).JPG',
   },
   {
     slug: 'sofia-oblast',

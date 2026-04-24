@@ -58,7 +58,7 @@ export function Navbar() {
           aria-label={open ? 'Затвори меню' : 'Отвори меню'}
           onClick={() => setOpen((o) => !o)}
         >
-          <span className="text-xl leading-none">{open ? '×' : '≡'}</span>
+          <span className="text-xl leading-none">{open ? '✕' : '☰'}</span>
         </button>
       </div>
 

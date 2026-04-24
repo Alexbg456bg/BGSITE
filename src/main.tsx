@@ -2,15 +2,18 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
-import App from './App.tsx'
+import App from './App'
 import { FavoritesProvider } from './context/FavoritesProvider'
+import { AppErrorBoundary } from './components/AppErrorBoundary'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <FavoritesProvider>
-        <App />
-      </FavoritesProvider>
+      <AppErrorBoundary>
+        <FavoritesProvider>
+          <App />
+        </FavoritesProvider>
+      </AppErrorBoundary>
     </BrowserRouter>
   </StrictMode>,
 )

@@ -27,7 +27,11 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   )
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([...favorites]))
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...favorites]))
+    } catch {
+      // Ignore storage quota/private-mode failures so the app stays usable.
+    }
   }, [favorites])
 
   const toggleFavorite = useCallback((id: string) => {

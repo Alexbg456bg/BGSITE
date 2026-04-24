@@ -2,18 +2,64 @@ import type { Destination, Region } from '../types'
 import { OBLASTI_META } from './oblastiMeta'
 import { DESTINATIONS_BY_SLUG } from './destinationsByRegion'
 
-const u = (photoId: string) =>
-  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=900&q=72`
+const wiki = (fileName: string) =>
+  `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(
+    fileName,
+  )}?width=1600`
 
-export const regions: Region[] = OBLASTI_META.map((m) => ({
-  id: `reg-${m.slug}`,
-  name: m.name,
-  slug: m.slug,
-  description: m.description,
-  bannerImage: u(m.banner),
-  highlights: [...m.highlights],
-  destinations: DESTINATIONS_BY_SLUG[m.slug] ?? [],
-}))
+const unsplash = (photoId: string) =>
+  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1600&q=82`
+
+const regionImageUrl = (value: string) =>
+  value.startsWith('photo-') ? unsplash(value) : wiki(value)
+
+const isWikimediaImage = (url: string) =>
+  url.includes('commons.wikimedia.org/wiki/Special:FilePath/')
+
+const REGION_BANNER_OVERRIDE: Record<string, string> = {
+  'sofia-grad': 'Boulevard Vitosha in Sofia.JPG',
+  'sofia-oblast': 'Vitosha seen from the center of Sofia.jpg',
+  vratsa: 'Ledenika cave 024.jpg',
+  dobrich: 'Balchik Palace.jpg',
+  kardzhali: 'Perperikon, Top view.jpg',
+  montana: 'Lopushanski Monastery.jpg',
+  pazardzhik: 'Velingrad Areal Image.jpg',
+  pernik:
+    'Pernik Region - Pernik Municipality - Town of Pernik - Krakra Fortress (21).jpg',
+  pleven: 'Pleven-Panorama 2010.jpg',
+  razgrad: 'Tomb sveshtari2-1-.jpg',
+  silistra: 'Srebarna Nature Reserve 01.jpg',
+  sliven: 'Sliven From Karandila.jpg',
+  smolyan: 'Smolyan Lakes 01.jpg',
+  'stara-zagora': 'Arc at Momini gardi sanctuary Starosel Bulgaria.jpg',
+  targovishte: 'Targovishte airview.jpg',
+  haskovo: 'Holymother.jpg',
+  shumen: 'Madara Rider.jpg',
+  yambol: 'Kabile Bulgaria.JPG',
+}
+
+export const regions: Region[] = OBLASTI_META.map((m) => {
+  const destinations = DESTINATIONS_BY_SLUG[m.slug] ?? []
+  const bannerOverride = REGION_BANNER_OVERRIDE[m.slug]
+  const bannerFromDestination =
+    destinations.find((d) => isWikimediaImage(d.image))?.image ??
+    destinations.find((d) => d.image)?.image
+  const bannerImage =
+    (bannerOverride ? wiki(bannerOverride) : null) ??
+    bannerFromDestination ??
+    regionImageUrl(m.banner)
+
+  return {
+    id: `reg-${m.slug}`,
+    name: m.name,
+    slug: m.slug,
+    description: m.description,
+    bannerImage,
+    images: m.images ? m.images.map(regionImageUrl) : undefined,
+    highlights: [...m.highlights],
+    destinations,
+  }
+})
 
 export const regionBySlug = new Map(regions.map((r) => [r.slug, r] as const))
 

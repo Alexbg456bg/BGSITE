@@ -8,9 +8,7 @@ export function RegionsPage() {
     <div className="pb-20">
       <div className="border-b border-[var(--border)] bg-white py-8 md:py-10">
         <div className="mx-auto max-w-6xl px-4">
-          <Breadcrumbs
-            items={[{ label: 'Начало', to: '/' }, { label: 'Области' }]}
-          />
+          <Breadcrumbs items={[{ label: 'Начало', to: '/' }, { label: 'Области' }]} />
           <motion.h1
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -19,8 +17,7 @@ export function RegionsPage() {
             Всички области
           </motion.h1>
           <p className="mt-3 max-w-2xl text-[var(--muted)]">
-            28 области — всяка с кратко описание и връзка към дестинации в
-            нея.
+            28 области, всяка със собствена страница и връзка към местата в нея.
           </p>
         </div>
       </div>

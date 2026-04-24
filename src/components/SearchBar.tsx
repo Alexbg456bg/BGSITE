@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { allDestinations, regionByDestinationId } from '../data/regions'
@@ -10,25 +10,42 @@ export function SearchBar({ className = '' }: Props) {
   const [q, setQ] = useState('')
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
+  const deferredQuery = useDeferredValue(q)
+
+  const indexedDestinations = useMemo(
+    () =>
+      allDestinations.map((destination) => ({
+        destination,
+        haystack: [
+          destination.name,
+          destination.location,
+          destination.shortDescription,
+          CATEGORY_LABELS[destination.category],
+        ]
+          .join(' ')
+          .toLowerCase(),
+      })),
+    [],
+  )
 
   const results = useMemo(() => {
-    const query = q.trim().toLowerCase()
+    const query = deferredQuery.trim().toLowerCase()
     if (query.length < 2) return []
-    return allDestinations
-      .filter(
-        (d) =>
-          d.name.toLowerCase().includes(query) ||
-          d.location.toLowerCase().includes(query) ||
-          d.shortDescription.toLowerCase().includes(query) ||
-          CATEGORY_LABELS[d.category].toLowerCase().includes(query),
-      )
+    return indexedDestinations
+      .filter(({ haystack }) => haystack.includes(query))
+      .map(({ destination }) => destination)
       .slice(0, 8)
-  }, [q])
+  }, [deferredQuery, indexedDestinations])
 
   useEffect(() => {
+    if (typeof document === 'undefined') return
+
     const onDoc = (e: MouseEvent) => {
-      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false)
+      const target = e.target
+      if (!(target instanceof Node)) return
+      if (!wrapRef.current?.contains(target)) setOpen(false)
     }
+
     document.addEventListener('click', onDoc)
     return () => document.removeEventListener('click', onDoc)
   }, [])
@@ -49,7 +66,7 @@ export function SearchBar({ className = '' }: Props) {
           id="site-search"
           type="search"
           autoComplete="off"
-          placeholder="Търси обект, град, категория…"
+          placeholder="Търси обект, град или категория..."
           value={q}
           onChange={(e) => {
             setQ(e.target.value)
@@ -71,7 +88,7 @@ export function SearchBar({ className = '' }: Props) {
           >
             {results.length === 0 ? (
               <li className="px-4 py-3 text-sm text-[var(--muted)]">
-                Няма резултати. Опитайте друга дума.
+                Няма резултати. Опитай с друга дума.
               </li>
             ) : (
               results.map((d) => {

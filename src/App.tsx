@@ -46,25 +46,82 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<LazyRoute><HomePage /></LazyRoute>} />
-        <Route path="/map" element={<LazyRoute><MapPage /></LazyRoute>} />
-        <Route path="/regions" element={<LazyRoute><RegionsPage /></LazyRoute>} />
+        <Route
+          path="/"
+          element={
+            <LazyRoute>
+              <HomePage />
+            </LazyRoute>
+          }
+        />
+        <Route
+          path="/map"
+          element={
+            <LazyRoute>
+              <MapPage />
+            </LazyRoute>
+          }
+        />
+        <Route
+          path="/regions"
+          element={
+            <LazyRoute>
+              <RegionsPage />
+            </LazyRoute>
+          }
+        />
         <Route
           path="/destinations"
-          element={<LazyRoute><DestinationsPage /></LazyRoute>}
+          element={
+            <LazyRoute>
+              <DestinationsPage />
+            </LazyRoute>
+          }
         />
         <Route
           path="/categories"
-          element={<LazyRoute><CategoriesPage /></LazyRoute>}
+          element={
+            <LazyRoute>
+              <CategoriesPage />
+            </LazyRoute>
+          }
         />
-        <Route path="/favorites" element={<LazyRoute><FavoritesPage /></LazyRoute>} />
-        <Route path="/region/sofia" element={<Navigate to="/region/sofia-oblast" replace />} />
-        <Route path="/region/:slug" element={<LazyRoute><RegionPage /></LazyRoute>} />
+        <Route
+          path="/favorites"
+          element={
+            <LazyRoute>
+              <FavoritesPage />
+            </LazyRoute>
+          }
+        />
+        <Route
+          path="/region/sofia"
+          element={<Navigate to="/region/sofia-oblast" replace />}
+        />
+        <Route
+          path="/region/:slug"
+          element={
+            <LazyRoute>
+              <RegionPage />
+            </LazyRoute>
+          }
+        />
         <Route
           path="/destination/:id"
-          element={<LazyRoute><DestinationPage /></LazyRoute>}
+          element={
+            <LazyRoute>
+              <DestinationPage />
+            </LazyRoute>
+          }
         />
-        <Route path="*" element={<LazyRoute><NotFoundPage /></LazyRoute>} />
+        <Route
+          path="*"
+          element={
+            <LazyRoute>
+              <NotFoundPage />
+            </LazyRoute>
+          }
+        />
       </Route>
     </Routes>
   )

@@ -1,8 +1,9 @@
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import type { Destination } from '../types'
 import { CATEGORY_LABELS } from '../data/categoryLabels'
 import { useFavorites } from '../hooks/useFavorites'
+import { SmartImage } from './SmartImage'
 
 type Props = {
   destination: Destination
@@ -10,30 +11,27 @@ type Props = {
   index?: number
 }
 
-export function DestinationCard({
+function DestinationCardComponent({
   destination: d,
   regionSlug,
-  index = 0,
 }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites()
   const fav = isFavorite(d.id)
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
-      viewport={{ once: true, margin: '-30px' }}
-      transition={{ delay: index * 0.04, duration: 0.24 }}
+    <article
       className="content-card flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:shadow-md"
     >
       <div className="relative aspect-[16/10] overflow-hidden">
-        <img
+        <SmartImage
           src={d.image}
           alt={d.name}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover transition duration-700 hover:scale-105"
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          maxWidth={720}
+          className="h-full w-full"
+          imgClassName="transition duration-700 hover:scale-105"
         />
         <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-medium text-[var(--forest-deep)] shadow-sm backdrop-blur">
           {CATEGORY_LABELS[d.category]}
@@ -49,6 +47,9 @@ export function DestinationCard({
         </button>
       </div>
       <div className="flex flex-1 flex-col p-4 md:p-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--forest)]/75">
+          Подбрано място
+        </p>
         <h3 className="font-display text-lg font-semibold leading-snug text-[var(--ink)]">
           {d.name}
         </h3>
@@ -78,6 +79,7 @@ export function DestinationCard({
           )}
         </div>
       </div>
-    </motion.article>
+    </article>
   )
 }
+export const DestinationCard = memo(DestinationCardComponent)

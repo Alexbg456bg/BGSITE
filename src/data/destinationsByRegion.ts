@@ -1,10 +1,10 @@
 import type { Destination } from '../types'
 
 const u = (photoId: string) =>
-  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=900&q=72`
+  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1600&q=82`
 
 const wiki = (fileName: string) =>
-  `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=900`
+  `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=1600`
 
 /** Дестинации по slug на област — покрива всички 28 области. */
 export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
@@ -17,6 +17,12 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
         'Символът на София с позлатени куполи — място за служби, органова музика и архитектурни детайли в нео-византийски стил.',
       location: 'София, център',
       image: u('photo-1526481280695-3c687fd643ed'),
+      images: [
+        u('photo-1526481280695-3c687fd643ed'),
+        wiki('Alexander_Nevsky_Cathedral,_Sofia,_Bulgaria.jpg'),
+        wiki('Alexander_Nevsky_Cathedral_interior.jpg'),
+        u('photo-1549880338-65ddcdfd017b'),
+      ],
       coords: { lat: 42.6957, lng: 23.3329 },
       mapsUrl: 'https://maps.google.com/?q=Alexander+Nevsky+Cathedral+Sofia',
     },
@@ -28,6 +34,12 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
         'Средновековна църква от XIII в. с уникални стенописи — обект на световното наследство на ЮНЕСКО в подножието на Витоша.',
       location: 'София, кв. Бояна',
       image: u('photo-1549880338-65ddcdfd017b'),
+      images: [
+        u('photo-1549880338-65ddcdfd017b'),
+        wiki('Boyana_Church,_Sofia,_Bulgaria.jpg'),
+        wiki('Boyana_Church_frescoes.jpg'),
+        u('photo-1566127444979-b3d2b64d6c48'),
+      ],
       coords: { lat: 42.6447, lng: 23.2657 },
       mapsUrl: 'https://maps.google.com/?q=Boyana+Church',
     },
@@ -404,6 +416,28 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       coords: { lat: 42.61149, lng: 27.39381 },
       mapsUrl: 'https://maps.google.com/?q=Aquae+Calidae+Burgas',
     },
+    {
+      id: 'dest-poda-burgas',
+      name: 'Защитена местност „Пода“',
+      category: 'natural',
+      shortDescription:
+        'Една от най-интересните орнитологични точки по Черноморието с наблюдателни площадки и богато птиче разнообразие.',
+      location: 'край Бургас',
+      image: u('photo-1439066615861-d1af74d74000'),
+      coords: { lat: 42.4597, lng: 27.4736 },
+      mapsUrl: 'https://maps.google.com/?q=Poda+Protected+Area',
+    },
+    {
+      id: 'dest-sinemorets',
+      name: 'Синеморец и устието на Велека',
+      category: 'natural',
+      shortDescription:
+        'Дюни, морски панорами и едно от най-красивите устия в България — чудесно място за южно лятно бягство.',
+      location: 'Синеморец',
+      image: u('photo-1507525428034-b723cf961d3e'),
+      coords: { lat: 42.0618, lng: 27.9789 },
+      mapsUrl: 'https://maps.google.com/?q=Sinemorets+Veleka',
+    },
   ],
   'veliko-tarnovo': [
     {
@@ -529,6 +563,28 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       coords: { lat: 41.818, lng: 24.582 },
       mapsUrl: 'https://maps.google.com/?q=Wonderful+Bridges+Bulgaria',
     },
+    {
+      id: 'dest-yagodinska-cave',
+      name: 'Ягодинска пещера',
+      category: 'cave',
+      shortDescription:
+        'Една от най-дългите и впечатляващи пещери в Родопите с добре оформен туристически маршрут и красиви зали.',
+      location: 'Ягодина',
+      image: u('photo-1509316785289-025f5b846b35'),
+      coords: { lat: 41.6458, lng: 24.3331 },
+      mapsUrl: 'https://maps.google.com/?q=Yagodina+Cave',
+    },
+    {
+      id: 'dest-smolyan-lakes',
+      name: 'Смолянските езера',
+      category: 'reservoir_lake_view',
+      shortDescription:
+        'Горски маршрут с езера, панорамни гледки и усещане за тишина само на минути от града.',
+      location: 'Смолян',
+      image: u('photo-1439066615861-d1af74d74000'),
+      coords: { lat: 41.5777, lng: 24.7071 },
+      mapsUrl: 'https://maps.google.com/?q=Smolyan+Lakes',
+    },
   ],
   gabrovo: [
     {
@@ -586,6 +642,17 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       coords: { lat: 42.8667, lng: 25.4919 },
       mapsUrl: 'https://maps.google.com/?q=Tryavna+Bulgaria',
     },
+    {
+      id: 'dest-dryanovo-monastery',
+      name: 'Дряновски манастир',
+      category: 'monastery',
+      shortDescription:
+        'Манастирски комплекс в живописно ждрело, свързан с историята на Априлското въстание и чудесни разходки в района.',
+      location: 'Дряново',
+      image: u('photo-1547036967-23d11aaca342'),
+      coords: { lat: 42.9445, lng: 25.4748 },
+      mapsUrl: 'https://maps.google.com/?q=Dryanovo+Monastery',
+    },
   ],
   ruse: [
     {
@@ -642,6 +709,17 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       image: wiki('Orlova Chuka Cave 3.jpg'),
       coords: { lat: 43.5899, lng: 25.9603 },
       mapsUrl: 'https://maps.google.com/?q=Orlova+Chuka+Cave',
+    },
+    {
+      id: 'dest-rusenski-lom',
+      name: 'Природен парк „Русенски Лом“',
+      category: 'eco_trail',
+      shortDescription:
+        'Каньонни гледки, скални манастири и приятни екомаршрути в една от най-живописните дунавски местности.',
+      location: 'Русенско',
+      image: u('photo-1472214103451-9374bd1c798e'),
+      coords: { lat: 43.6962, lng: 25.9537 },
+      mapsUrl: 'https://maps.google.com/?q=Rusenski+Lom+Nature+Park',
     },
   ],
   'stara-zagora': [
@@ -852,6 +930,28 @@ export const DESTINATIONS_BY_SLUG: Record<string, Destination[]> = {
       image: wiki('Cascade-Krushuna - panoramio.jpg'),
       coords: { lat: 43.2431, lng: 25.0333 },
       mapsUrl: 'https://maps.google.com/?q=Krushuna+waterfalls',
+    },
+    {
+      id: 'dest-lovech-fortress',
+      name: 'Крепост „Хисаря“',
+      category: 'historical',
+      shortDescription:
+        'Средновековна крепост над Ловеч с панорама към града, реката и възрожденския силует наоколо.',
+      location: 'Ловеч',
+      image: u('photo-1464822759023-fed622ff2c3b'),
+      coords: { lat: 42.8518, lng: 24.7184 },
+      mapsUrl: 'https://maps.google.com/?q=Hisarya+Fortress+Lovech',
+    },
+    {
+      id: 'dest-saeva-dupka',
+      name: 'Пещера „Съева дупка“',
+      category: 'cave',
+      shortDescription:
+        'Известна с впечатляващи зали, добър туристически маршрут и отлична акустика сред варовиковите масиви на Предбалкана.',
+      location: 'Брестница',
+      image: u('photo-1509316785289-025f5b846b35'),
+      coords: { lat: 43.1033, lng: 24.1741 },
+      mapsUrl: 'https://maps.google.com/?q=Saeva+Dupka',
     },
   ],
   dobrich: [

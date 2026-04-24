@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Breadcrumbs } from '../components/Breadcrumbs'
+import { SmartImage } from '../components/SmartImage'
+import { ImageGallery } from '../components/ImageGallery'
 import { CATEGORY_LABELS } from '../data/categoryLabels'
 import { getDestinationWithRegion } from '../data/regions'
 import { useFavorites } from '../hooks/useFavorites'
@@ -45,15 +47,26 @@ export function DestinationPage() {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--mist)] shadow-lg"
         >
-          <img
+          {d.images && d.images.length > 1 ? (
+            <ImageGallery
+              images={d.images}
+              alt={`${d.name}, ${region.name}`}
+              className="overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--mist)] shadow-lg"
+            />
+          ) : (
+            <div className="overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--mist)] shadow-lg">
+          <SmartImage
             src={d.image}
             alt={`${d.name}, ${region.name}`}
             fetchPriority="high"
             decoding="async"
-            className="aspect-[4/3] w-full object-cover lg:aspect-auto lg:min-h-[420px]"
+            maxWidth={1200}
+            className="aspect-[4/3] w-full lg:aspect-auto lg:min-h-[420px]"
+            imgClassName="object-cover"
           />
+            </div>
+          )}
         </motion.div>
 
         <motion.div
@@ -74,6 +87,24 @@ export function DestinationPage() {
           <p className="mt-6 text-lg leading-relaxed text-[var(--muted)]">
             {d.shortDescription}
           </p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
+                Категория
+              </p>
+              <p className="mt-2 font-display text-xl font-semibold text-[var(--forest-deep)]">
+                {CATEGORY_LABELS[d.category]}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
+                Област
+              </p>
+              <p className="mt-2 font-display text-xl font-semibold text-[var(--forest-deep)]">
+                {region.name}
+              </p>
+            </div>
+          </div>
 
           {d.coords && (
             <p className="mt-4 text-sm text-[var(--muted)]">

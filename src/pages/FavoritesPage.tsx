@@ -15,9 +15,7 @@ export function FavoritesPage() {
     <div className="pb-20">
       <div className="border-b border-[var(--border)] bg-[var(--surface-2)] py-8 md:py-10">
         <div className="mx-auto max-w-6xl px-4">
-          <Breadcrumbs
-            items={[{ label: 'Начало', to: '/' }, { label: 'Любими' }]}
-          />
+          <Breadcrumbs items={[{ label: 'Начало', to: '/' }, { label: 'Любими' }]} />
           <motion.h1
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -26,8 +24,8 @@ export function FavoritesPage() {
             Запазени места
           </motion.h1>
           <p className="mt-3 max-w-2xl text-[var(--muted)]">
-            Локално в браузъра (localStorage). Добавяйте сърце от картичките на
-            дестинации.
+            Запазват се локално в браузъра. Добавяй сърце от картите на
+            дестинациите и се върни тук по-късно.
           </p>
         </div>
       </div>

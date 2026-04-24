@@ -1,46 +1,63 @@
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import type { Region } from '../types'
+import { SmartImage } from './SmartImage'
 
-type Props = {
-  region: Region
-  index?: number
-}
+type Props = { region: Region; index?: number }
 
-export function RegionCard({ region, index = 0 }: Props) {
+function RegionCardComponent({ region }: Props) {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ delay: index * 0.06, duration: 0.24 }}
-      className="content-card group overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:shadow-lg"
-    >
+    <article className="content-card group flex h-full flex-col overflow-hidden rounded-[2rem] border border-[var(--border)] bg-white/96 shadow-[0_24px_46px_rgba(15,61,46,0.08)] transition hover:-translate-y-1 hover:border-[var(--forest)]/28 hover:shadow-[0_30px_70px_rgba(15,61,46,0.12)]">
       <div className="relative aspect-[16/10] overflow-hidden">
-        <img
+        <SmartImage
           src={region.bannerImage}
           alt={region.name}
           loading="lazy"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+          sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 28vw, (min-width: 640px) 45vw, 100vw"
+          maxWidth={720}
+          className="absolute inset-0 h-full w-full"
+          imgClassName="transition duration-700 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/88 via-[var(--forest-deep)]/20 to-transparent" />
-        <div className="absolute inset-0 flex flex-col justify-end p-5">
-          <h3 className="font-display text-xl font-semibold text-white">
-            {region.name}
-          </h3>
-          <p className="mt-1 line-clamp-2 text-sm text-white/85">
-            {region.description}
-          </p>
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/45 via-[var(--forest-deep)]/12 to-transparent" />
+        <div className="absolute left-4 top-4 rounded-full bg-white/92 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--forest-deep)] shadow-sm backdrop-blur-sm">
+          {region.destinations.length} места
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-[1.45rem] font-semibold leading-tight text-[var(--forest-deep)]">
+          {region.name}
+        </h3>
+        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-[var(--muted)]">
+          {region.description}
+        </p>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {region.highlights.slice(0, 3).map((highlight) => (
+            <span
+              key={highlight}
+              className="rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-3 py-1 text-xs font-medium text-[var(--ink-soft)]"
+            >
+              {highlight}
+            </span>
+          ))}
+        </div>
+
+        <div className="mt-5 flex items-center justify-between gap-3 border-t border-[var(--border)] pt-4">
+          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--forest)]">
+            {region.destinations.length} места
+          </span>
           <Link
             to={`/region/${region.slug}`}
-            className="mt-4 inline-flex w-fit items-center rounded-full bg-white/95 px-4 py-2 text-xs font-semibold text-[var(--forest-deep)] transition hover:bg-white"
+            className="inline-flex w-fit items-center rounded-full bg-[var(--forest-deep)] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[var(--forest)]"
           >
-            Виж обектите →
+            Към областта →
           </Link>
         </div>
       </div>
-    </motion.article>
+    </article>
   )
 }
+
+export const RegionCard = memo(RegionCardComponent)
