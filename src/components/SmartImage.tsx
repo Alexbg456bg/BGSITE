@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 type Props = {
   src: string
@@ -38,6 +38,59 @@ function optimizeImageUrl(src: string, maxWidth?: number, quality = 76) {
   return src
 }
 
+const WIKI_SEARCH_PREFIX = 'wiki-search:'
+
+const isWikiSearchToken = (src: string) => src.startsWith(WIKI_SEARCH_PREFIX)
+
+const wikiCommonsSearchUrl = (query: string) =>
+  `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(
+    `${query} file`,
+  )}&gsrlimit=1&prop=imageinfo&iiprop=url&format=json&origin=*`
+
+const wikiPageImageUrl = (host: 'bg' | 'en', title: string) =>
+  `https://${host}.wikipedia.org/w/api.php?action=query&prop=pageimages&piprop=original&titles=${encodeURIComponent(
+    title,
+  )}&format=json&origin=*`
+
+async function resolveWikiSearchToken(src: string): Promise<string | null> {
+  const query = src.slice(WIKI_SEARCH_PREFIX.length).trim()
+  if (!query) return null
+
+  try {
+    const commonsResp = await fetch(wikiCommonsSearchUrl(query))
+    if (commonsResp.ok) {
+      const commonsJson = (await commonsResp.json()) as {
+        query?: { pages?: Record<string, { imageinfo?: Array<{ url?: string }> }> }
+      }
+      const pages = commonsJson.query?.pages ?? {}
+      const firstPage = Object.values(pages)[0]
+      const firstUrl = firstPage?.imageinfo?.[0]?.url
+      if (firstUrl) return firstUrl
+    }
+  } catch {
+    // continue with fallback sources
+  }
+
+  const titleCandidate = query.replace(/\s+Bulgaria$/i, '').trim()
+  for (const host of ['bg', 'en'] as const) {
+    try {
+      const resp = await fetch(wikiPageImageUrl(host, titleCandidate))
+      if (!resp.ok) continue
+      const json = (await resp.json()) as {
+        query?: { pages?: Record<string, { original?: { source?: string } }> }
+      }
+      const pages = json.query?.pages ?? {}
+      const firstPage = Object.values(pages)[0]
+      const source = firstPage?.original?.source
+      if (source) return source
+    } catch {
+      // try next source
+    }
+  }
+
+  return null
+}
+
 export function SmartImage({
   src,
   alt,
@@ -53,12 +106,42 @@ export function SmartImage({
 }: Props) {
   const [loaded, setLoaded] = useState(false)
   const [failed, setFailed] = useState(false)
+  const [resolvedSrc, setResolvedSrc] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setResolvedSrc(null)
+    setFailed(false)
+    setLoaded(false)
+
+    if (!isWikiSearchToken(src)) {
+      setResolvedSrc(src)
+      return () => {
+        cancelled = true
+      }
+    }
+
+    resolveWikiSearchToken(src).then((resolved) => {
+      if (cancelled) return
+      if (resolved) {
+        setResolvedSrc(resolved)
+      } else {
+        setFailed(true)
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [src])
+
+  const displaySrc = resolvedSrc ?? (isWikiSearchToken(src) ? '' : src)
   const optimizedSrc = useMemo(
-    () => optimizeImageUrl(src, maxWidth, quality),
-    [src, maxWidth, quality],
+    () => optimizeImageUrl(displaySrc, maxWidth, quality),
+    [displaySrc, maxWidth, quality],
   )
 
-  if (!src) {
+  if (!displaySrc) {
     return (
       <div className={`relative overflow-hidden ${className}`}>
         <div className="relative flex h-full w-full items-end bg-[linear-gradient(160deg,rgba(61,124,158,0.65),rgba(15,61,46,0.92))] p-4 text-white">

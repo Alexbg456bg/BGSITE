@@ -16,6 +16,26 @@ const regionImageUrl = (value: string) =>
 const isWikimediaImage = (url: string) =>
   url.includes('commons.wikimedia.org/wiki/Special:FilePath/')
 
+const isUnsplashImage = (url: string) => url.includes('images.unsplash.com/')
+
+const wikiSearchToken = (query: string) => `wiki-search:${query}`
+
+const withRealDestinationImages = (destination: Destination): Destination => {
+  const query = `${destination.name} ${destination.location} Bulgaria`
+  const resolvedImage = isUnsplashImage(destination.image)
+    ? wikiSearchToken(query)
+    : destination.image
+  const resolvedImages = destination.images?.map((img) =>
+    isUnsplashImage(img) ? wikiSearchToken(query) : img,
+  )
+
+  return {
+    ...destination,
+    image: resolvedImage,
+    images: resolvedImages,
+  }
+}
+
 const REGION_BANNER_OVERRIDE: Record<string, string> = {
   'sofia-grad': 'Boulevard Vitosha in Sofia.JPG',
   'sofia-oblast': 'Vitosha seen from the center of Sofia.jpg',
@@ -39,7 +59,9 @@ const REGION_BANNER_OVERRIDE: Record<string, string> = {
 }
 
 export const regions: Region[] = OBLASTI_META.map((m) => {
-  const destinations = DESTINATIONS_BY_SLUG[m.slug] ?? []
+  const destinations = (DESTINATIONS_BY_SLUG[m.slug] ?? []).map(
+    withRealDestinationImages,
+  )
   const bannerOverride = REGION_BANNER_OVERRIDE[m.slug]
   const bannerFromDestination =
     destinations.find((d) => isWikimediaImage(d.image))?.image ??
