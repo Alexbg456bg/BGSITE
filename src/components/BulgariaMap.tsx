@@ -19,13 +19,15 @@ type Props = {
 export function BulgariaMap({ id = 'map', compact = false, large = false }: Props) {
   const navigate = useNavigate()
   const wrapRef = useRef<HTMLDivElement>(null)
-  const glowId = `map-glow-${useId().replace(/:/g, '')}`
+  const badgeRef = useRef<HTMLDivElement>(null)
+  const pathRefs = useRef(new Map<string, SVGPathElement>())
+  const labelRefs = useRef(new Map<string, SVGTextElement>())
+  const activeSlugRef = useRef<string | null>(null)
   const waterId = `map-water-${useId().replace(/:/g, '')}`
   const activeId = `map-active-${useId().replace(/:/g, '')}`
 
   const [size, setSize] = useState({ w: 980, h: 580 })
   const [fc, setFc] = useState<FeatureCollection | null>(null)
-  const [hovered, setHovered] = useState<string | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -52,7 +54,8 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
       const w = Math.max(320, el.clientWidth)
       const ratio = compact ? 0.54 : large ? 0.72 : 0.6
       const minHeight = compact ? 320 : large ? 560 : 420
-      setSize({ w, h: Math.max(minHeight, w * ratio) })
+      const h = Math.max(minHeight, w * ratio)
+      setSize((current) => (current.w === w && current.h === h ? current : { w, h }))
     }
 
     measure()
@@ -66,12 +69,13 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
     return () => ro.disconnect()
   }, [compact, large])
 
-  const { pathGen, features, labels } = useMemo(() => {
+  const { pathGen, features, labels, nameBySlug } = useMemo(() => {
     if (!fc?.features?.length) {
       return {
         pathGen: null as ReturnType<typeof geoPath> | null,
         features: [] as OblastFeature[],
         labels: [] as { slug: string; x: number; y: number; text: string }[],
+        nameBySlug: new Map<string, string>(),
       }
     }
 
@@ -86,6 +90,7 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
     const pathGen = geoPath(projection)
     const features = fc.features as OblastFeature[]
     const labels: { slug: string; x: number; y: number; text: string }[] = []
+    const nameBySlug = new Map<string, string>()
 
     for (const feature of features) {
       const slug = feature.properties?.slug
@@ -96,19 +101,88 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
 
       const raw =
         feature.properties?.nameBg ?? feature.properties?.name ?? feature.properties?.slug
+      nameBySlug.set(slug, raw)
       const clean = raw.replace(' област', '')
       const text = clean.length > 11 ? `${clean.slice(0, 10)}…` : clean
       labels.push({ slug, x: center[0], y: center[1], text })
     }
 
-    return { pathGen, features, labels }
+    return { pathGen, features, labels, nameBySlug }
   }, [fc, size.w, size.h])
 
-  const hoveredFeature = features.find((feature) => feature.properties?.slug === hovered)
-  const hoveredName =
-    hoveredFeature?.properties?.nameBg ??
-    hoveredFeature?.properties?.name ??
-    ''
+  const setPathState = (node: SVGPathElement | undefined, state: 'idle' | 'dimmed' | 'active') => {
+    if (!node) return
+
+    if (state === 'active') {
+      node.setAttribute('fill', `url(#${activeId})`)
+      node.setAttribute('stroke', 'rgba(255,255,255,0.98)')
+      node.setAttribute('stroke-width', '1.7')
+      node.style.opacity = '1'
+      return
+    }
+
+    node.setAttribute('fill', 'rgba(69, 126, 99, 0.34)')
+    node.setAttribute('stroke', 'rgba(255,255,255,0.92)')
+    node.setAttribute('stroke-width', '1.1')
+    node.style.opacity = state === 'dimmed' ? '0.84' : '1'
+  }
+
+  const setLabelState = (node: SVGTextElement | undefined, state: 'idle' | 'dimmed' | 'active') => {
+    if (!node) return
+
+    if (state === 'active') {
+      node.setAttribute('fill', '#ffffff')
+      node.setAttribute('font-weight', '700')
+      node.style.opacity = '1'
+      return
+    }
+
+    node.setAttribute('fill', '#173126')
+    node.setAttribute('font-weight', '600')
+    node.style.opacity = state === 'dimmed' ? '0.72' : '0.94'
+  }
+
+  const updateHovered = (slug: string | null) => {
+    const current = activeSlugRef.current
+    if (current === slug) return
+
+    if (!current && slug) {
+      for (const [key, node] of pathRefs.current) {
+        setPathState(node, key === slug ? 'active' : 'dimmed')
+      }
+      for (const [key, node] of labelRefs.current) {
+        setLabelState(node, key === slug ? 'active' : 'dimmed')
+      }
+    } else if (current && slug) {
+      setPathState(pathRefs.current.get(current), 'dimmed')
+      setLabelState(labelRefs.current.get(current), 'dimmed')
+      setPathState(pathRefs.current.get(slug), 'active')
+      setLabelState(labelRefs.current.get(slug), 'active')
+    } else if (current && !slug) {
+      for (const node of pathRefs.current.values()) {
+        setPathState(node, 'idle')
+      }
+      for (const node of labelRefs.current.values()) {
+        setLabelState(node, 'idle')
+      }
+    }
+
+    activeSlugRef.current = slug
+
+    if (badgeRef.current) {
+      badgeRef.current.textContent = slug
+        ? nameBySlug.get(slug) ?? slug
+        : badgeRef.current.dataset.defaultLabel ?? ''
+    }
+  }
+
+  useEffect(() => {
+    activeSlugRef.current = null
+
+    if (badgeRef.current) {
+      badgeRef.current.textContent = badgeRef.current.dataset.defaultLabel ?? ''
+    }
+  }, [features, nameBySlug])
 
   return (
     <section id={id} className="scroll-mt-24">
@@ -128,8 +202,12 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
                 Избери област направо от картата и продължи към нейната страница.
               </p>
             </div>
-            <div className="rounded-full border border-[var(--border)] bg-white/84 px-4 py-2 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)]">
-              {hoveredName || '28 области'}
+            <div
+              ref={badgeRef}
+              data-default-label="28 области"
+              className="rounded-full border border-[var(--border)] bg-white/84 px-4 py-2 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)]"
+            >
+              28 области
             </div>
           </div>
         )}
@@ -154,6 +232,7 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
               className="h-auto w-full max-w-full select-none"
               role="img"
               aria-label="Карта на България с 28 области"
+              onPointerLeave={() => updateHovered(null)}
             >
               <defs>
                 <linearGradient id={waterId} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -164,13 +243,6 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
                   <stop offset="0%" stopColor="#6aa4bf" />
                   <stop offset="100%" stopColor="#1f5d46" />
                 </linearGradient>
-                <filter id={glowId} x="-30%" y="-30%" width="160%" height="160%">
-                  <feGaussianBlur stdDeviation="3" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
               </defs>
 
               <rect width={size.w} height={size.h} rx="26" fill={`url(#${waterId})`} />
@@ -179,24 +251,34 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
                 const slug = feature.properties?.slug
                 if (!slug) return null
 
-                const active = hovered === slug
                 const d = pathGen(feature) ?? ''
 
                 return (
                   <path
                     key={slug}
-                    d={d}
-                    fill={active ? `url(#${activeId})` : 'rgba(69, 126, 99, 0.34)'}
-                    stroke={active ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,0.92)'}
-                    strokeWidth={active ? 2.1 : 1.1}
-                    strokeLinejoin="round"
-                    className="cursor-pointer transition-[fill,stroke-width,opacity] duration-200"
-                    style={{
-                      filter: active ? `url(#${glowId})` : undefined,
-                      opacity: hovered && !active ? 0.78 : 1,
+                    ref={(node) => {
+                      if (node) {
+                        pathRefs.current.set(slug, node)
+                        return
+                      }
+
+                      pathRefs.current.delete(slug)
                     }}
-                    onMouseEnter={() => setHovered(slug)}
-                    onMouseLeave={() => setHovered(null)}
+                    d={d}
+                    fill="rgba(69, 126, 99, 0.34)"
+                    stroke="rgba(255,255,255,0.92)"
+                    strokeWidth={1.1}
+                    strokeLinejoin="round"
+                    className="cursor-pointer transition-[fill,stroke,stroke-width,opacity] duration-75 ease-out"
+                    style={{
+                      opacity: 1,
+                      transformBox: 'fill-box',
+                      transformOrigin: 'center',
+                      willChange: 'fill, stroke, stroke-width, opacity',
+                    }}
+                    onPointerEnter={() => updateHovered(slug)}
+                    onFocus={() => updateHovered(slug)}
+                    onBlur={() => updateHovered(null)}
                     onClick={() => navigate(`/region/${slug}`)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -212,18 +294,29 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
               })}
 
               {labels.map((label) => {
-                const active = hovered === label.slug
                 return (
                   <text
                     key={label.slug}
+                    ref={(node) => {
+                      if (node) {
+                        labelRefs.current.set(label.slug, node)
+                        return
+                      }
+
+                      labelRefs.current.delete(label.slug)
+                    }}
                     x={label.x}
                     y={label.y}
                     textAnchor="middle"
-                    fill={active ? '#ffffff' : '#173126'}
+                    fill="#173126"
                     fontSize={compact ? 7 : 8.4}
-                    fontWeight={active ? 700 : 600}
-                    className="pointer-events-none transition-all"
-                    style={{ fontFamily: 'DM Sans, sans-serif' }}
+                    fontWeight={600}
+                    className="pointer-events-none transition-[fill,opacity] duration-75 ease-out"
+                    style={{
+                      fontFamily: 'DM Sans, sans-serif',
+                      opacity: 0.94,
+                      willChange: 'fill, opacity',
+                    }}
                   >
                     {label.text}
                   </text>
