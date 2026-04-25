@@ -26,10 +26,18 @@ export function Navbar() {
 
   return (
     <header
-      className={`top-0 z-50 border-b border-white/45 bg-white/54 shadow-[0_10px_36px_rgba(15,61,46,0.1)] backdrop-blur-2xl ${
-        isHome ? 'fixed left-0 right-0' : 'sticky'
+      className={`top-0 z-50 bg-white/54 shadow-[0_10px_36px_rgba(15,61,46,0.1)] backdrop-blur-2xl ${
+        isHome
+          ? 'fixed left-0 right-0'
+          : 'sticky border-b border-white/45'
       }`}
     >
+      {isHome && (
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-[-24px] h-6 bg-gradient-to-b from-white/36 via-white/14 to-transparent"
+          aria-hidden
+        />
+      )}
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:py-4">
         <Link
           to="/"
