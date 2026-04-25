@@ -7,7 +7,6 @@ const heroImage =
 const highlights = [
   { value: '28', label: 'области' },
   { value: '160+', label: 'места за откриване' },
-  { value: '1 карта', label: 'която води нататък' },
 ]
 
 export function HeroSection() {
@@ -35,7 +34,7 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(233,189,76,0.16),transparent_26%),radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_20%)]" />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[var(--bg)] to-transparent" />
 
-      <div className="relative mx-auto flex min-h-[680px] max-w-6xl items-end px-4 pb-22 pt-24 md:pb-28">
+      <div className="relative mx-auto flex min-h-[680px] max-w-6xl items-start px-4 pb-10 pt-18 md:pb-14 md:pt-20">
         <div className="max-w-4xl">
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -43,7 +42,7 @@ export function HeroSection() {
             transition={{ delay: 0.04 }}
             className="text-sm font-semibold uppercase tracking-[0.34em] text-[var(--sky-pale)]"
           >
-            България по области
+            Места за отдих
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 14 }}
@@ -51,7 +50,7 @@ export function HeroSection() {
             transition={{ delay: 0.1 }}
             className="mt-5 max-w-4xl font-display text-4xl font-semibold leading-[0.98] tracking-tight text-white md:text-6xl"
           >
-            Пътуването започва от картата
+            Разгледай България
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 14 }}
@@ -59,9 +58,7 @@ export function HeroSection() {
             transition={{ delay: 0.18 }}
             className="mt-6 max-w-2xl text-lg leading-relaxed text-white/88 md:text-xl"
           >
-            Тук можеш да откриеш красиви места в България, където да отдъхнеш
-            за миг от големия град, да се разходиш сред природа, история и
-            спокойствие, и да намериш следващата си любима дестинация.
+            Тук ще намериш различни места из страната – за разходка, почивка или просто да смениш обстановката.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 14 }}
@@ -80,7 +77,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="mt-10 grid max-w-3xl gap-3 sm:grid-cols-3"
+            className="mt-32 grid max-w-3xl gap-3 sm:grid-cols-3"
           >
             {highlights.map((item) => (
               <div

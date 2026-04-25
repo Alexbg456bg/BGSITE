@@ -274,7 +274,7 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
                 Карта на България
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-[var(--muted)] md:text-base">
-                Избери област направо от картата и продължи към нейната страница.
+                Избери си област и разгледай местата в нея.
               </p>
             </div>
             <div

@@ -27,23 +27,24 @@ export function HomePage() {
       <HeroSection />
 
       <section className="mx-auto max-w-6xl px-4 py-14 md:py-18">
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--forest)]">
-              Основен акцент
-            </p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-[var(--forest-deep)] md:text-4xl">
-              Картата е сърцето на сайта
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] md:text-base">
-              Вместо претрупване, навигацията започва от географията. Първо
-              България, после областта, след това конкретните места.
-            </p>
-          </div>
-        </div>
+  {false && (
+    <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="max-w-2xl">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--forest)]">
+          Основен акцент
+        </p>
+        <h2 className="mt-3 font-display text-3xl font-semibold text-[var(--forest-deep)] md:text-4xl">
+          Картата е сърцето на сайта
+        </h2>
+        <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] md:text-base">
+          Вместо претрупване, навигацията започва от географията. Първо България, после областта, след това конкретните места.
+        </p>
+      </div>
+    </div>
+  )}
 
-        <BulgariaMap id="home-map" large />
-      </section>
+  <BulgariaMap id="home-map" large />
+</section>
 
       <section className="mx-auto max-w-6xl px-4 py-14 md:py-18">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -52,11 +53,10 @@ export function HomePage() {
               Области
             </p>
             <h2 className="mt-3 font-display text-3xl font-semibold text-[var(--forest-deep)] md:text-4xl">
-              Продължи към регионите
+              Разгледай регионите
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] md:text-base">
-              Всяка област има собствена атмосфера, собствена карта и собствен
-              подбор от дестинации.
+            Всяка област предлага различни места за посещение.
             </p>
           </div>
           <Link
