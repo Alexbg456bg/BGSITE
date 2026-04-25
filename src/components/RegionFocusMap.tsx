@@ -333,7 +333,6 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
                     }}
                     className="cursor-pointer"
                   >
-                    <title>{marker.name}</title>
                     <circle
                       r={active ? 13 : 10}
                       fill="rgba(255,255,255,0.18)"

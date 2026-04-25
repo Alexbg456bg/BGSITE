@@ -40,14 +40,6 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/categories"
-                  className="text-[var(--forest)] hover:underline"
-                >
-                  Категории
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/favorites"
                   className="text-[var(--forest)] hover:underline"
                 >

@@ -104,18 +104,17 @@ export function SmartImage({
   maxWidth,
   quality,
 }: Props) {
-  const [loaded, setLoaded] = useState(false)
-  const [failed, setFailed] = useState(false)
-  const [resolvedSrc, setResolvedSrc] = useState<string | null>(null)
+  const [resolvedImage, setResolvedImage] = useState<{
+    token: string
+    url: string | null
+  } | null>(null)
+  const [loadedSrc, setLoadedSrc] = useState('')
+  const [failedSrc, setFailedSrc] = useState('')
 
   useEffect(() => {
     let cancelled = false
-    setResolvedSrc(null)
-    setFailed(false)
-    setLoaded(false)
 
     if (!isWikiSearchToken(src)) {
-      setResolvedSrc(src)
       return () => {
         cancelled = true
       }
@@ -123,11 +122,7 @@ export function SmartImage({
 
     resolveWikiSearchToken(src).then((resolved) => {
       if (cancelled) return
-      if (resolved) {
-        setResolvedSrc(resolved)
-      } else {
-        setFailed(true)
-      }
+      setResolvedImage({ token: src, url: resolved })
     })
 
     return () => {
@@ -135,7 +130,13 @@ export function SmartImage({
     }
   }, [src])
 
-  const displaySrc = resolvedSrc ?? (isWikiSearchToken(src) ? '' : src)
+  const displaySrc = isWikiSearchToken(src)
+    ? resolvedImage?.token === src
+      ? (resolvedImage.url ?? '')
+      : ''
+    : src
+  const loaded = loadedSrc === displaySrc
+  const failed = failedSrc === displaySrc
   const optimizedSrc = useMemo(
     () => optimizeImageUrl(displaySrc, maxWidth, quality),
     [displaySrc, maxWidth, quality],
@@ -167,8 +168,8 @@ export function SmartImage({
           fetchPriority={fetchPriority}
           decoding={decoding}
           sizes={sizes}
-          onLoad={() => setLoaded(true)}
-          onError={() => setFailed(true)}
+          onLoad={() => setLoadedSrc(displaySrc)}
+          onError={() => setFailedSrc(displaySrc)}
           className={`relative h-full w-full object-cover transition duration-700 ${loaded ? 'scale-100 opacity-100' : 'scale-[1.04] opacity-0'} ${imgClassName}`}
         />
       ) : (

@@ -16,7 +16,6 @@ const links: { to: string; label: string; end?: boolean }[] = [
   { to: '/map', label: 'Карта' },
   { to: '/regions', label: 'Области' },
   { to: '/destinations', label: 'Дестинации' },
-  { to: '/categories', label: 'Категории' },
   { to: '/favorites', label: 'Любими' },
 ]
 
