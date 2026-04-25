@@ -6,6 +6,7 @@ import App from './App'
 import { FavoritesProvider } from './context/FavoritesProvider'
 import { CustomDestinationsProvider } from './context/CustomDestinationsProvider'
 import { AppErrorBoundary } from './components/AppErrorBoundary'
+import { ScrollToTop } from './components/ScrollToTop'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')!).render(
       <AppErrorBoundary>
         <FavoritesProvider>
           <CustomDestinationsProvider>
+            <ScrollToTop />
             <App />
           </CustomDestinationsProvider>
         </FavoritesProvider>

@@ -111,12 +111,6 @@ export function DestinationPage() {
             </div>
           </div>
 
-          {d.coords && (
-            <p className="mt-4 text-sm text-[var(--muted)]">
-              Координати: {d.coords.lat.toFixed(4)}, {d.coords.lng.toFixed(4)}
-            </p>
-          )}
-
           <div className="mt-8 flex flex-wrap gap-3">
             <button
               type="button"

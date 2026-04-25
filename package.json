@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --configLoader native",
+    "dev": "node scripts/dev-with-admin.mjs",
+    "dev:vite": "vite --configLoader native",
     "admin": "node scripts/admin-server.mjs",
     "build": "tsc -b && vite build --configLoader native",
     "lint": "eslint .",

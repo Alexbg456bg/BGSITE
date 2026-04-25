@@ -1,1 +1,21 @@
-[]
+[
+  {
+    "regionSlug": "shumen",
+    "destination": {
+      "id": "dest-pliska",
+      "name": "Археологически резерват „Плиска“",
+      "category": "museum",
+      "shortDescription": "Първата столица на България — основи на голямата базилика и музей на открито.",
+      "location": "Плиска",
+      "image": "/images/destinations/dest-pliska.png",
+      "images": [
+        "/images/destinations/dest-pliska.png"
+      ],
+      "mapsUrl": "https://maps.google.com/?q=Pliska+Bulgaria",
+      "coords": {
+        "lat": 43.365,
+        "lng": 27.247
+      }
+    }
+  }
+]

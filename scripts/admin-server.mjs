@@ -228,6 +228,15 @@ const server = createServer(async (req, res) => {
   }
 })
 
+server.on('error', (error) => {
+  if (error?.code === 'EADDRINUSE') {
+    console.log(`Admin server already running at http://localhost:${port}`)
+    process.exit(0)
+  }
+
+  throw error
+})
+
 server.listen(port, () => {
   console.log(`Admin server running at http://localhost:${port}`)
 })
