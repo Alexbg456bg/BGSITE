@@ -1,8 +1,41 @@
-import { motion } from 'framer-motion'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { SmartImage } from './SmartImage'
 
-const heroImage =
-  'https://commons.wikimedia.org/wiki/Special:FilePath/View%20from%20Seven%20Rila%20Lakes.jpg?width=2400'
+const heroImages = [
+  {
+    src: '/images/hero/rhodope-village.jpg',
+    alt: 'Родопско село с каменни къщи',
+  },
+  {
+    src: '/images/hero/tsarevets-lion.jpg',
+    alt: 'Лъв пред крепостта Царевец във Велико Търново',
+  },
+  {
+    src: '/images/hero/belogradchik-balloons.jpg',
+    alt: 'Белоградчишки скали с балони във въздуха',
+  },
+  {
+    src: '/images/hero/buzludzha.jpg',
+    alt: 'Паметник Бузлуджа',
+  },
+  {
+    src: '/images/hero/rila-crocus.jpg',
+    alt: 'Рилски минзухари и планинско езеро',
+  },
+  {
+    src: '/images/hero/devil-bridge.jpg',
+    alt: 'Дяволски мост в Родопите',
+  },
+  {
+    src: '/images/hero/shipka-sunrise.jpg',
+    alt: 'Паметникът Шипка при залез',
+  },
+]
+
+function shuffledHeroImages() {
+  return [...heroImages].sort(() => Math.random() - 0.5)
+}
 
 const highlights = [
   { value: '28', label: 'области' },
@@ -10,31 +43,82 @@ const highlights = [
 ]
 
 export function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const candidates = useMemo(() => shuffledHeroImages(), [])
+  const [heroImage, setHeroImage] = useState(candidates[0])
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  })
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, 120])
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1.06, 1.18])
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -72])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.72], [1, 0])
+  const shadeOpacity = useTransform(scrollYProgress, [0, 1], [0.08, 0.42])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const loadCandidate = (index: number) => {
+      const candidate = candidates[index]
+      if (!candidate) return
+
+      const image = new Image()
+      image.onload = () => {
+        if (!cancelled) setHeroImage(candidate)
+      }
+      image.onerror = () => loadCandidate(index + 1)
+      image.src = candidate.src
+    }
+
+    loadCandidate(0)
+
+    return () => {
+      cancelled = true
+    }
+  }, [candidates])
+
   return (
-    <section className="relative isolate min-h-[680px] overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative isolate min-h-[720px] overflow-hidden md:min-h-[760px]"
+    >
       <motion.div
-        initial={{ scale: 1.05 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 1.3, ease: 'easeOut' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        style={{ y: imageY, scale: imageScale }}
         className="absolute inset-0 will-change-transform"
         aria-hidden
       >
         <SmartImage
-          src={heroImage}
-          alt="Панорамна гледка към планински пейзаж в България"
+          src={heroImage.src}
+          alt={heroImage.alt}
           loading="eager"
           fetchPriority="high"
           decoding="async"
           maxWidth={1600}
           className="h-full w-full"
-          imgClassName="object-center"
+          imgClassName="object-center brightness-[0.92] saturate-[1.08]"
         />
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-r from-[var(--forest-deep)]/88 via-[var(--forest-deep)]/40 to-[var(--sky-deep)]/14" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[var(--forest-deep)]/90 via-[var(--forest-deep)]/46 to-[var(--sky-deep)]/16" />
+      <motion.div
+        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0),rgba(15,61,46,0.72))]"
+        style={{ opacity: shadeOpacity }}
+      />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(233,189,76,0.16),transparent_26%),radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_20%)]" />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[var(--bg)] to-transparent" />
+      <motion.div
+        className="absolute left-0 top-0 z-10 h-1 origin-left bg-[var(--sand)] shadow-[0_0_24px_rgba(236,216,164,0.52)]"
+        style={{ scaleX: scrollYProgress, width: '100%' }}
+        aria-hidden
+      />
 
-      <div className="relative mx-auto flex min-h-[680px] max-w-6xl items-start px-4 pb-10 pt-18 md:pb-14 md:pt-20">
+      <motion.div
+        className="relative mx-auto flex min-h-[720px] max-w-6xl items-end px-4 pb-22 pt-24 md:min-h-[760px] md:pb-28"
+        style={{ y: contentY, opacity: contentOpacity }}
+      >
         <div className="max-w-4xl">
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -58,7 +142,8 @@ export function HeroSection() {
             transition={{ delay: 0.18 }}
             className="mt-6 max-w-2xl text-lg leading-relaxed text-white/88 md:text-xl"
           >
-            Тук ще намериш различни места из страната – за разходка, почивка или просто да смениш обстановката.
+            Тук ще намериш различни места из страната - за разходка,
+            почивка или просто да смениш обстановката.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 14 }}
@@ -92,7 +177,7 @@ export function HeroSection() {
             ))}
           </motion.div>
         </div>
-      </div>
+      </motion.div>
     </section>
   )
 }

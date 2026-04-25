@@ -133,6 +133,39 @@
     width: 20rem;
     background: radial-gradient(circle, rgba(79, 140, 171, 0.28), transparent 70%);
   }
+
+  .map-color-field {
+    background:
+      linear-gradient(135deg, rgba(15, 61, 46, 0.24), rgba(31, 89, 115, 0.2) 46%, rgba(236, 216, 164, 0.24)),
+      radial-gradient(circle at 18% 30%, rgba(45, 106, 79, 0.66), transparent 30%),
+      radial-gradient(circle at 84% 42%, rgba(79, 140, 171, 0.56), transparent 32%),
+      radial-gradient(circle at 48% 76%, rgba(236, 216, 164, 0.58), transparent 28%);
+    background-size: 160% 160%, 140% 140%, 150% 150%, 140% 140%;
+    animation: map-color-drift 11s ease-in-out infinite alternate;
+  }
+
+  .map-card-color-field {
+    background:
+      linear-gradient(135deg, rgba(15, 61, 46, 0.42), rgba(79, 140, 171, 0.34) 46%, rgba(236, 216, 164, 0.4)),
+      radial-gradient(circle at 26% 22%, rgba(236, 216, 164, 0.62), transparent 28%),
+      radial-gradient(circle at 80% 74%, rgba(45, 106, 79, 0.52), transparent 34%),
+      radial-gradient(circle at 58% 42%, rgba(79, 140, 171, 0.36), transparent 30%);
+    background-size: 170% 170%, 140% 140%, 150% 150%, 130% 130%;
+    animation: map-card-color-drift 8s ease-in-out infinite alternate;
+  }
+
+  .map-color-orb {
+    animation: map-orb-pulse 7s ease-in-out infinite alternate;
+  }
+
+  .map-color-orb-a {
+    background: rgba(45, 106, 79, 0.42);
+  }
+
+  .map-color-orb-b {
+    background: rgba(79, 140, 171, 0.38);
+    animation-delay: -2.8s;
+  }
 }
 
 @keyframes surface-drift {
@@ -142,6 +175,45 @@
 
   to {
     background-position: center, 100% 40%;
+  }
+}
+
+@keyframes map-color-drift {
+  0% {
+    background-position: 0% 42%, 10% 26%, 92% 38%, 48% 82%;
+    filter: saturate(1);
+  }
+
+  50% {
+    background-position: 74% 50%, 28% 36%, 72% 54%, 58% 68%;
+    filter: saturate(1.18);
+  }
+
+  100% {
+    background-position: 100% 58%, 18% 48%, 82% 28%, 38% 72%;
+    filter: saturate(1.08);
+  }
+}
+
+@keyframes map-card-color-drift {
+  0% {
+    background-position: 0% 45%, 24% 18%, 82% 76%, 56% 42%;
+  }
+
+  100% {
+    background-position: 100% 55%, 34% 30%, 70% 64%, 48% 54%;
+  }
+}
+
+@keyframes map-orb-pulse {
+  from {
+    transform: translate3d(-1rem, 0, 0) scale(0.96);
+    filter: blur(64px) saturate(1);
+  }
+
+  to {
+    transform: translate3d(1.5rem, -0.8rem, 0) scale(1.08);
+    filter: blur(72px) saturate(1.2);
   }
 }
 

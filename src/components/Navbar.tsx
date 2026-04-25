@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SearchBar } from './SearchBar'
 
@@ -8,7 +8,7 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     'rounded-full px-3 py-2 text-sm font-medium transition lg:px-4',
     isActive
       ? 'bg-[var(--forest)] text-white shadow-sm'
-      : 'text-[var(--ink-soft)] hover:bg-[var(--mist)] hover:text-[var(--forest-deep)]',
+      : 'text-[var(--forest-deep)] [text-shadow:0_1px_10px_rgba(255,255,255,0.72)] hover:bg-white/48 hover:text-[var(--forest-deep)]',
   ].join(' ')
 
 const links: { to: string; label: string; end?: boolean }[] = [
@@ -21,13 +21,19 @@ const links: { to: string; label: string; end?: boolean }[] = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
+  const isHome = pathname === '/'
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--border)]/80 bg-[var(--surface)]/85 backdrop-blur-xl">
+    <header
+      className={`top-0 z-50 border-b border-white/45 bg-white/54 shadow-[0_10px_36px_rgba(15,61,46,0.1)] backdrop-blur-2xl ${
+        isHome ? 'fixed left-0 right-0' : 'sticky'
+      }`}
+    >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:py-4">
         <Link
           to="/"
-          className="group flex shrink-0 items-center gap-2 font-display text-lg font-semibold tracking-tight text-[var(--forest-deep)]"
+          className="group flex shrink-0 items-center gap-2 font-display text-lg font-semibold tracking-tight text-[var(--forest-deep)] [text-shadow:0_1px_10px_rgba(255,255,255,0.72)]"
         >
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--forest)] to-[var(--sky-deep)] text-sm text-white shadow-md">
             BG
@@ -67,7 +73,7 @@ export function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-[var(--border)] bg-[var(--surface)] lg:hidden"
+            className="overflow-hidden border-t border-white/45 bg-white/72 backdrop-blur-2xl lg:hidden"
           >
             <div className="flex flex-col gap-2 px-4 py-4">
               <SearchBar />

@@ -74,7 +74,7 @@ export function SearchBar({ className = '' }: Props) {
             setOpen(true)
           }}
           onFocus={() => setOpen(true)}
-          className="w-full rounded-2xl border border-[var(--border)] bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--ink)] shadow-sm outline-none ring-[var(--forest)]/25 transition placeholder:text-[var(--muted)] focus:border-[var(--forest)] focus:ring-4"
+          className="w-full rounded-2xl border border-white/60 bg-white/62 py-2.5 pl-10 pr-4 text-sm text-[var(--ink)] shadow-sm outline-none ring-[var(--forest)]/25 backdrop-blur-xl transition placeholder:text-[var(--muted)] focus:border-[var(--forest)] focus:bg-white/82 focus:ring-4"
         />
       </div>
 

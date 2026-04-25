@@ -61,9 +61,15 @@ type Props = {
   id?: string
   compact?: boolean
   large?: boolean
+  atmospheric?: boolean
 }
 
-export function BulgariaMap({ id = 'map', compact = false, large = false }: Props) {
+export function BulgariaMap({
+  id = 'map',
+  compact = false,
+  large = false,
+  atmospheric = false,
+}: Props) {
   const navigate = useNavigate()
   const wrapRef = useRef<HTMLDivElement>(null)
   const badgeRef = useRef<HTMLDivElement>(null)
@@ -265,7 +271,11 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
         initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
-        className="overflow-hidden rounded-[2.2rem] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(231,240,234,0.92))] p-4 shadow-[0_34px_70px_rgba(15,61,46,0.10)] md:p-8"
+        className={`overflow-hidden rounded-[2.2rem] border p-4 shadow-[0_34px_70px_rgba(15,61,46,0.10)] md:p-8 ${
+          atmospheric
+            ? 'border-white/64 bg-[linear-gradient(180deg,rgba(255,255,255,0.76),rgba(231,240,234,0.56))] backdrop-blur-xl'
+            : 'border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(231,240,234,0.92))]'
+        }`}
       >
         {!compact && (
           <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -289,7 +299,11 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
 
         <div
           ref={wrapRef}
-          className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-[rgba(214,230,220,0.36)] p-2 md:p-4"
+          className={`overflow-hidden rounded-[1.8rem] border border-white/70 p-2 md:p-4 ${
+            atmospheric
+              ? 'bg-[rgba(214,230,220,0.18)] shadow-[inset_0_1px_0_rgba(255,255,255,0.42)]'
+              : 'bg-[rgba(214,230,220,0.36)]'
+          }`}
           onWheelCapture={handleWheelActivity}
         >
           {loadError && (
@@ -312,8 +326,14 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
             >
               <defs>
                 <linearGradient id={waterId} x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#eef6f2" />
-                  <stop offset="100%" stopColor="#dcebe2" />
+                  <stop
+                    offset="0%"
+                    stopColor={atmospheric ? 'rgba(238,246,242,0.72)' : '#eef6f2'}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor={atmospheric ? 'rgba(220,235,226,0.62)' : '#dcebe2'}
+                  />
                 </linearGradient>
                 <linearGradient id={activeId} x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#6aa4bf" />
