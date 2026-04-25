@@ -7,8 +7,55 @@ import { loadBulgariaGeoJson } from '../data/bulgariaGeoJson'
 
 const PAD = 14
 
+const LABEL_OVERRIDES: Record<
+  string,
+  { dx?: number; dy?: number; fontSize?: { compact?: number; default?: number; large?: number } }
+> = {
+  'sofia-oblast': {
+    dx: 44,
+  },
+  'sofia-grad': {
+    dx: -16,
+    fontSize: {
+      compact: 7.2,
+      default: 9,
+      large: 9.5,
+    },
+  },
+}
+
+function splitLabelLines(name: string) {
+  if (name.length <= 12) return [name]
+
+  const words = name.split(' ').filter(Boolean)
+  if (words.length < 2) return [name]
+
+  const midpoint = Math.ceil(name.length / 2)
+  let bestIndex = 1
+  let bestDistance = Number.POSITIVE_INFINITY
+  let currentLength = 0
+
+  for (let index = 0; index < words.length - 1; index += 1) {
+    currentLength += words[index].length + (index > 0 ? 1 : 0)
+    const distance = Math.abs(midpoint - currentLength)
+    if (distance < bestDistance) {
+      bestDistance = distance
+      bestIndex = index + 1
+    }
+  }
+
+  return [words.slice(0, bestIndex).join(' '), words.slice(bestIndex).join(' ')]
+}
+
 type OblastProps = { slug: string; nameBg?: string; name?: string }
 type OblastFeature = Feature<Geometry, OblastProps>
+type Label = {
+  slug: string
+  x: number
+  y: number
+  lines: string[]
+  fontSize?: { compact?: number; default?: number; large?: number }
+}
 
 type Props = {
   id?: string
@@ -19,10 +66,12 @@ type Props = {
 export function BulgariaMap({ id = 'map', compact = false, large = false }: Props) {
   const navigate = useNavigate()
   const wrapRef = useRef<HTMLDivElement>(null)
+  const svgRef = useRef<SVGSVGElement>(null)
   const badgeRef = useRef<HTMLDivElement>(null)
   const pathRefs = useRef(new Map<string, SVGPathElement>())
   const labelRefs = useRef(new Map<string, SVGTextElement>())
   const activeSlugRef = useRef<string | null>(null)
+  const wheelUnlockRef = useRef<number | null>(null)
   const waterId = `map-water-${useId().replace(/:/g, '')}`
   const activeId = `map-active-${useId().replace(/:/g, '')}`
 
@@ -52,8 +101,8 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
 
     const measure = () => {
       const w = Math.max(320, el.clientWidth)
-      const ratio = compact ? 0.54 : large ? 0.72 : 0.6
-      const minHeight = compact ? 320 : large ? 560 : 420
+      const ratio = compact ? 0.58 : large ? 0.82 : 0.72
+      const minHeight = compact ? 360 : large ? 680 : 540
       const h = Math.max(minHeight, w * ratio)
       setSize((current) => (current.w === w && current.h === h ? current : { w, h }))
     }
@@ -74,7 +123,7 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
       return {
         pathGen: null as ReturnType<typeof geoPath> | null,
         features: [] as OblastFeature[],
-        labels: [] as { slug: string; x: number; y: number; text: string }[],
+        labels: [] as Label[],
         nameBySlug: new Map<string, string>(),
       }
     }
@@ -89,7 +138,7 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
 
     const pathGen = geoPath(projection)
     const features = fc.features as OblastFeature[]
-    const labels: { slug: string; x: number; y: number; text: string }[] = []
+    const labels: Label[] = []
     const nameBySlug = new Map<string, string>()
 
     for (const feature of features) {
@@ -101,16 +150,23 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
 
       const raw =
         feature.properties?.nameBg ?? feature.properties?.name ?? feature.properties?.slug
-      nameBySlug.set(slug, raw)
       const clean = raw.replace(' област', '')
-      const text = clean.length > 11 ? `${clean.slice(0, 10)}…` : clean
-      labels.push({ slug, x: center[0], y: center[1], text })
+      const override = LABEL_OVERRIDES[slug]
+
+      nameBySlug.set(slug, raw)
+      labels.push({
+        slug,
+        x: center[0] + (override?.dx ?? 0),
+        y: center[1] + (override?.dy ?? 0),
+        lines: splitLabelLines(clean),
+        fontSize: override?.fontSize,
+      })
     }
 
     return { pathGen, features, labels, nameBySlug }
   }, [fc, size.w, size.h])
 
-  const setPathState = (node: SVGPathElement | undefined, state: 'idle' | 'dimmed' | 'active') => {
+  const setPathState = (node: SVGPathElement | undefined, state: 'idle' | 'active') => {
     if (!node) return
 
     if (state === 'active') {
@@ -124,10 +180,10 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
     node.setAttribute('fill', 'rgba(69, 126, 99, 0.34)')
     node.setAttribute('stroke', 'rgba(255,255,255,0.92)')
     node.setAttribute('stroke-width', '1.1')
-    node.style.opacity = state === 'dimmed' ? '0.84' : '1'
+    node.style.opacity = '1'
   }
 
-  const setLabelState = (node: SVGTextElement | undefined, state: 'idle' | 'dimmed' | 'active') => {
+  const setLabelState = (node: SVGTextElement | undefined, state: 'idle' | 'active') => {
     if (!node) return
 
     if (state === 'active') {
@@ -137,9 +193,9 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
       return
     }
 
-    node.setAttribute('fill', '#173126')
-    node.setAttribute('font-weight', '600')
-    node.style.opacity = state === 'dimmed' ? '0.72' : '0.94'
+    node.setAttribute('fill', '#0f1720')
+    node.setAttribute('font-weight', '700')
+    node.style.opacity = '0.98'
   }
 
   const updateHovered = (slug: string | null) => {
@@ -147,24 +203,16 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
     if (current === slug) return
 
     if (!current && slug) {
-      for (const [key, node] of pathRefs.current) {
-        setPathState(node, key === slug ? 'active' : 'dimmed')
-      }
-      for (const [key, node] of labelRefs.current) {
-        setLabelState(node, key === slug ? 'active' : 'dimmed')
-      }
+      setPathState(pathRefs.current.get(slug), 'active')
+      setLabelState(labelRefs.current.get(slug), 'active')
     } else if (current && slug) {
-      setPathState(pathRefs.current.get(current), 'dimmed')
-      setLabelState(labelRefs.current.get(current), 'dimmed')
+      setPathState(pathRefs.current.get(current), 'idle')
+      setLabelState(labelRefs.current.get(current), 'idle')
       setPathState(pathRefs.current.get(slug), 'active')
       setLabelState(labelRefs.current.get(slug), 'active')
     } else if (current && !slug) {
-      for (const node of pathRefs.current.values()) {
-        setPathState(node, 'idle')
-      }
-      for (const node of labelRefs.current.values()) {
-        setLabelState(node, 'idle')
-      }
+      setPathState(pathRefs.current.get(current), 'idle')
+      setLabelState(labelRefs.current.get(current), 'idle')
     }
 
     activeSlugRef.current = slug
@@ -183,6 +231,33 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
       badgeRef.current.textContent = badgeRef.current.dataset.defaultLabel ?? ''
     }
   }, [features, nameBySlug])
+
+  useEffect(() => {
+    return () => {
+      if (wheelUnlockRef.current !== null) {
+        window.clearTimeout(wheelUnlockRef.current)
+      }
+    }
+  }, [])
+
+  const handleWheelActivity = () => {
+    if (wheelUnlockRef.current !== null) {
+      window.clearTimeout(wheelUnlockRef.current)
+    }
+
+    updateHovered(null)
+
+    if (svgRef.current) {
+      svgRef.current.style.pointerEvents = 'none'
+    }
+
+    wheelUnlockRef.current = window.setTimeout(() => {
+      if (svgRef.current) {
+        svgRef.current.style.pointerEvents = 'auto'
+      }
+      wheelUnlockRef.current = null
+    }, 110)
+  }
 
   return (
     <section id={id} className="scroll-mt-24">
@@ -215,6 +290,7 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
         <div
           ref={wrapRef}
           className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-[rgba(214,230,220,0.36)] p-2 md:p-4"
+          onWheelCapture={handleWheelActivity}
         >
           {loadError && (
             <p className="py-16 text-center text-sm text-red-600">{loadError}</p>
@@ -228,6 +304,7 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
 
           {!loadError && fc && pathGen && (
             <svg
+              ref={svgRef}
               viewBox={`0 0 ${size.w} ${size.h}`}
               className="h-auto w-full max-w-full select-none"
               role="img"
@@ -275,7 +352,10 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
                       transformBox: 'fill-box',
                       transformOrigin: 'center',
                       willChange: 'fill, stroke, stroke-width, opacity',
+                      outline: 'none',
+                      WebkitTapHighlightColor: 'transparent',
                     }}
+                    onMouseDown={(e) => e.preventDefault()}
                     onPointerEnter={() => updateHovered(slug)}
                     onFocus={() => updateHovered(slug)}
                     onBlur={() => updateHovered(null)}
@@ -293,35 +373,51 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
                 )
               })}
 
-              {labels.map((label) => {
-                return (
-                  <text
-                    key={label.slug}
-                    ref={(node) => {
-                      if (node) {
-                        labelRefs.current.set(label.slug, node)
-                        return
-                      }
+              {labels.map((label) => (
+                <text
+                  key={label.slug}
+                  ref={(node) => {
+                    if (node) {
+                      labelRefs.current.set(label.slug, node)
+                      return
+                    }
 
-                      labelRefs.current.delete(label.slug)
-                    }}
-                    x={label.x}
-                    y={label.y}
-                    textAnchor="middle"
-                    fill="#173126"
-                    fontSize={compact ? 7 : 8.4}
-                    fontWeight={600}
-                    className="pointer-events-none transition-[fill,opacity] duration-75 ease-out"
-                    style={{
-                      fontFamily: 'DM Sans, sans-serif',
-                      opacity: 0.94,
-                      willChange: 'fill, opacity',
-                    }}
-                  >
-                    {label.text}
-                  </text>
-                )
-              })}
+                    labelRefs.current.delete(label.slug)
+                  }}
+                  x={label.x}
+                  y={label.y}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fill="#0f1720"
+                  fontSize={
+                    compact
+                      ? (label.fontSize?.compact ?? 8.2)
+                      : large
+                        ? (label.fontSize?.large ?? 11.8)
+                        : (label.fontSize?.default ?? 10.4)
+                  }
+                  fontWeight={700}
+                  stroke="rgba(255,255,255,0.92)"
+                  strokeWidth={0.9}
+                  paintOrder="stroke"
+                  className="pointer-events-none transition-[fill,opacity] duration-75 ease-out"
+                  style={{
+                    fontFamily: 'DM Sans, sans-serif',
+                    opacity: 0.98,
+                    willChange: 'fill, opacity',
+                  }}
+                >
+                  {label.lines.map((line, index) => (
+                    <tspan
+                      key={`${label.slug}-${index}`}
+                      x={label.x}
+                      dy={index === 0 ? `${label.lines.length === 1 ? 0 : -0.55}em` : '1.1em'}
+                    >
+                      {line}
+                    </tspan>
+                  ))}
+                </text>
+              ))}
             </svg>
           )}
         </div>

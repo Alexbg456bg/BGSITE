@@ -64,7 +64,7 @@ export function HomePage() {
           ))}
         </div>
 
-        <BulgariaMap id="home-map" />
+        <BulgariaMap id="home-map" large />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-14 md:py-18">
