@@ -153,7 +153,7 @@ export function RegionPage() {
             )}
           </p>
           <Link
-            to="/map"
+            to="/#home-map"
             className="text-sm font-medium text-[var(--forest)] hover:underline"
           >
             ← Към картата

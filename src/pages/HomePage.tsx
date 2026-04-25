@@ -16,12 +16,6 @@ const featuredRegionSlugs = [
   'ruse',
 ]
 
-const mapTraits = [
-  'Реални очертания на всички 28 области',
-  'Пряк преход от страната към всяка област',
-  'Отделна карта във всяка областна страница',
-]
-
 export function HomePage() {
   const featuredRegions = regions.filter((r) =>
     featuredRegionSlugs.includes(r.slug),
@@ -45,23 +39,6 @@ export function HomePage() {
               България, после областта, след това конкретните места.
             </p>
           </div>
-          <Link
-            to="/map"
-            className="inline-flex rounded-full border border-[var(--forest)]/18 bg-white px-6 py-3 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_14px_30px_rgba(15,61,46,0.08)] transition hover:-translate-y-0.5 hover:border-[var(--forest)]/40"
-          >
-            Отвори голямата карта
-          </Link>
-        </div>
-
-        <div className="mb-8 grid gap-4 md:grid-cols-3">
-          {mapTraits.map((trait) => (
-            <div
-              key={trait}
-              className="rounded-[1.7rem] border border-[var(--border)] bg-white/82 px-5 py-5 text-sm leading-relaxed text-[var(--ink-soft)] shadow-[0_18px_34px_rgba(15,61,46,0.05)]"
-            >
-              {trait}
-            </div>
-          ))}
         </div>
 
         <BulgariaMap id="home-map" large />

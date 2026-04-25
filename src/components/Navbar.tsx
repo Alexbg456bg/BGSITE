@@ -13,7 +13,6 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 
 const links: { to: string; label: string; end?: boolean }[] = [
   { to: '/', label: 'Начало', end: true },
-  { to: '/map', label: 'Карта' },
   { to: '/regions', label: 'Области' },
   { to: '/destinations', label: 'Дестинации' },
   { to: '/favorites', label: 'Любими' },

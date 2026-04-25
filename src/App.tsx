@@ -5,9 +5,6 @@ import { Layout } from './components/Layout'
 const HomePage = lazy(async () => ({
   default: (await import('./pages/HomePage')).HomePage,
 }))
-const MapPage = lazy(async () => ({
-  default: (await import('./pages/MapPage')).MapPage,
-}))
 const RegionsPage = lazy(async () => ({
   default: (await import('./pages/RegionsPage')).RegionsPage,
 }))
@@ -48,14 +45,6 @@ export default function App() {
           element={
             <LazyRoute>
               <HomePage />
-            </LazyRoute>
-          }
-        />
-        <Route
-          path="/map"
-          element={
-            <LazyRoute>
-              <MapPage />
             </LazyRoute>
           }
         />

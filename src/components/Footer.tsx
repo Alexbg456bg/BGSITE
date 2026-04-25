@@ -21,11 +21,6 @@ export function Footer() {
             <p className="text-sm font-semibold text-[var(--ink)]">Раздели</p>
             <ul className="mt-3 space-y-2 text-sm">
               <li>
-                <Link to="/map" className="text-[var(--forest)] hover:underline">
-                  Карта
-                </Link>
-              </li>
-              <li>
                 <Link to="/regions" className="text-[var(--forest)] hover:underline">
                   Области
                 </Link>

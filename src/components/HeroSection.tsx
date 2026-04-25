@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { SmartImage } from './SmartImage'
 
@@ -70,12 +69,12 @@ export function HeroSection() {
             transition={{ delay: 0.24 }}
             className="mt-9 flex flex-wrap gap-4"
           >
-            <Link
-              to="/map"
+            <a
+              href="#home-map"
               className="inline-flex rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_20px_40px_rgba(0,0,0,0.18)] transition hover:-translate-y-0.5 hover:bg-[var(--mist)]"
             >
               Към картата
-            </Link>
+            </a>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 14 }}
