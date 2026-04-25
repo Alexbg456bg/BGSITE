@@ -1,30 +1,40 @@
-import { Suspense, lazy, type ReactNode } from 'react'
+import { Suspense, lazy, useEffect, type ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
+import { loadBulgariaGeoJson } from './data/bulgariaGeoJson'
+
+const loadHomePage = () => import('./pages/HomePage')
+const loadRegionsPage = () => import('./pages/RegionsPage')
+const loadDestinationsPage = () => import('./pages/DestinationsPage')
+const loadFavoritesPage = () => import('./pages/FavoritesPage')
+const loadAdminPage = () => import('./pages/AdminPage')
+const loadRegionPage = () => import('./pages/RegionPage')
+const loadDestinationPage = () => import('./pages/DestinationPage')
+const loadNotFoundPage = () => import('./pages/NotFoundPage')
 
 const HomePage = lazy(async () => ({
-  default: (await import('./pages/HomePage')).HomePage,
+  default: (await loadHomePage()).HomePage,
 }))
 const RegionsPage = lazy(async () => ({
-  default: (await import('./pages/RegionsPage')).RegionsPage,
+  default: (await loadRegionsPage()).RegionsPage,
 }))
 const DestinationsPage = lazy(async () => ({
-  default: (await import('./pages/DestinationsPage')).DestinationsPage,
+  default: (await loadDestinationsPage()).DestinationsPage,
 }))
 const FavoritesPage = lazy(async () => ({
-  default: (await import('./pages/FavoritesPage')).FavoritesPage,
+  default: (await loadFavoritesPage()).FavoritesPage,
 }))
 const AdminPage = lazy(async () => ({
-  default: (await import('./pages/AdminPage')).AdminPage,
+  default: (await loadAdminPage()).AdminPage,
 }))
 const RegionPage = lazy(async () => ({
-  default: (await import('./pages/RegionPage')).RegionPage,
+  default: (await loadRegionPage()).RegionPage,
 }))
 const DestinationPage = lazy(async () => ({
-  default: (await import('./pages/DestinationPage')).DestinationPage,
+  default: (await loadDestinationPage()).DestinationPage,
 }))
 const NotFoundPage = lazy(async () => ({
-  default: (await import('./pages/NotFoundPage')).NotFoundPage,
+  default: (await loadNotFoundPage()).NotFoundPage,
 }))
 
 function RouteLoader() {
@@ -40,6 +50,22 @@ function LazyRoute({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    const preload = () => {
+      void loadRegionsPage()
+      void loadDestinationsPage()
+      void loadFavoritesPage()
+      void loadAdminPage()
+      void loadRegionPage()
+      void loadDestinationPage()
+      void loadNotFoundPage()
+      void loadBulgariaGeoJson()
+    }
+
+    const timeoutId = window.setTimeout(preload, 320)
+    return () => window.clearTimeout(timeoutId)
+  }, [])
+
   return (
     <Routes>
       <Route element={<Layout />}>

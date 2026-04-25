@@ -5,7 +5,7 @@ import type { Feature, FeatureCollection, Geometry } from 'geojson'
 import { motion } from 'framer-motion'
 import { loadBulgariaGeoJson } from '../data/bulgariaGeoJson'
 
-const PAD = 14
+const PAD = 3
 
 const LABEL_OVERRIDES: Record<
   string,
@@ -66,12 +66,12 @@ type Props = {
 export function BulgariaMap({ id = 'map', compact = false, large = false }: Props) {
   const navigate = useNavigate()
   const wrapRef = useRef<HTMLDivElement>(null)
-  const svgRef = useRef<SVGSVGElement>(null)
   const badgeRef = useRef<HTMLDivElement>(null)
   const pathRefs = useRef(new Map<string, SVGPathElement>())
   const labelRefs = useRef(new Map<string, SVGTextElement>())
   const activeSlugRef = useRef<string | null>(null)
   const wheelUnlockRef = useRef<number | null>(null)
+  const isWheelLockedRef = useRef(false)
   const waterId = `map-water-${useId().replace(/:/g, '')}`
   const activeId = `map-active-${useId().replace(/:/g, '')}`
 
@@ -245,18 +245,18 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
       window.clearTimeout(wheelUnlockRef.current)
     }
 
+    isWheelLockedRef.current = true
     updateHovered(null)
 
-    if (svgRef.current) {
-      svgRef.current.style.pointerEvents = 'none'
-    }
-
     wheelUnlockRef.current = window.setTimeout(() => {
-      if (svgRef.current) {
-        svgRef.current.style.pointerEvents = 'auto'
-      }
+      isWheelLockedRef.current = false
       wheelUnlockRef.current = null
-    }, 110)
+    }, 130)
+  }
+
+  const updateHoveredIfUnlocked = (slug: string | null) => {
+    if (isWheelLockedRef.current) return
+    updateHovered(slug)
   }
 
   return (
@@ -304,7 +304,6 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
 
           {!loadError && fc && pathGen && (
             <svg
-              ref={svgRef}
               viewBox={`0 0 ${size.w} ${size.h}`}
               className="h-auto w-full max-w-full select-none"
               role="img"
@@ -356,9 +355,9 @@ export function BulgariaMap({ id = 'map', compact = false, large = false }: Prop
                       WebkitTapHighlightColor: 'transparent',
                     }}
                     onMouseDown={(e) => e.preventDefault()}
-                    onPointerEnter={() => updateHovered(slug)}
-                    onFocus={() => updateHovered(slug)}
-                    onBlur={() => updateHovered(null)}
+                    onPointerEnter={() => updateHoveredIfUnlocked(slug)}
+                    onFocus={() => updateHoveredIfUnlocked(slug)}
+                    onBlur={() => updateHoveredIfUnlocked(null)}
                     onClick={() => navigate(`/region/${slug}`)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {

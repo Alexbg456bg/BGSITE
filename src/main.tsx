@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
@@ -9,16 +8,14 @@ import { AppErrorBoundary } from './components/AppErrorBoundary'
 import { ScrollToTop } from './components/ScrollToTop'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <AppErrorBoundary>
-        <FavoritesProvider>
-          <CustomDestinationsProvider>
-            <ScrollToTop />
-            <App />
-          </CustomDestinationsProvider>
-        </FavoritesProvider>
-      </AppErrorBoundary>
-    </BrowserRouter>
-  </StrictMode>,
+  <BrowserRouter>
+    <AppErrorBoundary>
+      <FavoritesProvider>
+        <CustomDestinationsProvider>
+          <ScrollToTop />
+          <App />
+        </CustomDestinationsProvider>
+      </FavoritesProvider>
+    </AppErrorBoundary>
+  </BrowserRouter>,
 )

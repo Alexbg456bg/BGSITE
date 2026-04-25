@@ -8,8 +8,8 @@ import { loadBulgariaGeoJson } from '../data/bulgariaGeoJson'
 import { GEOCODED_COORDS } from '../data/geocodedCoords'
 import { SmartImage } from './SmartImage'
 
-const PAD = 10
-const FOCUS_EXPAND = 0.18
+const PAD = 2
+const FOCUS_EXPAND = 0.06
 
 type OblastProps = { slug: string; nameBg?: string; name?: string }
 type OblastFeature = Feature<Geometry, OblastProps>
@@ -104,6 +104,8 @@ function expandedBoundsFeature(feature: OblastFeature): Feature {
 export function RegionFocusMap({ slug, regionName, destinations }: Props) {
   const navigate = useNavigate()
   const wrapRef = useRef<HTMLDivElement>(null)
+  const wheelUnlockRef = useRef<number | null>(null)
+  const isWheelLockedRef = useRef(false)
 
   const fillId = `region-fill-${useId().replace(/:/g, '')}`
   const waterId = `region-water-${useId().replace(/:/g, '')}`
@@ -130,6 +132,14 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
 
     return () => {
       cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (wheelUnlockRef.current !== null) {
+        window.clearTimeout(wheelUnlockRef.current)
+      }
     }
   }, [])
 
@@ -230,6 +240,25 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
     }
   }, [hoveredMarker, size.w, size.h])
 
+  const handleWheelActivity = () => {
+    if (wheelUnlockRef.current !== null) {
+      window.clearTimeout(wheelUnlockRef.current)
+    }
+
+    isWheelLockedRef.current = true
+    setHovered(null)
+
+    wheelUnlockRef.current = window.setTimeout(() => {
+      isWheelLockedRef.current = false
+      wheelUnlockRef.current = null
+    }, 140)
+  }
+
+  const setHoveredIfUnlocked = (id: string | null) => {
+    if (isWheelLockedRef.current) return
+    setHovered(id)
+  }
+
   return (
     <section className="overflow-hidden rounded-[2.2rem] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(232,240,234,0.92))] p-4 shadow-[0_34px_70px_rgba(15,61,46,0.10)] md:p-8">
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -243,12 +272,15 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
           </p>
         </div>
         <div className="rounded-full border border-[var(--border)] bg-white/84 px-4 py-2 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)]">
-          {hoveredMarker?.name || `${markers.length} точки`}
+          {`${markers.length} точки`}
         </div>
       </div>
 
       <div ref={wrapRef} className="relative w-full">
-        <div className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-[rgba(214,230,220,0.34)] p-2 md:p-4">
+        <div
+          className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-[rgba(214,230,220,0.34)] p-2 md:p-4"
+          onWheelCapture={handleWheelActivity}
+        >
           {loadError && (
             <p className="py-16 text-center text-sm text-red-600">{loadError}</p>
           )}
@@ -312,38 +344,27 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
               />
 
               {markers.map((marker, index) => {
-                const active = hovered === marker.id
                 return (
                   <g
                     key={marker.id}
                     transform={`translate(${marker.x}, ${marker.y})`}
-                    tabIndex={0}
-                    role="button"
-                    aria-label={`Отвори ${marker.name}`}
-                    onMouseEnter={() => setHovered(marker.id)}
-                    onMouseLeave={() => setHovered(null)}
-                    onFocus={() => setHovered(marker.id)}
-                    onBlur={() => setHovered(null)}
+                    aria-label={marker.name}
+                    onMouseEnter={() => setHoveredIfUnlocked(marker.id)}
+                    onMouseLeave={() => setHoveredIfUnlocked(null)}
                     onClick={() => navigate(`/destination/${marker.id}`)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        navigate(`/destination/${marker.id}`)
-                      }
-                    }}
                     className="cursor-pointer"
                   >
                     <circle
-                      r={active ? 13 : 10}
+                      r={10}
                       fill="rgba(255,255,255,0.18)"
                       stroke="rgba(255,255,255,0.92)"
-                      strokeWidth={active ? 1.8 : 1.2}
+                      strokeWidth={1.2}
                       style={{ filter: `url(#${pulseId})` }}
                     />
                     <motion.circle
-                      r={active ? 5.5 : 4.6}
-                      fill={active ? '#16382c' : '#ffffff'}
-                      stroke={active ? '#ffffff' : '#2d6a4f'}
+                      r={4.6}
+                      fill="#ffffff"
+                      stroke="#2d6a4f"
                       strokeWidth={1.4}
                       initial={{ opacity: 0, scale: 0.6 }}
                       animate={{ opacity: 1, scale: 1 }}
