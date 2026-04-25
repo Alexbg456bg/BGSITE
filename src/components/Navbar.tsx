@@ -16,6 +16,7 @@ const links: { to: string; label: string; end?: boolean }[] = [
   { to: '/regions', label: 'Области' },
   { to: '/destinations', label: 'Дестинации' },
   { to: '/favorites', label: 'Любими' },
+  { to: '/admin', label: 'Админ' },
 ]
 
 export function Navbar() {

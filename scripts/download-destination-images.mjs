@@ -10,6 +10,7 @@ const dataFile = path.join(repoRoot, 'src', 'data', 'localDestinationImages.ts')
 const destinationsFile = path.join(repoRoot, 'src', 'data', 'destinationsByRegion.ts')
 
 const WIKI_SEARCH_PREFIX = 'wiki-search:'
+const TARGET_IMAGES_PER_DESTINATION = 3
 
 const contentTypeExtension = {
   'image/jpeg': '.jpg',
@@ -22,7 +23,7 @@ const contentTypeExtension = {
 const wikiCommonsSearchUrl = (query) =>
   `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(
     query,
-  )}&gsrlimit=5&prop=imageinfo&iiprop=url&iiurlwidth=1600&format=json&origin=*`
+  )}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url&iiurlwidth=1600&format=json&origin=*`
 
 const wikiCommonsFileUrl = (fileName) =>
   `https://commons.wikimedia.org/w/api.php?action=query&titles=File:${encodeURIComponent(
@@ -36,12 +37,26 @@ const wikiPageImageSearchUrl = (host, query) =>
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
+async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    })
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
 async function resolveWikiSearchToken(src) {
   const query = src.slice(WIKI_SEARCH_PREFIX.length).trim()
   if (!query) return null
 
   try {
-    const commonsResp = await fetch(wikiCommonsSearchUrl(query))
+    const commonsResp = await fetchWithTimeout(wikiCommonsSearchUrl(query))
     if (commonsResp.ok) {
       const commonsJson = await commonsResp.json()
       const pages = commonsJson.query?.pages ?? {}
@@ -56,7 +71,7 @@ async function resolveWikiSearchToken(src) {
   const titleCandidate = query.replace(/\s+Bulgaria$/i, '').trim()
   for (const host of ['bg', 'en']) {
     try {
-      const resp = await fetch(wikiPageImageSearchUrl(host, titleCandidate))
+      const resp = await fetchWithTimeout(wikiPageImageSearchUrl(host, titleCandidate))
       if (!resp.ok) continue
       const json = await resp.json()
       const pages = json.query?.pages ?? {}
@@ -68,6 +83,52 @@ async function resolveWikiSearchToken(src) {
   }
 
   return null
+}
+
+function isUsableImageUrl(url) {
+  return /\.(jpe?g|png|webp|gif)(\?|$)/i.test(url)
+}
+
+async function resolveWikiSearchTokenSources(src, limit = TARGET_IMAGES_PER_DESTINATION) {
+  const query = src.slice(WIKI_SEARCH_PREFIX.length).trim()
+  if (!query) return []
+
+  const sources = []
+
+  try {
+    const commonsResp = await fetchWithTimeout(wikiCommonsSearchUrl(query))
+    if (commonsResp.ok) {
+      const commonsJson = await commonsResp.json()
+      const pages = commonsJson.query?.pages ?? {}
+      for (const page of Object.values(pages)) {
+        const firstImage = page?.imageinfo?.[0]
+        const firstUrl = firstImage?.thumburl ?? firstImage?.url
+        if (typeof firstUrl === 'string' && isUsableImageUrl(firstUrl)) {
+          sources.push(firstUrl)
+        }
+        if (sources.length >= limit) return [...new Set(sources)]
+      }
+    }
+  } catch {}
+
+  const titleCandidate = query.replace(/\s+Bulgaria$/i, '').trim()
+  for (const host of ['bg', 'en']) {
+    try {
+      const resp = await fetchWithTimeout(wikiPageImageSearchUrl(host, titleCandidate))
+      if (!resp.ok) continue
+      const json = await resp.json()
+      const pages = json.query?.pages ?? {}
+      for (const page of Object.values(pages)) {
+        const source = page?.thumbnail?.source ?? page?.original?.source
+        if (typeof source === 'string' && isUsableImageUrl(source)) {
+          sources.push(source)
+        }
+        if (sources.length >= limit) return [...new Set(sources)]
+      }
+    } catch {}
+  }
+
+  return [...new Set(sources)]
 }
 
 async function loadDestinationsBySlug() {
@@ -116,7 +177,7 @@ async function resolveSource(src) {
       const parsed = new URL(src)
       const fileName = decodeURIComponent(parsed.pathname.split('/Special:FilePath/')[1] ?? '')
       if (fileName) {
-        const response = await fetch(wikiCommonsFileUrl(fileName))
+        const response = await fetchWithTimeout(wikiCommonsFileUrl(fileName))
         if (response.ok) {
           const json = await response.json()
           const pages = json.query?.pages ?? {}
@@ -133,11 +194,21 @@ async function resolveSource(src) {
   return null
 }
 
-async function downloadBinary(url, retries = 5) {
+async function resolveSources(src) {
+  if (!src) return []
+  if (src.startsWith(WIKI_SEARCH_PREFIX)) {
+    return resolveWikiSearchTokenSources(src)
+  }
+
+  const resolved = await resolveSource(src)
+  return resolved ? [resolved] : []
+}
+
+async function downloadBinary(url, retries = 2) {
   let lastError = null
 
   for (let attempt = 1; attempt <= retries; attempt += 1) {
-    const response = await fetch(url, {
+    const response = await fetchWithTimeout(url, {
       headers: {
         'user-agent': 'BGSITE image downloader/1.0',
       },
@@ -153,8 +224,8 @@ async function downloadBinary(url, retries = 5) {
     }
 
     lastError = new Error(`Failed to fetch ${url}: ${response.status}`)
-    if (response.status === 429 || response.status >= 500) {
-      await sleep(1500 * attempt)
+    if (response.status >= 500) {
+      await sleep(800 * attempt)
       continue
     }
 
@@ -165,11 +236,24 @@ async function downloadBinary(url, retries = 5) {
 }
 
 function uniqueSources(destination) {
-  return [destination.image].filter(Boolean)
+  return [...new Set([destination.image, ...(destination.images ?? [])].filter(Boolean))]
 }
 
 function toPosixRelative(...parts) {
   return `/${parts.join('/')}`.replace(/\\/g, '/')
+}
+
+async function writeManifest(manifest) {
+  const fileContents =
+    `import type { Destination } from '../types'\n\n` +
+    `type DestinationImageOverride = Pick<Destination, 'image' | 'images'>\n\n` +
+    `export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> = ${JSON.stringify(
+      manifest,
+      null,
+      2,
+    )} as const\n`
+
+  await writeFile(dataFile, fileContents)
 }
 
 async function main() {
@@ -183,39 +267,60 @@ async function main() {
 
   for (const fileName of existingFiles) {
     const ext = path.extname(fileName)
-    const id = path.basename(fileName, ext)
-    if (!/-\d+$/.test(id)) {
-      manifest[id] = {
-        image: toPosixRelative('images', 'destinations', fileName),
-      }
+    const baseName = path.basename(fileName, ext)
+    const id = baseName.replace(/-\d+$/, '')
+    const indexMatch = baseName.match(/-(\d+)$/)
+    const index = indexMatch ? Number(indexMatch[1]) : 0
+
+    manifest[id] ??= { image: '', images: [] }
+    manifest[id].images[index] = toPosixRelative('images', 'destinations', fileName)
+  }
+
+  for (const item of Object.values(manifest)) {
+    item.images = item.images.filter(Boolean)
+    item.image = item.images[0] ?? item.image
+    if (item.images.length <= 1) {
+      delete item.images
     }
   }
 
   for (const destination of destinations) {
-    if (manifest[destination.id]?.image) {
+    const existingImages = [
+      manifest[destination.id]?.image,
+      ...(manifest[destination.id]?.images ?? []),
+    ].filter(Boolean)
+    const downloadedPaths = [...new Set(existingImages)]
+
+    if (downloadedPaths.length >= TARGET_IMAGES_PER_DESTINATION) {
       continue
     }
 
-    const downloadedPaths = []
     const sources = uniqueSources(destination)
+    let sourceIndex = Math.max(0, downloadedPaths.length - 1)
 
-    for (let index = 0; index < sources.length; index += 1) {
-      const source = sources[index]
-      const resolvedUrl = await resolveSource(source)
-      if (!resolvedUrl) continue
+    for (const source of sources) {
+      const resolvedUrls = await resolveSources(source)
 
-      try {
-        const file = await downloadBinary(resolvedUrl)
-        const ext = extensionFromUrl(file.finalUrl, file.contentType)
-        const fileName = index === 0 ? `${destination.id}${ext}` : `${destination.id}-${index}${ext}`
-        const targetPath = path.join(publicDir, fileName)
-        await writeFile(targetPath, file.buffer)
-        downloadedPaths.push(toPosixRelative('images', 'destinations', fileName))
-        await sleep(250)
-      } catch (error) {
-        console.error(`Download failed for ${destination.id} from ${resolvedUrl}`)
-        console.error(error instanceof Error ? error.message : String(error))
+      for (const resolvedUrl of resolvedUrls) {
+        if (downloadedPaths.length >= TARGET_IMAGES_PER_DESTINATION) break
+
+        try {
+          const file = await downloadBinary(resolvedUrl)
+          const ext = extensionFromUrl(file.finalUrl, file.contentType)
+          const index = downloadedPaths.length === 0 ? 0 : sourceIndex + 1
+          const fileName = index === 0 ? `${destination.id}${ext}` : `${destination.id}-${index}${ext}`
+          const targetPath = path.join(publicDir, fileName)
+          await writeFile(targetPath, file.buffer)
+          downloadedPaths.push(toPosixRelative('images', 'destinations', fileName))
+          sourceIndex = index
+          await sleep(250)
+        } catch (error) {
+          console.error(`Download failed for ${destination.id} from ${resolvedUrl}`)
+          console.error(error instanceof Error ? error.message : String(error))
+        }
       }
+
+      if (downloadedPaths.length >= TARGET_IMAGES_PER_DESTINATION) break
     }
 
     if (downloadedPaths.length > 0) {
@@ -227,15 +332,7 @@ async function main() {
       unresolved.push(destination.id)
     }
 
-    const fileContents = `import type { Destination } from '../types'\n\n` +
-      `type DestinationImageOverride = Pick<Destination, 'image' | 'images'>\n\n` +
-      `export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> = ${JSON.stringify(
-        manifest,
-        null,
-        2,
-      )} as const\n`
-
-    await writeFile(dataFile, fileContents)
+    await writeManifest(manifest)
   }
 
   console.log(`Downloaded images for ${Object.keys(manifest).length} destinations.`)

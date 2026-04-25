@@ -4,12 +4,13 @@ import { Breadcrumbs } from '../components/Breadcrumbs'
 import { SmartImage } from '../components/SmartImage'
 import { ImageGallery } from '../components/ImageGallery'
 import { CATEGORY_LABELS } from '../data/categoryLabels'
-import { getDestinationWithRegion } from '../data/regions'
+import { useSiteData } from '../hooks/useSiteData'
 import { useFavorites } from '../hooks/useFavorites'
 
 export function DestinationPage() {
   const { id } = useParams<{ id: string }>()
   const { isFavorite, toggleFavorite } = useFavorites()
+  const { getDestinationWithRegion } = useSiteData()
   const found = id ? getDestinationWithRegion(id) : undefined
 
   if (!found) {
@@ -30,6 +31,10 @@ export function DestinationPage() {
 
   const { destination: d, region } = found
   const fav = isFavorite(d.id)
+  const galleryImages = [d.image, ...(d.images ?? [])].filter(
+    (image, index, all): image is string =>
+      Boolean(image) && all.indexOf(image) === index,
+  )
 
   return (
     <article className="pb-20">
@@ -48,9 +53,9 @@ export function DestinationPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          {d.images && d.images.length > 1 ? (
+          {galleryImages.length > 1 ? (
             <ImageGallery
-              images={d.images}
+              images={galleryImages}
               alt={`${d.name}, ${region.name}`}
               className="overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--mist)] shadow-lg"
             />

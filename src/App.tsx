@@ -14,6 +14,9 @@ const DestinationsPage = lazy(async () => ({
 const FavoritesPage = lazy(async () => ({
   default: (await import('./pages/FavoritesPage')).FavoritesPage,
 }))
+const AdminPage = lazy(async () => ({
+  default: (await import('./pages/AdminPage')).AdminPage,
+}))
 const RegionPage = lazy(async () => ({
   default: (await import('./pages/RegionPage')).RegionPage,
 }))
@@ -69,6 +72,14 @@ export default function App() {
           element={
             <LazyRoute>
               <FavoritesPage />
+            </LazyRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <LazyRoute>
+              <AdminPage />
             </LazyRoute>
           }
         />

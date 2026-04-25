@@ -41,6 +41,14 @@ export function Footer() {
                   Любими
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/admin"
+                  className="text-[var(--forest)] hover:underline"
+                >
+                  Админ
+                </Link>
+              </li>
             </ul>
           </div>
 

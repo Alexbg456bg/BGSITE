@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { HeroSection } from '../components/HeroSection'
 import { BulgariaMap } from '../components/BulgariaMap'
 import { RegionCard } from '../components/RegionCard'
-import { regions } from '../data/regions'
+import { useSiteData } from '../hooks/useSiteData'
 
 const featuredRegionSlugs = [
   'sofia-grad',
@@ -17,6 +17,7 @@ const featuredRegionSlugs = [
 ]
 
 export function HomePage() {
+  const { regions } = useSiteData()
   const featuredRegions = regions.filter((r) =>
     featuredRegionSlugs.includes(r.slug),
   )

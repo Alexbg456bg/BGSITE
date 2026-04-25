@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { RegionCard } from '../components/RegionCard'
-import { regions } from '../data/regions'
+import { useSiteData } from '../hooks/useSiteData'
 
 export function RegionsPage() {
+  const { regions } = useSiteData()
+
   return (
     <div className="pb-20">
       <section className="relative overflow-hidden border-b border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(236,242,235,0.76))] py-10 md:py-14">

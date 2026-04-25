@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App'
 import { FavoritesProvider } from './context/FavoritesProvider'
+import { CustomDestinationsProvider } from './context/CustomDestinationsProvider'
 import { AppErrorBoundary } from './components/AppErrorBoundary'
 
 createRoot(document.getElementById('root')!).render(
@@ -11,7 +12,9 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <AppErrorBoundary>
         <FavoritesProvider>
-          <App />
+          <CustomDestinationsProvider>
+            <App />
+          </CustomDestinationsProvider>
         </FavoritesProvider>
       </AppErrorBoundary>
     </BrowserRouter>

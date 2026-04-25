@@ -1,8 +1,8 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { allDestinations, regionByDestinationId } from '../data/regions'
 import { CATEGORY_LABELS } from '../data/categoryLabels'
+import { useSiteData } from '../hooks/useSiteData'
 
 type Props = { className?: string }
 
@@ -11,6 +11,7 @@ export function SearchBar({ className = '' }: Props) {
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
   const deferredQuery = useDeferredValue(q)
+  const { allDestinations, regionByDestinationId } = useSiteData()
 
   const indexedDestinations = useMemo(
     () =>
@@ -25,7 +26,7 @@ export function SearchBar({ className = '' }: Props) {
           .join(' ')
           .toLowerCase(),
       })),
-    [],
+    [allDestinations],
   )
 
   const results = useMemo(() => {

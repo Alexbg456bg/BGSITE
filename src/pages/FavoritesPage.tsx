@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { DestinationCard } from '../components/DestinationCard'
-import { getDestinationWithRegion } from '../data/regions'
 import { useFavorites } from '../hooks/useFavorites'
+import { useSiteData } from '../hooks/useSiteData'
 
 export function FavoritesPage() {
   const { favorites } = useFavorites()
+  const { getDestinationWithRegion } = useSiteData()
   const list = [...favorites]
     .map((id) => getDestinationWithRegion(id))
     .filter(Boolean) as NonNullable<ReturnType<typeof getDestinationWithRegion>>[]

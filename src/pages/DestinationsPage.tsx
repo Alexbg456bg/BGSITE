@@ -4,15 +4,13 @@ import { motion } from 'framer-motion'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { DestinationCard } from '../components/DestinationCard'
 import { FilterBar } from '../components/FilterBar'
-import {
-  allDestinations,
-  destinationIdsByRegionSlug,
-  regionByDestinationId,
-} from '../data/regions'
+import { useSiteData } from '../hooks/useSiteData'
 import type { DestinationCategory } from '../types'
 
 export function DestinationsPage() {
   const navigate = useNavigate()
+  const { allDestinations, destinationIdsByRegionSlug, regionByDestinationId } =
+    useSiteData()
   const [category, setCategory] = useState<DestinationCategory | 'all'>('all')
   const [regionSlug, setRegionSlug] = useState<string | 'all'>('all')
 

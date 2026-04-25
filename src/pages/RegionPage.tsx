@@ -7,7 +7,7 @@ import { DestinationCard } from '../components/DestinationCard'
 import { RegionFocusMap } from '../components/RegionFocusMap'
 import { SmartImage } from '../components/SmartImage'
 import { ImageGallery } from '../components/ImageGallery'
-import { getRegionBySlug, regions } from '../data/regions'
+import { useSiteData } from '../hooks/useSiteData'
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../data/categoryLabels'
 import type { DestinationCategory } from '../types'
 
@@ -23,6 +23,7 @@ export function RegionPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
+  const { getRegionBySlug, regions } = useSiteData()
   const region = slug ? getRegionBySlug(slug) : undefined
 
   const category = parseCategory(searchParams.get('category'))

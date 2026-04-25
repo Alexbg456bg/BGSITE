@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --configLoader native",
+    "admin": "node scripts/admin-server.mjs",
     "build": "tsc -b && vite build --configLoader native",
     "lint": "eslint .",
     "preview": "vite preview --configLoader native"
