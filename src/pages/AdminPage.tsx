@@ -6,6 +6,7 @@ import {
   type FormEvent,
 } from 'react'
 import { Breadcrumbs } from '../components/Breadcrumbs'
+import { FilterBar } from '../components/FilterBar'
 import { SmartImage } from '../components/SmartImage'
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../data/categoryLabels'
 import { regions as staticRegions } from '../data/regions'
@@ -121,6 +122,8 @@ export function AdminPage() {
   const [form, setForm] = useState<FormState>(blankForm)
   const [status, setStatus] = useState('')
   const [query, setQuery] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState<DestinationCategory | 'all'>('all')
+  const [regionFilter, setRegionFilter] = useState<string | 'all'>('all')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const customIds = useMemo(
@@ -130,14 +133,31 @@ export function AdminPage() {
 
   const filteredDestinations = useMemo(() => {
     const value = query.trim().toLowerCase()
-    if (!value) return allDestinations
-    return allDestinations.filter((destination) =>
-      [destination.name, destination.location, destination.shortDescription]
+    return allDestinations.filter((destination) => {
+      const region = regionByDestinationId.get(destination.id)
+
+      if (categoryFilter !== 'all' && destination.category !== categoryFilter) {
+        return false
+      }
+
+      if (regionFilter !== 'all' && region?.slug !== regionFilter) {
+        return false
+      }
+
+      if (!value) return true
+
+      return [
+        destination.name,
+        destination.location,
+        destination.shortDescription,
+        CATEGORY_LABELS[destination.category],
+        region?.name,
+      ]
         .join(' ')
         .toLowerCase()
-        .includes(value),
-    )
-  }, [allDestinations, query])
+        .includes(value)
+    })
+  }, [allDestinations, categoryFilter, query, regionByDestinationId, regionFilter])
 
   const selectedRegion = staticRegions.find(
     (region) => region.slug === form.regionSlug,
@@ -308,9 +328,18 @@ export function AdminPage() {
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Търси..."
+            placeholder="Търси по име, категория или област..."
             className="mt-4 w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm outline-none focus:border-[var(--forest)]"
           />
+
+          <div className="mt-4">
+            <FilterBar
+              category={categoryFilter}
+              onCategoryChange={setCategoryFilter}
+              regionSlug={regionFilter}
+              onRegionChange={setRegionFilter}
+            />
+          </div>
 
           <div className="mt-4 max-h-[680px] space-y-2 overflow-auto pr-1">
             {filteredDestinations.map((destination) => {

@@ -22,6 +22,7 @@ export const LOCAL_REGION_BANNERS: Record<string, string> = {
   smolyan: '/images/regions/smolyan.jpg',
   'sofia-grad': '/images/regions/sofia-grad.jpg',
   'sofia-oblast': '/images/regions/sofia-oblast.jpg',
+  'stara-zagora': '/images/regions/cover_stara_zagora.jpg',
   haskovo: '/images/regions/haskovo.jpg',
   shumen: '/images/regions/shumen.jpg',
   yambol: '/images/regions/yambol.jpg',
