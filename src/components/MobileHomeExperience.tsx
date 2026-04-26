@@ -16,6 +16,9 @@ const heroImages = [
   '/images/hero-rotation/image5.jpg',
   '/images/hero-rotation/image6.jpg',
   '/images/hero-rotation/image7.jpg',
+  '/images/hero-rotation/image8.jpg',
+  '/images/hero-rotation/image9.jpg',
+  '/images/hero-rotation/image10.jpg',
 ]
 
 const featureRegionSlugs = [
