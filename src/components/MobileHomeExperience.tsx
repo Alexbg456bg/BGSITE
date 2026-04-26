@@ -90,12 +90,15 @@ export function MobileHomeExperience() {
             transition: 'all 1s ease'
           }}
         >
-        {/* Enhanced gradient overlays for better text readability */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-transparent via-transparent to-[var(--forest)]/20" />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.1),rgba(0,0,0,0.3)_50%,rgba(0,0,0,0.5)_100%)]" />
+        {/* Smart gradient overlays for perfect text readability */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-transparent via-transparent to-[var(--forest)]/25" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.15),rgba(0,0,0,0.4)_40%,rgba(0,0,0,0.7)_80%,rgba(0,0,0,0.85)_100%)]" />
         
         {/* Desktop specific gradient for text readability */}
-        <div className="hidden lg:absolute lg:inset-0 lg:-z-10 lg:bg-gradient-to-r lg:from-black/30 lg:via-black/20 lg:to-transparent" />
+        <div className="hidden lg:absolute lg:inset-0 lg:-z-10 lg:bg-gradient-to-r lg:from-black/40 lg:via-black/25 lg:to-transparent" />
+        
+        {/* Text enhancement overlay */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
         
         {/* Animated ambient orbs */}
         <div className="absolute top-20 left-10 w-32 h-32 bg-[var(--sky)]/20 rounded-full blur-3xl animate-pulse-slow" />
