@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, type ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
+import { ThemeProvider } from './contexts/ThemeContext'
 import { loadBulgariaGeoJson } from './data/bulgariaGeoJson'
 
 const loadHomePage = () => import('./pages/HomePage')
@@ -67,77 +68,78 @@ export default function App() {
   }, [])
 
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route
-          path="/"
-          element={
-            <LazyRoute>
-              <HomePage />
-            </LazyRoute>
-          }
-        />
-        <Route
-          path="/regions"
-          element={
-            <LazyRoute>
-              <RegionsPage />
-            </LazyRoute>
-          }
-        />
-        <Route
-          path="/destinations"
-          element={
-            <LazyRoute>
-              <DestinationsPage />
-            </LazyRoute>
-          }
-        />
-        <Route
-          path="/favorites"
-          element={
-            <LazyRoute>
-              <FavoritesPage />
-            </LazyRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <LazyRoute>
-              <AdminPage />
-            </LazyRoute>
-          }
-        />
-        <Route
-          path="/region/sofia"
-          element={<Navigate to="/region/sofia-oblast" replace />}
-        />
-        <Route
-          path="/region/:slug"
-          element={
-            <LazyRoute>
-              <RegionPage />
-            </LazyRoute>
-          }
-        />
-        <Route
-          path="/destination/:id"
-          element={
-            <LazyRoute>
-              <DestinationPage />
-            </LazyRoute>
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <LazyRoute>
-              <NotFoundPage />
-            </LazyRoute>
-          }
-        />
-      </Route>
-    </Routes>
-  )
-}
+    <ThemeProvider>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route
+            path="/"
+            element={
+              <LazyRoute>
+                <HomePage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path="/regions"
+            element={
+              <LazyRoute>
+                <RegionsPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path="/destinations"
+            element={
+              <LazyRoute>
+                <DestinationsPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path="/favorites"
+            element={
+              <LazyRoute>
+                <FavoritesPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <LazyRoute>
+                <AdminPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path="/region/sofia"
+            element={<Navigate to="/region/sofia-oblast" replace />}
+          />
+          <Route
+            path="/region/:slug"
+            element={
+              <LazyRoute>
+                <RegionPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path="/destination/:id"
+            element={
+              <LazyRoute>
+                <DestinationPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <LazyRoute>
+                <NotFoundPage />
+              </LazyRoute>
+            }
+          />
+        </Route>
+      </Routes>
+    </ThemeProvider>
+  )}

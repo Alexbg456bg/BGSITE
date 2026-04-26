@@ -1,10 +1,22 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 import { SearchBar } from './SearchBar'
 import { SmartImage } from './SmartImage'
 import { CATEGORY_LABELS } from '../data/categoryLabels'
 import { useSiteData } from '../hooks/useSiteData'
 import type { DestinationCategory, Region } from '../types'
+
+// Hero rotation images array
+const heroImages = [
+  '/images/hero-rotation/image1.jpg',
+  '/images/hero-rotation/image2.jpg',
+  '/images/hero-rotation/image3.jpg',
+  '/images/hero-rotation/image4.jpg',
+  '/images/hero-rotation/image5.jpg',
+  '/images/hero-rotation/image6.jpg',
+  '/images/hero-rotation/image7.jpg',
+]
 
 const featureRegionSlugs = [
   'sofia-grad',
@@ -16,12 +28,16 @@ const featureRegionSlugs = [
 ]
 
 const categoryOrder: DestinationCategory[] = [
+  'cave',
+  'eco_trail',
+  'waterfall',
+  'monastery',
+  'museum',
+  'monument',
+  'reservoir_lake_view',
+  'resort',
   'natural',
   'historical',
-  'monastery',
-  'waterfall',
-  'eco_trail',
-  'museum',
 ]
 
 const categoryTone: Record<DestinationCategory, string> = {
@@ -38,13 +54,18 @@ const categoryTone: Record<DestinationCategory, string> = {
 }
 
 export function MobileHomeExperience() {
+  const [showAllCategories, setShowAllCategories] = useState(false)
+  const [currentHeroImage, setCurrentHeroImage] = useState('')
   const { regions, allDestinations } = useSiteData()
+
+  // Random hero image selection on component mount
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * heroImages.length)
+    setCurrentHeroImage(heroImages[randomIndex])
+  }, [])
   const featuredRegions = featureRegionSlugs
     .map((slug) => regions.find((region) => region.slug === slug))
     .filter((region): region is Region => Boolean(region))
-  const regionDirectory = regions
-    .filter((region) => !featureRegionSlugs.includes(region.slug))
-    .slice(0, 10)
   const featuredDestinations = allDestinations.slice(0, 6)
   const categoryCounts = categoryOrder.map((category) => ({
     category,
@@ -52,68 +73,154 @@ export function MobileHomeExperience() {
     count: allDestinations.filter((destination) => destination.category === category)
       .length,
   }))
+  
+  // Show only first 6 categories by default, rest on demand
+  const visibleCategories = showAllCategories ? categoryCounts : categoryCounts.slice(0, 6)
 
   return (
     <div className="bg-[var(--bg)]">
-      <section className="relative isolate min-h-[680px] overflow-hidden px-4 pb-8 pt-24">
-        <SmartImage
-          src="/images/hero/rhodope-village.jpg"
-          alt="България"
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-          maxWidth={900}
-          className="absolute inset-0 -z-20 h-full w-full"
-          imgClassName="object-cover brightness-[0.86] saturate-[1.08]"
-        />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(15,61,46,0.36),rgba(15,61,46,0.88)_72%,var(--bg)_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 -z-10 h-28 bg-gradient-to-t from-[var(--bg)] to-transparent" />
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55 }}
-          className="mx-auto flex min-h-[560px] max-w-md flex-col justify-end"
+      <section 
+          className="relative isolate min-h-[500px] lg:min-h-[600px] overflow-hidden pb-4 pt-16 lg:pb-0 lg:pt-20"
+          style={{
+            backgroundImage: `url(${currentHeroImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            filter: 'brightness(0.95) saturate(1.1)',
+            transition: 'all 1s ease'
+          }}
         >
-          <p className="w-fit rounded-full border border-white/24 bg-white/14 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/86 backdrop-blur">
-            Пътеводител за България
-          </p>
-          <h1 className="mt-4 font-display text-[2.85rem] font-semibold leading-[0.92] text-white">
-            Откривай места по-лесно
-          </h1>
-          <p className="mt-4 text-base leading-relaxed text-white/84">
-            Области, категории и подбрани места в структура, направена за
-            телефон.
-          </p>
+        {/* Enhanced gradient overlays for better text readability */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-transparent via-transparent to-[var(--forest)]/40" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.3),rgba(0,0,0,0.7)_50%,rgba(0,0,0,0.9)_100%)]" />
+        
+        {/* Desktop specific gradient for text readability */}
+        <div className="hidden lg:absolute lg:inset-0 lg:-z-10 lg:bg-gradient-to-r lg:from-black/60 lg:via-black/40 lg:to-transparent" />
+        
+        {/* Animated ambient orbs */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-[var(--sky)]/20 rounded-full blur-3xl animate-pulse-slow" />
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-[var(--sand)]/20 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }} />
+        
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
-          <div className="mt-6 rounded-[1.35rem] border border-white/24 bg-white/18 p-3 shadow-[0_24px_60px_rgba(0,0,0,0.2)] backdrop-blur-xl">
-            <SearchBar className="w-full" />
+        {/* All content positioned ON TOP of the image */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative z-10 flex min-h-[400px] flex-col justify-end lg:min-h-[500px] lg:max-w-7xl lg:flex-row lg:items-center lg:justify-between lg:gap-12 xl:gap-16 lg:mx-auto"
+        >
+          {/* Left column - Text content directly on image */}
+          <div className="flex flex-col justify-center lg:flex-1 lg:pr-8 px-4 lg:px-0">
+            {/* Enhanced badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="w-fit rounded-full border border-white/50 bg-black/30 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md shadow-[0_8px_20px_rgba(0,0,0,0.3)]"
+            >
+              <span className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                Пътеводител за България
+              </span>
+            </motion.div>
+            
+            {/* Enhanced heading */}
+            <motion.h1 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="mt-6 font-display text-[3.2rem] lg:text-[4.5rem] xl:text-[5rem] font-black leading-[0.9] text-white drop-shadow-2xl"
+            >
+              Откривай
+              <br />
+              <span className="text-white">
+                места по-лесно
+              </span>
+            </motion.h1>
+            
+            {/* Enhanced description */}
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mt-6 text-lg lg:text-xl leading-relaxed text-white font-semibold drop-shadow-xl"
+            >
+              Области, категории и подбрани места в структура, направена за
+              телефон.
+            </motion.p>
           </div>
 
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <Link
-              to="/regions"
-              className="rounded-2xl border border-white/18 bg-white/14 px-3 py-3 text-center text-white backdrop-blur transition active:scale-[0.98]"
+          {/* Right column - Search and stats directly on image */}
+          <div className="flex flex-col justify-center lg:flex-1 lg:max-w-md px-4 lg:px-0">
+            {/* Enhanced search bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="mt-8 lg:mt-0 group"
             >
-              <span className="block font-display text-2xl font-semibold">28</span>
-              <span className="mt-1 block text-[11px] text-white/74">области</span>
-            </Link>
-            <Link
-              to="/destinations"
-              className="rounded-2xl border border-white/18 bg-white/14 px-3 py-3 text-center text-white backdrop-blur transition active:scale-[0.98]"
+              <div className="relative rounded-[1.5rem] border border-white/70 bg-white/20 p-4 shadow-[0_32px_80px_rgba(0,0,0,0.2)] backdrop-blur-2xl transition-all duration-300 hover:bg-white/30 hover:shadow-[0_40px_100px_rgba(0,0,0,0.3)]">
+                <div className="absolute inset-0 rounded-[1.5rem] bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <SearchBar className="relative z-10 w-full" />
+              </div>
+            </motion.div>
+
+            {/* Enhanced stats cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="mt-6 lg:mt-8 grid grid-cols-3 gap-3"
             >
-              <span className="block font-display text-2xl font-semibold">
-                {allDestinations.length}
-              </span>
-              <span className="mt-1 block text-[11px] text-white/74">места</span>
-            </Link>
-            <a
-              href="#mobile-regions"
-              className="rounded-2xl border border-white/18 bg-white/14 px-3 py-3 text-center text-white backdrop-blur transition active:scale-[0.98]"
-            >
-              <span className="block font-display text-xl font-semibold">области</span>
-              <span className="mt-1 block text-[11px] text-white/74">директория</span>
-            </a>
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative"
+              >
+                <Link
+                  to="/regions"
+                  className="block rounded-2xl border border-white/60 bg-gradient-to-br from-white/25 to-white/15 px-3 py-4 text-center text-white backdrop-blur-md transition-all duration-300 hover:from-white/35 hover:to-white/25 hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
+                >
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent to-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <span className="relative z-10 block font-display text-2xl font-black drop-shadow-xl">28</span>
+                  <span className="relative z-10 mt-1 block text-[11px] font-bold text-white uppercase tracking-[0.05em]">области</span>
+                </Link>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative"
+              >
+                <Link
+                  to="/destinations"
+                  className="block rounded-2xl border border-white/60 bg-gradient-to-br from-white/25 to-white/15 px-3 py-4 text-center text-white backdrop-blur-md transition-all duration-300 hover:from-white/35 hover:to-white/25 hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
+                >
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent to-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <span className="relative z-10 block font-display text-2xl font-black drop-shadow-xl">
+                    {allDestinations.length}
+                  </span>
+                  <span className="relative z-10 mt-1 block text-[11px] font-bold text-white uppercase tracking-[0.05em]">места</span>
+                </Link>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative"
+              >
+                <a
+                  href="#mobile-regions"
+                  className="block rounded-2xl border border-white/60 bg-gradient-to-br from-white/25 to-white/15 px-3 py-4 text-center text-white backdrop-blur-md transition-all duration-300 hover:from-white/35 hover:to-white/25 hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
+                >
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent to-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <span className="relative z-10 block font-display text-xl font-black drop-shadow-xl">области</span>
+                  <span className="relative z-10 mt-1 block text-[11px] font-bold text-white uppercase tracking-[0.05em]">директория</span>
+                </a>
+              </motion.div>
+            </motion.div>
           </div>
         </motion.div>
       </section>
@@ -129,31 +236,59 @@ export function MobileHomeExperience() {
                 Избери преживяване
               </h2>
             </div>
-            <Link to="/destinations" className="text-sm font-semibold text-[var(--forest)]">
-              всички
-            </Link>
-          </div>
-
-          <div className="mt-4 flex gap-3 overflow-x-auto px-4 pb-3 [scroll-snap-type:x_mandatory]">
-            {categoryCounts.map((item) => (
+                      </div>
+          <div className="mt-4 grid grid-cols-2 gap-3 px-4">
+            {visibleCategories.map((item, index) => (
               <Link
                 key={item.category}
                 to={`/destinations?category=${item.category}`}
-                className={`relative min-h-36 min-w-[58%] overflow-hidden rounded-[1.35rem] bg-gradient-to-br ${categoryTone[item.category]} p-4 text-white shadow-[0_18px_42px_rgba(15,61,46,0.14)] transition active:scale-[0.98] [scroll-snap-align:start]`}
+                className={`relative min-h-32 overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${categoryTone[item.category]} p-4 text-white shadow-[0_16px_38px_rgba(15,61,46,0.12)] transition-all duration-500 active:scale-[0.97] hover:scale-[1.02]`}
+                style={{
+                  animationDelay: `${index * 100}ms`,
+                  animation: showAllCategories && index >= 6 ? 'slideUp 0.5s ease-out forwards' : undefined
+                }}
               >
-                <span className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/18" />
-                <span className="relative text-xs font-semibold uppercase tracking-[0.12em] text-white/72">
-                  {item.count} места
-                </span>
-                <span className="relative mt-8 block font-display text-xl font-semibold leading-tight">
-                  {item.label}
-                </span>
-                <span className="relative mt-3 inline-flex rounded-full bg-white/18 px-3 py-1 text-xs font-semibold backdrop-blur">
-                  разгледай
-                </span>
+                <span className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/20" />
+                <div className="relative z-10">
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-white/80 bg-white/10 px-2 py-1 rounded-full backdrop-blur-sm">
+                    {item.count} места
+                  </span>
+                  <span className="relative mt-3 block font-display text-lg font-semibold leading-tight">
+                    {item.label}
+                  </span>
+                  <span className="relative mt-2 inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-1.5 text-[10px] font-semibold backdrop-blur">
+                    <span className="w-1 h-1 bg-white rounded-full"></span>
+                    разгледай
+                  </span>
+                </div>
               </Link>
             ))}
           </div>
+          
+          {/* More categories button */}
+          {categoryCounts.length > 6 && (
+            <div className="mt-4 px-4">
+              <button
+                onClick={() => setShowAllCategories(!showAllCategories)}
+                className="group relative w-full rounded-2xl border border-[var(--border)] bg-white px-4 py-3 text-xs font-bold text-[var(--ink-soft)] transition-all duration-300 hover:bg-gradient-to-r hover:from-[var(--mist)] hover:to-white hover:text-[var(--forest-deep)] hover:scale-[1.02] hover:shadow-[0_8px_20px_rgba(15,61,46,0.12)]"
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  {showAllCategories ? 'По-малко категории' : 'Още категории'}
+                  <svg 
+                    className={`w-4 h-4 transition-transform duration-300 ${showAllCategories ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+                
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[var(--forest)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -178,60 +313,72 @@ export function MobileHomeExperience() {
           </p>
         </div>
 
-        <div className="mt-4 flex gap-3 overflow-x-auto px-4 pb-4 [scroll-snap-type:x_mandatory]">
-          {featuredRegions.map((region) => (
+        <div className="mt-4 flex gap-4 overflow-x-auto px-4 pb-4 [scroll-snap-type:x_mandatory]">
+          {featuredRegions.map((region, index) => (
             <Link
               key={region.id}
               to={`/region/${region.slug}`}
-              className="relative h-72 min-w-[82%] overflow-hidden rounded-[1.65rem] bg-[var(--forest-deep)] shadow-[0_22px_52px_rgba(15,61,46,0.2)] [scroll-snap-align:start]"
+              className="group relative h-80 min-w-[85%] overflow-hidden rounded-[2rem] bg-gradient-to-br from-[var(--forest-deep)] to-[var(--forest)] shadow-[0_24px_60px_rgba(15,61,46,0.25)] transition-all duration-500 ease-out hover:scale-[1.02] hover:shadow-[0_32px_80px_rgba(15,61,46,0.35)] [scroll-snap-align:start]"
+              style={{
+                animationDelay: `${index * 150}ms`
+              }}
             >
+              {/* Enhanced image with overlay effects */}
               <SmartImage
                 src={region.bannerImage}
                 alt={region.name}
                 loading="lazy"
                 decoding="async"
                 maxWidth={720}
-                className="absolute inset-0 h-full w-full"
+                className="absolute inset-0 h-full w-full transition-transform duration-700 group-hover:scale-110"
                 imgClassName="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/90 via-[var(--forest-deep)]/34 to-transparent" />
-              <div className="absolute left-4 top-4 rounded-full border border-white/18 bg-white/18 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
-                {region.destinations.length} места
-              </div>
-              <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                <h3 className="font-display text-3xl font-semibold leading-tight">
-                  {region.name}
-                </h3>
-                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-white/78">
-                  {region.description}
-                </p>
-                <span className="mt-4 inline-flex rounded-full bg-white px-4 py-2 text-xs font-semibold text-[var(--forest-deep)]">
-                  Отвори областта
+              
+              {/* Multi-layered gradient overlays */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/95 via-[var(--forest-deep)]/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent/50 via-transparent to-[var(--forest)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* Shimmer effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-shimmer" />
+              
+              {/* Enhanced badge with animation */}
+              <div className="absolute left-4 top-4 rounded-full border border-white/20 bg-white/20 backdrop-blur-md px-4 py-2 text-xs font-bold text-white shadow-[0_8px_20px_rgba(0,0,0,0.2)] transition-all duration-300 group-hover:scale-110 group-hover:bg-white/30">
+                <span className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                  {region.destinations.length} места
                 </span>
               </div>
+              
+              {/* Content with enhanced typography */}
+              <div className="absolute inset-x-0 bottom-0 p-6 text-white">
+                <div className="space-y-3">
+                  <h3 className="font-display text-3xl font-bold leading-tight drop-shadow-lg transition-transform duration-300 group-hover:translate-x-1">
+                    {region.name}
+                  </h3>
+                  <p className="line-clamp-2 text-sm leading-relaxed text-white/85 drop-shadow transition-all duration-300 group-hover:text-white/95">
+                    {region.description}
+                  </p>
+                </div>
+                
+                {/* Enhanced button with hover effects */}
+                <div className="mt-6 flex items-center gap-3">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-5 py-2.5 text-xs font-bold text-[var(--forest-deep)] shadow-[0_12px_24px_rgba(0,0,0,0.15)] transition-all duration-300 group-hover:bg-white group-hover:scale-105 group-hover:shadow-[0_16px_32px_rgba(0,0,0,0.2)]">
+                    <span className="transition-transform duration-300 group-hover:translate-x-0.5">Отвори областта</span>
+                    <svg className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+              
+              {/* Decorative corner elements */}
+              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute bottom-0 left-0 w-12 h-12 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </Link>
           ))}
         </div>
 
-        <div className="mx-auto max-w-md px-4">
-          <div className="grid grid-cols-2 gap-3">
-            {regionDirectory.map((region) => (
-              <Link
-                key={region.id}
-                to={`/region/${region.slug}`}
-                className="rounded-[1.2rem] border border-[var(--border)] bg-white/86 p-3 shadow-[0_12px_30px_rgba(15,61,46,0.06)] transition active:scale-[0.98]"
-              >
-                <span className="block truncate font-display text-lg font-semibold text-[var(--forest-deep)]">
-                  {region.name}
-                </span>
-                <span className="mt-1 block text-xs text-[var(--muted)]">
-                  {region.destinations.length} места
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+              </section>
 
       <section className="px-4 py-6">
         <div className="mx-auto max-w-md">

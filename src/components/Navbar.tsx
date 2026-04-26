@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SearchBar } from './SearchBar'
+import { ThemeToggle } from './ThemeToggle'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -64,15 +65,21 @@ export function Navbar() {
           <SearchBar className="w-full" />
         </div>
 
-        <button
-          type="button"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] shadow-sm lg:hidden"
-          aria-expanded={open}
-          aria-label={open ? 'Затвори меню' : 'Отвори меню'}
-          onClick={() => setOpen((o) => !o)}
-        >
-          <span className="text-xl leading-none">{open ? '✕' : '☰'}</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="hidden lg:block">
+            <ThemeToggle />
+          </div>
+          
+          <button
+            type="button"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] shadow-sm lg:hidden"
+            aria-expanded={open}
+            aria-label={open ? 'Затвори меню' : 'Отвори меню'}
+            onClick={() => setOpen((o) => !o)}
+          >
+            <span className="text-xl leading-none">{open ? '✕' : '☰'}</span>
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -84,7 +91,10 @@ export function Navbar() {
             className="max-h-[calc(100svh-4rem)] overflow-auto border-t border-white/45 bg-white/88 backdrop-blur-2xl lg:hidden"
           >
             <div className="flex flex-col gap-2 px-4 py-4">
-              <SearchBar className="w-full" />
+              <div className="flex items-center justify-between">
+                <SearchBar className="w-full" />
+                <ThemeToggle />
+              </div>
               {links.map(({ to, label, end }) => (
                 <NavLink
                   key={to}
