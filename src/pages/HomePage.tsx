@@ -10,6 +10,7 @@ import type { Variants } from 'framer-motion'
 import { HeroSection } from '../components/HeroSection'
 import { BulgariaMap } from '../components/BulgariaMap'
 import { RegionCard } from '../components/RegionCard'
+import { MobileHomeExperience } from '../components/MobileHomeExperience'
 import { useSiteData } from '../hooks/useSiteData'
 
 const featuredRegionSlugs = [
@@ -134,18 +135,23 @@ export function HomePage() {
 
   return (
     <>
-      <HeroSection />
+      <div className="md:hidden">
+        <MobileHomeExperience />
+      </div>
+
+      <div className="hidden md:block">
+        <HeroSection />
 
       <motion.section
         ref={mapSectionRef}
-        className="relative isolate overflow-hidden pb-14 pt-10 md:pb-20 md:pt-12"
+        className="relative isolate overflow-hidden pb-10 pt-8 md:pb-20 md:pt-12"
         variants={sectionReveal}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.22 }}
       >
         <motion.div
-          className="map-color-field absolute inset-x-0 top-0 -z-20 h-full min-h-[820px]"
+          className="map-color-field absolute inset-x-0 top-0 -z-20 h-full min-h-[560px] md:min-h-[820px]"
           style={{
             y: mapBackdropY,
             scale: mapBackdropScale,
@@ -154,12 +160,12 @@ export function HomePage() {
           aria-hidden
         />
         <motion.div
-          className="map-color-orb map-color-orb-a absolute -left-28 top-24 -z-10 h-72 w-[34rem] rounded-full blur-3xl"
+            className="map-color-orb map-color-orb-a absolute -left-32 top-24 -z-10 h-52 w-80 rounded-full blur-3xl md:-left-28 md:h-72 md:w-[34rem]"
           style={{ x: mapAccentX, opacity: mapAccentOpacity }}
           aria-hidden
         />
         <motion.div
-          className="map-color-orb map-color-orb-b absolute -right-28 bottom-20 -z-10 h-80 w-[38rem] rounded-full blur-3xl"
+            className="map-color-orb map-color-orb-b absolute -right-32 bottom-20 -z-10 h-56 w-80 rounded-full blur-3xl md:-right-28 md:h-80 md:w-[38rem]"
           style={{ x: mapAccentX, opacity: mapAccentOpacity }}
           aria-hidden
         />
@@ -174,14 +180,14 @@ export function HomePage() {
 
         <div className="mx-auto max-w-6xl px-4">
           <motion.div
-            className="mb-12 flex flex-col gap-4 md:mb-14 md:flex-row md:items-end md:justify-between"
+            className="mb-8 flex flex-col gap-4 md:mb-14 md:flex-row md:items-end md:justify-between"
             variants={headingReveal}
           >
             <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--forest)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--forest)] md:tracking-[0.3em]">
                 Основен акцент
               </p>
-              <h2 className="mt-3 font-display text-3xl font-semibold text-[var(--forest-deep)] md:text-4xl">
+              <h2 className="mt-3 font-display text-2xl font-semibold text-[var(--forest-deep)] md:text-4xl">
                 Картата е сърцето на сайта
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] md:text-base">
@@ -209,7 +215,7 @@ export function HomePage() {
 
       <motion.section
         ref={regionsSectionRef}
-        className="mx-auto max-w-6xl px-4 py-14 md:py-18"
+        className="relative mx-auto max-w-6xl px-4 py-10 md:py-18"
         variants={sectionReveal}
         initial="hidden"
         whileInView="visible"
@@ -220,10 +226,10 @@ export function HomePage() {
           variants={headingReveal}
         >
           <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--forest)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--forest)] md:tracking-[0.3em]">
               Области
             </p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-[var(--forest-deep)] md:text-4xl">
+              <h2 className="mt-3 font-display text-2xl font-semibold text-[var(--forest-deep)] md:text-4xl">
               Разгледай регионите
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] md:text-base">
@@ -272,6 +278,7 @@ export function HomePage() {
           </motion.div>
         </motion.div>
       </motion.section>
+      </div>
     </>
   )
 }

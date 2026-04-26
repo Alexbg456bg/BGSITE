@@ -1,54 +1,96 @@
 import { Link } from 'react-router-dom'
 
+const footerLinks = [
+  { to: '/regions', label: 'Области' },
+  { to: '/destinations', label: 'Дестинации' },
+  { to: '/favorites', label: 'Любими' },
+  { to: '/admin', label: 'Админ' },
+]
+
 export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="mt-24 border-t border-[var(--border)] bg-[linear-gradient(180deg,rgba(237,242,235,0.84),rgba(255,255,255,0.96))]">
-      <div className="mx-auto max-w-6xl px-4 py-14">
-        <div className="grid gap-10 md:grid-cols-3">
+    <footer className="mt-14 overflow-hidden border-t border-[var(--border)] bg-[linear-gradient(180deg,rgba(237,242,235,0.86),rgba(255,255,255,0.98))] md:mt-24">
+      <div className="relative mx-auto max-w-6xl px-4 py-9 md:py-14">
+        <div
+          className="pointer-events-none absolute -left-24 top-8 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(236,216,164,0.42),transparent_70%)] blur-2xl"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -right-24 bottom-16 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(79,140,171,0.22),transparent_70%)] blur-2xl"
+          aria-hidden
+        />
+
+        <div className="relative rounded-[1.25rem] border border-white/70 bg-white/72 p-4 shadow-[0_22px_70px_rgba(15,61,46,0.08)] backdrop-blur md:flex md:items-center md:justify-between md:gap-8 md:rounded-[1.5rem] md:p-6">
           <div>
-            <p className="font-display text-xl font-semibold text-[var(--forest-deep)]">
-              Открий България
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--forest)] md:tracking-[0.22em]">
+              Пътеводител
             </p>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-[var(--muted)]">
+            <h2 className="mt-2 font-display text-[1.65rem] font-semibold leading-tight text-[var(--forest-deep)] md:text-3xl">
+              Открий следващото място в България
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--muted)]">
+              Разгледай областите, запази любими дестинации и се върни към тях,
+              когато планираш следващото пътуване.
+            </p>
+          </div>
+          <Link
+            to="/regions"
+            className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[var(--forest-deep)] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_32px_rgba(15,61,46,0.18)] transition hover:-translate-y-0.5 hover:bg-[var(--forest)] sm:w-auto md:mt-0"
+          >
+            Разгледай областите
+          </Link>
+        </div>
+
+        <div className="relative mt-8 grid gap-7 md:mt-10 md:grid-cols-[1.4fr_0.8fr_1fr] md:gap-8">
+          <div>
+            <Link
+              to="/"
+              className="font-display text-xl font-semibold text-[var(--forest-deep)] transition hover:text-[var(--forest)] md:text-2xl"
+            >
+              Открий България
+            </Link>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-[var(--muted)]">
               Туристически портал с 28 области, реална карта на България и фокус
               върху места, които си заслужава да бъдат открити.
             </p>
+
+            <div className="mt-5 grid max-w-md grid-cols-3 gap-2 md:gap-3">
+              <div className="rounded-2xl border border-[var(--border)] bg-white/70 px-2.5 py-3 md:px-3">
+                <p className="font-display text-lg font-semibold text-[var(--forest-deep)] md:text-xl">
+                  28
+                </p>
+                <p className="mt-1 text-xs text-[var(--muted)]">области</p>
+              </div>
+              <div className="rounded-2xl border border-[var(--border)] bg-white/70 px-2.5 py-3 md:px-3">
+                <p className="font-display text-lg font-semibold text-[var(--forest-deep)] md:text-xl">
+                  100+
+                </p>
+                <p className="mt-1 text-xs text-[var(--muted)]">места</p>
+              </div>
+              <div className="rounded-2xl border border-[var(--border)] bg-white/70 px-2.5 py-3 md:px-3">
+                <p className="font-display text-base font-semibold text-[var(--forest-deep)] md:text-xl">
+                  карта
+                </p>
+                <p className="mt-1 text-xs text-[var(--muted)]">навигация</p>
+              </div>
+            </div>
           </div>
 
           <div>
             <p className="text-sm font-semibold text-[var(--ink)]">Раздели</p>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li>
-                <Link to="/regions" className="text-[var(--forest)] hover:underline">
-                  Области
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/destinations"
-                  className="text-[var(--forest)] hover:underline"
-                >
-                  Дестинации
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/favorites"
-                  className="text-[var(--forest)] hover:underline"
-                >
-                  Любими
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/admin"
-                  className="text-[var(--forest)] hover:underline"
-                >
-                  Админ
-                </Link>
-              </li>
+            <ul className="mt-4 space-y-2 text-sm">
+              {footerLinks.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="inline-flex text-[var(--forest)] transition hover:translate-x-1 hover:text-[var(--forest-deep)]"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -66,12 +108,17 @@ export function Footer() {
               </a>
               .
             </p>
+            <p className="mt-4 rounded-2xl border border-[var(--border)] bg-white/64 p-4 text-sm leading-relaxed text-[var(--ink-soft)]">
+              Съвет: добави контакт, социални профили и кратка форма за
+              предложения, за да изглежда сайтът по-завършен.
+            </p>
           </div>
         </div>
 
-        <p className="mt-12 border-t border-[var(--border)] pt-8 text-center text-xs text-[var(--muted)]">
-          © {year} · React · Vite · TypeScript · Tailwind
-        </p>
+        <div className="relative mt-8 flex flex-col gap-3 border-t border-[var(--border)] pt-5 text-xs text-[var(--muted)] sm:flex-row sm:items-center sm:justify-between md:mt-10 md:pt-6">
+          <p>© {year} Открий България. Всички права запазени.</p>
+          <p>React · Vite · TypeScript · Tailwind</p>
+        </div>
       </div>
     </footer>
   )

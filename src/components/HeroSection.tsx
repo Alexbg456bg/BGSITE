@@ -81,7 +81,7 @@ export function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative isolate min-h-[720px] overflow-hidden md:min-h-[760px]"
+      className="relative isolate min-h-[640px] overflow-hidden md:min-h-[760px]"
     >
       <motion.div
         initial={{ opacity: 0 }}
@@ -116,7 +116,7 @@ export function HeroSection() {
       />
 
       <motion.div
-        className="relative mx-auto flex min-h-[720px] max-w-6xl items-end px-4 pb-22 pt-24 md:min-h-[760px] md:pb-28"
+        className="relative mx-auto flex min-h-[640px] max-w-6xl items-end px-4 pb-14 pt-24 md:min-h-[760px] md:pb-28"
         style={{ y: contentY, opacity: contentOpacity }}
       >
         <div className="max-w-4xl">
@@ -124,7 +124,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.04 }}
-            className="text-sm font-semibold uppercase tracking-[0.34em] text-[var(--sky-pale)]"
+            className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--sky-pale)] md:text-sm md:tracking-[0.34em]"
           >
             Места за отдих
           </motion.p>
@@ -132,7 +132,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="mt-5 max-w-4xl font-display text-4xl font-semibold leading-[0.98] tracking-tight text-white md:text-6xl"
+            className="mt-4 max-w-4xl font-display text-[2.65rem] font-semibold leading-[0.96] tracking-tight text-white md:mt-5 md:text-6xl"
           >
             Разгледай България
           </motion.h1>
@@ -140,7 +140,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.18 }}
-            className="mt-6 max-w-2xl text-lg leading-relaxed text-white/88 md:text-xl"
+            className="mt-4 max-w-2xl text-base leading-relaxed text-white/88 md:mt-6 md:text-xl"
           >
             Тук ще намериш различни места из страната - за разходка,
             почивка или просто да смениш обстановката.
@@ -149,11 +149,11 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.24 }}
-            className="mt-9 flex flex-wrap gap-4"
+            className="mt-7 flex flex-wrap gap-3 md:mt-9 md:gap-4"
           >
             <a
               href="#home-map"
-              className="inline-flex rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_20px_40px_rgba(0,0,0,0.18)] transition hover:-translate-y-0.5 hover:bg-[var(--mist)]"
+              className="inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_20px_40px_rgba(0,0,0,0.18)] transition hover:-translate-y-0.5 hover:bg-[var(--mist)] md:px-8 md:py-3.5"
             >
               Към картата
             </a>
@@ -162,14 +162,14 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="mt-32 grid max-w-3xl gap-3 sm:grid-cols-3"
+            className="mt-10 grid max-w-3xl grid-cols-2 gap-3 md:mt-32 sm:grid-cols-3"
           >
             {highlights.map((item) => (
               <div
                 key={item.label}
-                className="rounded-[1.7rem] border border-white/16 bg-white/10 px-5 py-4 backdrop-blur-md"
+                className="rounded-[1.35rem] border border-white/16 bg-white/10 px-4 py-3 backdrop-blur-md md:rounded-[1.7rem] md:px-5 md:py-4"
               >
-                <p className="font-display text-3xl font-semibold text-white">
+                <p className="font-display text-2xl font-semibold text-white md:text-3xl">
                   {item.value}
                 </p>
                 <p className="mt-1 text-sm text-white/72">{item.label}</p>

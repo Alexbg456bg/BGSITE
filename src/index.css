@@ -83,8 +83,11 @@
   .content-card {
     content-visibility: auto;
     contain-intrinsic-size: 320px;
-    will-change: transform;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .content-card:hover {
+    will-change: transform;
   }
 
   .glass-card {

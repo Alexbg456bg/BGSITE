@@ -37,8 +37,8 @@ export function DestinationPage() {
   )
 
   return (
-    <article className="pb-20">
-      <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
+    <article className="pb-14 md:pb-20">
+      <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
         <Breadcrumbs
           items={[
             { label: 'Начало', to: '/' },
@@ -48,7 +48,7 @@ export function DestinationPage() {
         />
       </div>
 
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 lg:grid-cols-2 lg:gap-14">
+      <div className="mx-auto grid max-w-6xl gap-7 px-4 md:gap-10 lg:grid-cols-2 lg:gap-14">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -57,10 +57,10 @@ export function DestinationPage() {
             <ImageGallery
               images={galleryImages}
               alt={`${d.name}, ${region.name}`}
-              className="overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--mist)] shadow-lg"
+              className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--mist)] shadow-lg md:rounded-3xl"
             />
           ) : (
-            <div className="overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--mist)] shadow-lg">
+            <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--mist)] shadow-lg md:rounded-3xl">
           <SmartImage
             src={d.image}
             alt={`${d.name}, ${region.name}`}
@@ -83,16 +83,16 @@ export function DestinationPage() {
           <span className="w-fit rounded-full bg-[var(--forest)]/10 px-3 py-1 text-xs font-semibold text-[var(--forest)]">
             {CATEGORY_LABELS[d.category]}
           </span>
-          <h1 className="mt-4 font-display text-3xl font-semibold leading-tight text-[var(--forest-deep)] md:text-4xl">
+          <h1 className="mt-4 font-display text-2xl font-semibold leading-tight text-[var(--forest-deep)] md:text-4xl">
             {d.name}
           </h1>
           <p className="mt-2 text-sm font-medium text-[var(--forest)]">
             {d.location} · {region.name}
           </p>
-          <p className="mt-6 text-lg leading-relaxed text-[var(--muted)]">
+          <p className="mt-4 text-base leading-relaxed text-[var(--muted)] md:mt-6 md:text-lg">
             {d.shortDescription}
           </p>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 md:mt-6">
             <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
                 Категория
@@ -111,11 +111,11 @@ export function DestinationPage() {
             </div>
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-7 flex flex-wrap gap-3 md:mt-8">
             <button
               type="button"
               onClick={() => toggleFavorite(d.id)}
-              className="inline-flex items-center justify-center rounded-xl border-2 border-[var(--forest)] bg-white px-5 py-3 text-sm font-semibold text-[var(--forest)] transition hover:bg-[var(--mist)]"
+              className="inline-flex w-full items-center justify-center rounded-xl border-2 border-[var(--forest)] bg-white px-5 py-3 text-sm font-semibold text-[var(--forest)] transition hover:bg-[var(--mist)] sm:w-auto"
             >
               {fav ? '♥ В любими' : '♡ Запази'}
             </button>
@@ -124,14 +124,14 @@ export function DestinationPage() {
                 href={d.mapsUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center rounded-xl bg-[var(--forest)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--forest-deep)]"
+                className="inline-flex w-full items-center justify-center rounded-xl bg-[var(--forest)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--forest-deep)] sm:w-auto"
               >
                 Отвори в Google Maps
               </a>
             )}
             <Link
               to={`/region/${region.slug}`}
-              className="inline-flex items-center justify-center rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-medium text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)]"
+              className="inline-flex w-full items-center justify-center rounded-xl border border-[var(--border)] px-5 py-3 text-center text-sm font-medium text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)] sm:w-auto"
             >
               Всички обекти в областта
             </Link>

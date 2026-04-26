@@ -61,7 +61,7 @@ export function RegionPage() {
   return (
     <div>
       <div
-        className="relative h-[min(54vh,440px)] overflow-hidden"
+        className="relative min-h-[620px] overflow-hidden md:h-[min(54vh,440px)] md:min-h-0"
         role="img"
         aria-label={region.name}
       >
@@ -77,7 +77,7 @@ export function RegionPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/94 via-[var(--forest-deep)]/46 to-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.14),transparent_24%)]" />
 
-        <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-end px-4 pb-12 pt-24">
+        <div className="relative mx-auto flex min-h-[620px] max-w-6xl flex-col justify-end px-4 pb-8 pt-24 md:h-full md:min-h-0 md:pb-12">
           <Breadcrumbs
             items={[
               { label: 'Начало', to: '/' },
@@ -88,14 +88,14 @@ export function RegionPage() {
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 font-display text-4xl font-semibold text-white md:text-5xl"
+            className="mt-4 font-display text-3xl font-semibold text-white md:text-5xl"
           >
             {region.name}
           </motion.h1>
-          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/90">
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/90 md:mt-4 md:text-lg">
             {region.description}
           </p>
-          <ul className="mt-6 flex flex-wrap gap-2">
+          <ul className="mt-4 flex flex-wrap gap-2 md:mt-6">
             {region.highlights.map((highlight) => (
               <li
                 key={highlight}
@@ -105,7 +105,7 @@ export function RegionPage() {
               </li>
             ))}
           </ul>
-          <div className="mt-6 flex flex-wrap gap-3 text-sm text-white/88">
+          <div className="mt-4 flex flex-wrap gap-2 text-sm text-white/88 md:mt-6 md:gap-3">
             <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur">
               {region.destinations.length} обекта
             </span>
@@ -116,14 +116,14 @@ export function RegionPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
+      <div className="mx-auto max-w-6xl px-4 py-9 md:py-16">
         <RegionFocusMap
           slug={region.slug}
           regionName={region.name}
           destinations={region.destinations}
         />
 
-        <div className="mt-10">
+        <div className="mt-8 md:mt-10">
           <FilterBar
             category={category}
             onCategoryChange={setCategory}
@@ -139,7 +139,7 @@ export function RegionPage() {
           />
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 md:mt-6 md:gap-4">
           <p className="text-sm text-[var(--muted)]">
             {filteredDestinations.length}{' '}
             {filteredDestinations.length === 1 ? 'обект' : 'обекта'}
@@ -161,7 +161,7 @@ export function RegionPage() {
           </Link>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-7 grid gap-4 sm:grid-cols-2 md:mt-10 md:gap-6 lg:grid-cols-3">
           {filteredDestinations.map((destination, index) => (
             <DestinationCard
               key={destination.id}
@@ -188,7 +188,7 @@ export function RegionPage() {
         )}
 
         {region.images && region.images.length > 1 && (
-          <section className="mt-16">
+          <section className="mt-12 md:mt-16">
             <h2 className="font-display text-xl font-semibold text-[var(--forest-deep)]">
               Галерия {region.name}
             </h2>
@@ -201,7 +201,7 @@ export function RegionPage() {
           </section>
         )}
 
-        <section className="mt-20 border-t border-[var(--border)] pt-12">
+        <section className="mt-14 border-t border-[var(--border)] pt-8 md:mt-20 md:pt-12">
           <h2 className="font-display text-xl font-semibold text-[var(--forest-deep)]">
             Други области
           </h2>

@@ -107,8 +107,9 @@ export function BulgariaMap({
 
     const measure = () => {
       const w = Math.max(320, el.clientWidth)
-      const ratio = compact ? 0.58 : large ? 0.82 : 0.72
-      const minHeight = compact ? 360 : large ? 680 : 540
+      const isMobile = w < 640
+      const ratio = compact ? 0.58 : large ? (isMobile ? 0.92 : 0.82) : 0.72
+      const minHeight = compact ? 360 : large ? (isMobile ? 380 : 680) : 540
       const h = Math.max(minHeight, w * ratio)
       setSize((current) => (current.w === w && current.h === h ? current : { w, h }))
     }
@@ -271,16 +272,16 @@ export function BulgariaMap({
         initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
-        className={`overflow-hidden rounded-[2.2rem] border p-4 shadow-[0_34px_70px_rgba(15,61,46,0.10)] md:p-8 ${
+        className={`overflow-hidden rounded-[1.45rem] border p-3 shadow-[0_34px_70px_rgba(15,61,46,0.10)] md:rounded-[2.2rem] md:p-8 ${
           atmospheric
             ? 'border-white/64 bg-[linear-gradient(180deg,rgba(255,255,255,0.76),rgba(231,240,234,0.56))] backdrop-blur-xl'
             : 'border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(231,240,234,0.92))]'
         }`}
       >
         {!compact && (
-          <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="mb-4 flex flex-col gap-3 md:mb-6 md:flex-row md:items-end md:justify-between md:gap-4">
             <div className="max-w-2xl">
-              <h2 className="font-display text-2xl font-semibold text-[var(--forest-deep)] md:text-3xl">
+              <h2 className="font-display text-xl font-semibold text-[var(--forest-deep)] md:text-3xl">
                 Карта на България
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-[var(--muted)] md:text-base">
@@ -290,7 +291,7 @@ export function BulgariaMap({
             <div
               ref={badgeRef}
               data-default-label="28 области"
-              className="rounded-full border border-[var(--border)] bg-white/84 px-4 py-2 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)]"
+              className="w-fit rounded-full border border-[var(--border)] bg-white/84 px-3 py-1.5 text-xs font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)] md:px-4 md:py-2 md:text-sm"
             >
               28 области
             </div>
@@ -299,7 +300,7 @@ export function BulgariaMap({
 
         <div
           ref={wrapRef}
-          className={`overflow-hidden rounded-[1.8rem] border border-white/70 p-2 md:p-4 ${
+          className={`overflow-hidden rounded-[1.2rem] border border-white/70 p-1.5 md:rounded-[1.8rem] md:p-4 ${
             atmospheric
               ? 'bg-[rgba(214,230,220,0.18)] shadow-[inset_0_1px_0_rgba(255,255,255,0.42)]'
               : 'bg-[rgba(214,230,220,0.36)]'

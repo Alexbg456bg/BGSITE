@@ -8,7 +8,6 @@ type Props = {
   onCategoryChange: (c: DestinationCategory | 'all') => void
   regionSlug: string | 'all'
   onRegionChange: (slug: string | 'all') => void
-  /** Когато е false, скрива филтъра по област (напр. на страницата на област) */
   showRegionFilter?: boolean
 }
 
@@ -29,17 +28,17 @@ export function FilterBar({
   )
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6 md:p-5">
+    <div className="flex flex-col gap-4 rounded-[1.35rem] border border-[var(--border)] bg-white/88 p-3 shadow-[0_16px_38px_rgba(15,61,46,0.06)] backdrop-blur md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6 md:rounded-2xl md:bg-[var(--surface)] md:p-5 md:shadow-none">
       <div className="min-w-0 flex-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
           Категория
         </p>
-        <div className="mt-2 flex max-h-32 flex-wrap gap-2 overflow-y-auto md:max-h-none">
+        <div className="mt-2 flex gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-visible md:pb-0">
           <button
             type="button"
             onClick={() => onCategoryChange('all')}
             className={[
-              'rounded-full px-3 py-1.5 text-xs font-medium transition',
+              'shrink-0 rounded-full px-3 py-2 text-xs font-semibold transition md:py-1.5 md:font-medium',
               category === 'all'
                 ? 'bg-[var(--forest)] text-white'
                 : 'bg-[var(--mist)] text-[var(--ink-soft)] hover:bg-[var(--border)]',
@@ -53,7 +52,7 @@ export function FilterBar({
               type="button"
               onClick={() => onCategoryChange(key)}
               className={[
-                'rounded-full px-3 py-1.5 text-xs font-medium transition',
+                'shrink-0 rounded-full px-3 py-2 text-xs font-semibold transition md:py-1.5 md:font-medium',
                 category === key
                   ? 'bg-[var(--forest)] text-white'
                   : 'bg-[var(--mist)] text-[var(--ink-soft)] hover:bg-[var(--border)]',
@@ -76,10 +75,8 @@ export function FilterBar({
           <select
             id="filter-region"
             value={regionSlug}
-            onChange={(e) =>
-              onRegionChange(e.target.value as string | 'all')
-            }
-            className="mt-2 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--ink)] outline-none ring-[var(--forest)]/20 focus:ring-4"
+            onChange={(e) => onRegionChange(e.target.value as string | 'all')}
+            className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-white px-3 py-3 text-sm font-medium text-[var(--ink)] outline-none ring-[var(--forest)]/20 focus:ring-4 md:rounded-xl md:py-2.5"
           >
             <option value="all">Всички области</option>
             {regions.map((r) => (

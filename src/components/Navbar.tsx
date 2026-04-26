@@ -38,7 +38,7 @@ export function Navbar() {
           aria-hidden
         />
       )}
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 md:gap-4 md:py-4">
         <Link
           to="/"
           className="group flex shrink-0 items-center gap-2 font-display text-lg font-semibold tracking-tight text-[var(--forest-deep)] [text-shadow:0_1px_10px_rgba(255,255,255,0.72)]"
@@ -66,7 +66,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] lg:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] shadow-sm lg:hidden"
           aria-expanded={open}
           aria-label={open ? 'Затвори меню' : 'Отвори меню'}
           onClick={() => setOpen((o) => !o)}
@@ -81,10 +81,10 @@ export function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-white/45 bg-white/72 backdrop-blur-2xl lg:hidden"
+            className="max-h-[calc(100svh-4rem)] overflow-auto border-t border-white/45 bg-white/88 backdrop-blur-2xl lg:hidden"
           >
             <div className="flex flex-col gap-2 px-4 py-4">
-              <SearchBar />
+              <SearchBar className="w-full" />
               {links.map(({ to, label, end }) => (
                 <NavLink
                   key={to}

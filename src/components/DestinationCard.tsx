@@ -16,7 +16,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
   const fav = isFavorite(d.id)
 
   return (
-    <article className="content-card h-full overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition hover:shadow-md">
+    <article className="content-card h-full overflow-hidden rounded-[1.35rem] border border-[var(--border)] bg-white shadow-sm transition hover:shadow-md md:rounded-2xl">
       <Link
         to={`/destination/${d.id}`}
         state={{ fromRegion: regionSlug }}
@@ -34,7 +34,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
             className="h-full w-full"
             imgClassName="transition duration-700 hover:scale-105"
           />
-          <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-medium text-[var(--forest-deep)] shadow-sm backdrop-blur">
+          <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-medium text-[var(--forest-deep)] shadow-sm backdrop-blur md:px-3 md:text-xs">
             {CATEGORY_LABELS[d.category]}
           </span>
           <button
@@ -53,10 +53,10 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
         </div>
 
         <div className="flex flex-1 flex-col p-4 md:p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--forest)]/75">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--forest)]/75 md:text-[11px] md:tracking-[0.22em]">
             Подбрано място
           </p>
-          <h3 className="font-display text-lg font-semibold leading-snug text-[var(--ink)]">
+          <h3 className="font-display text-[1.05rem] font-semibold leading-snug text-[var(--ink)] md:text-lg">
             {d.name}
           </h3>
           <p className="mt-1 text-xs font-medium text-[var(--forest)]">
@@ -75,7 +75,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
                 target="_blank"
                 rel="noreferrer"
                 onClick={(event) => event.stopPropagation()}
-                className="inline-flex items-center justify-center rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)]"
+                className="inline-flex flex-1 items-center justify-center rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)] sm:flex-none"
               >
                 Карта
               </a>
