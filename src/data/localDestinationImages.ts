@@ -3,12 +3,17 @@ import type { Destination } from '../types'
 type DestinationImageOverride = Pick<Destination, 'image' | 'images'>
 
 export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> = {
+  "custom-test-save": {
+    "image": "/images/destinations/custom-test-save.png"
+  },
   "dest-aleksander-nevski": {
     "image": "/images/destinations/dest-aleksander-nevski.jpg",
     "images": [
       "/images/destinations/dest-aleksander-nevski.jpg",
       "/images/destinations/dest-aleksander-nevski-1.jpg",
-      "/images/destinations/dest-aleksander-nevski-2.jpg"
+      "/images/destinations/dest-aleksander-nevski-2.jpg",
+      "/images/destinations/dest-aleksander-nevski-3.jpg",
+      "/images/destinations/dest-aleksander-nevski-4.jpg"
     ]
   },
   "dest-aquae-calidae": {
@@ -52,11 +57,20 @@ export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> 
   "dest-belogradchik": {
     "image": "/images/destinations/dest-belogradchik.jpg"
   },
+  "dest-bezbog-popovo-lake": {
+    "image": "/images/destinations/dest-bezbog-popovo-lake.jpg",
+    "images": [
+      "/images/destinations/dest-bezbog-popovo-lake.jpg",
+      "/images/destinations/dest-bezbog-popovo-lake-1.jpg",
+      "/images/destinations/dest-bezbog-popovo-lake-2.jpg"
+    ]
+  },
   "dest-blue-rocks": {
     "image": "/images/destinations/dest-blue-rocks.png",
     "images": [
       "/images/destinations/dest-blue-rocks.png",
-      "/images/destinations/dest-blue-rocks-1.png"
+      "/images/destinations/dest-blue-rocks-1.png",
+      "/images/destinations/dest-blue-rocks-2.png"
     ]
   },
   "dest-boyana-church": {
@@ -69,6 +83,21 @@ export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> 
   },
   "dest-bozhentsi": {
     "image": "/images/destinations/dest-bozhentsi.jpg"
+  },
+  "dest-byala-reka-kalofer": {
+    "image": "/images/destinations/dest-byala-reka-kalofer.jpg",
+    "images": [
+      "/images/destinations/dest-byala-reka-kalofer.jpg",
+      "/images/destinations/dest-byala-reka-kalofer-1.jpg",
+      "/images/destinations/dest-byala-reka-kalofer-2.jpg"
+    ]
+  },
+  "dest-canyon-waterfalls-smolyan": {
+    "image": "/images/destinations/dest-canyon-waterfalls-smolyan.jpg",
+    "images": [
+      "/images/destinations/dest-canyon-waterfalls-smolyan.jpg",
+      "/images/destinations/dest-canyon-waterfalls-smolyan-1.jpg"
+    ]
   },
   "dest-devetashka": {
     "image": "/images/destinations/dest-devetashka.png"
@@ -84,6 +113,16 @@ export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> 
   },
   "dest-emen-canyon": {
     "image": "/images/destinations/dest-emen-canyon.jpg"
+  },
+  "dest-euxinograd": {
+    "image": "/images/destinations/dest-euxinograd.jpg"
+  },
+  "dest-harman-kaya-trail": {
+    "image": "/images/destinations/dest-harman-kaya-trail.jpg",
+    "images": [
+      "/images/destinations/dest-harman-kaya-trail.jpg",
+      "/images/destinations/dest-harman-kaya-trail-1.jpg"
+    ]
   },
   "dest-hisarlaka": {
     "image": "/images/destinations/dest-hisarlaka.jpg"
@@ -142,6 +181,14 @@ export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> 
   "dest-magura": {
     "image": "/images/destinations/dest-magura.png"
   },
+  "dest-marina-reka-trail": {
+    "image": "/images/destinations/dest-marina-reka-trail.jpg",
+    "images": [
+      "/images/destinations/dest-marina-reka-trail.jpg",
+      "/images/destinations/dest-marina-reka-trail-1.jpg",
+      "/images/destinations/dest-marina-reka-trail-2.jpg"
+    ]
+  },
   "dest-melnik-pyramids": {
     "image": "/images/destinations/dest-melnik-pyramids.jpg",
     "images": [
@@ -169,10 +216,18 @@ export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> 
     ]
   },
   "dest-neolithic": {
-    "image": "/images/destinations/dest-neolithic.jpg"
+    "image": "/images/destinations/dest-neolithic.jpg",
+    "images": [
+      "/images/destinations/dest-neolithic.jpg",
+      "/images/destinations/dest-neolithic-1.jpg",
+      "/images/destinations/dest-neolithic-2.jpg"
+    ]
   },
   "dest-nessebar": {
     "image": "/images/destinations/dest-nessebar.jpg"
+  },
+  "dest-nevyastata-trail": {
+    "image": "/images/destinations/dest-nevyastata-trail.jpg"
   },
   "dest-nhm": {
     "image": "/images/destinations/dest-nhm.jpg",
@@ -198,8 +253,15 @@ export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> 
   "dest-pamporovo": {
     "image": "/images/destinations/dest-pamporovo.jpg"
   },
+  "dest-perperikon": {
+    "image": "/images/destinations/dest-perperikon.jpg"
+  },
   "dest-pleven-panorama": {
-    "image": "/images/destinations/dest-pleven-panorama.jpg"
+    "image": "/images/destinations/dest-pleven-panorama.jpg",
+    "images": [
+      "/images/destinations/dest-pleven-panorama.jpg",
+      "/images/destinations/dest-pleven-panorama-1.jpg"
+    ]
   },
   "dest-pliska": {
     "image": "/images/destinations/dest-pliska.png"
@@ -252,11 +314,18 @@ export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> 
   "dest-shipka": {
     "image": "/images/destinations/dest-shipka.jpg"
   },
+  "dest-silistar-rezovo-trail": {
+    "image": "/images/destinations/dest-silistar-rezovo-trail.jpg"
+  },
   "dest-silistra-fort": {
     "image": "/images/destinations/dest-silistra-fort.jpg"
   },
   "dest-sinemorets": {
-    "image": "/images/destinations/dest-sinemorets.jpg"
+    "image": "/images/destinations/dest-sinemorets.jpg",
+    "images": [
+      "/images/destinations/dest-sinemorets.jpg",
+      "/images/destinations/dest-sinemorets-1.jpg"
+    ]
   },
   "dest-sozopol": {
     "image": "/images/destinations/dest-sozopol.jpg"
@@ -281,6 +350,13 @@ export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> 
       "/images/destinations/dest-strandzha-1.jpg"
     ]
   },
+  "dest-sveshtari": {
+    "image": "/images/destinations/dest-sveshtari.jpg",
+    "images": [
+      "/images/destinations/dest-sveshtari.jpg",
+      "/images/destinations/dest-sveshtari-1.jpg"
+    ]
+  },
   "dest-tryavna": {
     "image": "/images/destinations/dest-tryavna.jpg",
     "images": [
@@ -290,6 +366,9 @@ export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> 
   },
   "dest-tsarevets": {
     "image": "/images/destinations/dest-tsarevets.png"
+  },
+  "dest-uzana-geo-center-trails": {
+    "image": "/images/destinations/dest-uzana-geo-center-trails.jpg"
   },
   "dest-varna-cathedral": {
     "image": "/images/destinations/dest-varna-cathedral.jpg"
@@ -312,10 +391,48 @@ export const LOCAL_DESTINATION_IMAGES: Record<string, DestinationImageOverride> 
   "dest-zagorka": {
     "image": "/images/destinations/dest-zagorka.jpg"
   },
-  "dest-perperikon": {
-    "image": "/images/destinations/dest-perperikon.jpg"
+  "dest-zlatna-panega-trail": {
+    "image": "/images/destinations/dest-zlatna-panega-trail.jpg"
   },
-  "dest-sveshtari": {
-    "image": "/images/destinations/dest-sveshtari.jpg"
+  "dest-vazova-eco-trail": {
+    "image": "/images/destinations/dest-vazova-eco-trail.jpg",
+    "images": [
+      "/images/destinations/dest-vazova-eco-trail.jpg",
+      "/images/destinations/dest-vazova-eco-trail-1.jpg",
+      "/images/destinations/dest-vazova-eco-trail-2.jpg",
+      "/images/destinations/dest-vazova-eco-trail-3.jpg",
+      "/images/destinations/dest-vazova-eco-trail-4.jpg"
+    ]
+  },
+  "dest-pod-kamiko": {
+    "image": "/images/destinations/dest-pod-kamiko.jpg",
+    "images": [
+      "/images/destinations/dest-pod-kamiko.jpg",
+      "/images/destinations/dest-pod-kamiko-1.jpg",
+      "/images/destinations/dest-pod-kamiko-2.jpg"
+    ]
+  },
+  "dest-demyanitsa-trail": {
+    "image": "/images/destinations/dest-demyanitsa-trail.jpg"
+  },
+  "dest-krastova-gora-trails": {
+    "image": "/images/destinations/dest-krastova-gora-trails.jpg"
+  },
+  "dest-negovanka-trail": {
+    "image": "/images/destinations/dest-negovanka-trail.jpg",
+    "images": [
+      "/images/destinations/dest-negovanka-trail.jpg",
+      "/images/destinations/dest-negovanka-trail-1.jpg"
+    ]
+  },
+  "dest-dryanovo-eco-trail": {
+    "image": "/images/destinations/dest-dryanovo-eco-trail.jpg",
+    "images": [
+      "/images/destinations/dest-dryanovo-eco-trail.jpg",
+      "/images/destinations/dest-dryanovo-eco-trail-1.jpg"
+    ]
+  },
+  "dest-utangard-kardzhali": {
+    "image": "/images/destinations/dest-utangard-kardzhali.jpg"
   }
 } as const

@@ -200,10 +200,16 @@ export function AdminPage() {
   }
 
   const removeImage = (index: number) => {
+    const removed = form.images[index]
     setForm((current) => ({
       ...current,
       images: current.images.filter((_, imageIndex) => imageIndex !== index),
     }))
+    setStatus(
+      removed
+        ? 'Снимката е махната от списъка. Натисни „Запиши“, за да се приложи в сайта.'
+        : '',
+    )
   }
 
   const moveImage = (index: number, direction: -1 | 1) => {
@@ -267,8 +273,12 @@ export function AdminPage() {
       })
       setStatus('Записано във файловете на проекта.')
       setForm((current) => ({ ...current, id }))
-    } catch {
-      setStatus('Пусни admin server-а с npm run admin и опитай пак.')
+    } catch (error) {
+      setStatus(
+        error instanceof Error
+          ? `Неуспешен запис: ${error.message}`
+          : 'Пусни admin server-а с npm run admin и опитай пак.',
+      )
     }
   }
 
@@ -285,8 +295,12 @@ export function AdminPage() {
       })
       setStatus('Дестинацията е изтрита/скрита от сайта.')
       startNew()
-    } catch {
-      setStatus('Пусни admin server-а с npm run admin и опитай пак.')
+    } catch (error) {
+      setStatus(
+        error instanceof Error
+          ? `Неуспешно изтриване: ${error.message}`
+          : 'Пусни admin server-а с npm run admin и опитай пак.',
+      )
     }
   }
 
@@ -472,7 +486,28 @@ export function AdminPage() {
           </div>
 
           <div className="mt-4">
-            <p className="text-sm font-medium text-[var(--ink)]">Снимки</p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-medium text-[var(--ink)]">
+                Снимки
+                <span className="ml-2 text-xs font-normal text-[var(--muted)]">
+                  {form.images.length} бр.
+                </span>
+              </p>
+              {form.images.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForm((current) => ({ ...current, images: [] }))
+                    setStatus(
+                      'Всички снимки са махнати от списъка. Добави поне една нова, за да можеш да запишеш.',
+                    )
+                  }}
+                  className="rounded-lg border border-red-200 px-2.5 py-1 text-xs font-semibold text-red-600 transition hover:bg-red-50"
+                >
+                  Изчисти всички
+                </button>
+              )}
+            </div>
             <input
               ref={fileInputRef}
               type="file"
@@ -489,7 +524,7 @@ export function AdminPage() {
               Добави снимки
             </button>
             <p className="mt-2 text-xs text-[var(--muted)]">
-              Можеш да добавяш няколко снимки наведнъж. Първата е основната.
+              Можеш да добавяш няколко снимки наведнъж. Първата е основната. След махане на снимки натисни „Запиши“.
             </p>
           </div>
 
@@ -500,12 +535,28 @@ export function AdminPage() {
                   key={`${image}-${index}`}
                   className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-2)]"
                 >
-                  <SmartImage
-                    src={image}
-                    alt={`Снимка ${index + 1}`}
-                    className="h-32 w-full"
-                    imgClassName="object-cover"
-                  />
+                  <div className="relative">
+                    <SmartImage
+                      src={image}
+                      alt={`Снимка ${index + 1}`}
+                      className="h-32 w-full"
+                      imgClassName="object-cover"
+                    />
+                    {index === 0 && (
+                      <span className="absolute left-2 top-2 rounded-full bg-white/95 px-2 py-1 text-[10px] font-semibold text-[var(--forest-deep)] shadow-sm">
+                        основна
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-lg font-semibold text-red-600 shadow-sm transition hover:bg-red-50"
+                      aria-label="Изтрий снимката"
+                      title="Изтрий снимката"
+                    >
+                      ×
+                    </button>
+                  </div>
                   <div className="flex flex-wrap gap-2 p-2">
                     <button
                       type="button"
@@ -536,7 +587,7 @@ export function AdminPage() {
                       onClick={() => removeImage(index)}
                       className="rounded-lg border border-red-200 px-2 py-1 text-xs font-semibold text-red-600"
                     >
-                      Махни
+                      Изтрий
                     </button>
                   </div>
                 </div>

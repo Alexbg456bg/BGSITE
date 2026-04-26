@@ -10,7 +10,13 @@ const dataFile = path.join(repoRoot, 'src', 'data', 'localDestinationImages.ts')
 const destinationsFile = path.join(repoRoot, 'src', 'data', 'destinationsByRegion.ts')
 
 const WIKI_SEARCH_PREFIX = 'wiki-search:'
-const TARGET_IMAGES_PER_DESTINATION = 3
+const TARGET_IMAGES_PER_DESTINATION = 5
+const DOWNLOAD_DESTINATION_IDS = new Set(
+  (process.env.DOWNLOAD_DESTINATION_IDS ?? '')
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean),
+)
 
 const contentTypeExtension = {
   'image/jpeg': '.jpg',
@@ -224,8 +230,8 @@ async function downloadBinary(url, retries = 2) {
     }
 
     lastError = new Error(`Failed to fetch ${url}: ${response.status}`)
-    if (response.status >= 500) {
-      await sleep(800 * attempt)
+    if (response.status === 429 || response.status >= 500) {
+      await sleep(response.status === 429 ? 5000 * attempt : 800 * attempt)
       continue
     }
 
@@ -258,7 +264,12 @@ async function writeManifest(manifest) {
 
 async function main() {
   const DESTINATIONS_BY_SLUG = await loadDestinationsBySlug()
-  const destinations = Object.values(DESTINATIONS_BY_SLUG).flat()
+  const destinations = Object.values(DESTINATIONS_BY_SLUG)
+    .flat()
+    .filter(
+      (destination) =>
+        DOWNLOAD_DESTINATION_IDS.size === 0 || DOWNLOAD_DESTINATION_IDS.has(destination.id),
+    )
   const manifest = {}
   const unresolved = []
 
@@ -313,7 +324,7 @@ async function main() {
           await writeFile(targetPath, file.buffer)
           downloadedPaths.push(toPosixRelative('images', 'destinations', fileName))
           sourceIndex = index
-          await sleep(250)
+          await sleep(1200)
         } catch (error) {
           console.error(`Download failed for ${destination.id} from ${resolvedUrl}`)
           console.error(error instanceof Error ? error.message : String(error))

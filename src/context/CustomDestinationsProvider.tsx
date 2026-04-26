@@ -56,7 +56,8 @@ export function CustomDestinationsProvider({
         })
 
         if (!response.ok) {
-          throw new Error('Admin server save failed')
+          const details = await response.json().catch(() => null)
+          throw new Error(details?.error ?? 'Admin server save failed')
         }
 
         const saved = (await response.json()) as CustomDestinationEntry[]
@@ -73,7 +74,8 @@ export function CustomDestinationsProvider({
         const response = await fetch(url.toString(), { method: 'DELETE' })
 
         if (!response.ok) {
-          throw new Error('Admin server delete failed')
+          const details = await response.json().catch(() => null)
+          throw new Error(details?.error ?? 'Admin server delete failed')
         }
 
         const saved = (await response.json()) as CustomDestinationEntry[]
