@@ -28,6 +28,23 @@ export const LOCAL_REGION_BANNERS: Record<string, string> = {
   yambol: '/images/regions/yambol.jpg',
 }
 
+export const LOCAL_REGION_MOBILE_BANNERS: Record<string, string> = {
+  blagoevgrad: '/images/regions-mobile/blagoevgrad.jpg',
+  burgas: '/images/regions-mobile/burgas.jpg',
+  dobrich: '/images/regions-mobile/dobrich.jpg',
+  haskovo: '/images/regions-mobile/haskovo.jpg',
+  kardzhali: '/images/regions-mobile/kardzhali.jpg',
+  kyustendil: '/images/regions-mobile/kyustendil.jpg',
+  lovech: '/images/regions-mobile/lovech.jpg',
+  pernik: '/images/regions-mobile/pernik.jpg',
+  plovdiv: '/images/regions-mobile/plovdiv.jpg',
+  shumen: '/images/regions-mobile/shumen.jpg',
+  'sofia-grad': '/images/regions-mobile/sofia-grad.jpg',
+  'sofia-oblast': '/images/regions-mobile/sofia-oblast.jpg',
+  'veliko-tarnovo': '/images/regions-mobile/veliko-tarnovo.jpg',
+  vratsa: '/images/regions-mobile/vratsa.jpg',
+}
+
 // Example:
 // export const LOCAL_REGION_GALLERIES = {
 //   'sofia-grad': [

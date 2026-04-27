@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Breadcrumbs } from '../components/Breadcrumbs'
@@ -9,6 +9,7 @@ import { SmartImage } from '../components/SmartImage'
 import { ImageGallery } from '../components/ImageGallery'
 import { useSiteData } from '../hooks/useSiteData'
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../data/categoryLabels'
+import { LOCAL_REGION_MOBILE_BANNERS } from '../data/localRegionImages'
 import type { DestinationCategory } from '../types'
 
 function parseCategory(s: string | null): DestinationCategory | 'all' {
@@ -27,6 +28,18 @@ export function RegionPage() {
   const region = slug ? getRegionBySlug(slug) : undefined
 
   const category = parseCategory(searchParams.get('category'))
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window === 'undefined' ? false : window.matchMedia('(min-width: 768px)').matches,
+  )
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 768px)')
+    const onChange = () => setIsDesktop(media.matches)
+
+    onChange()
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
+  }, [])
 
   const setCategory = (c: DestinationCategory | 'all') => {
     if (c === 'all') setSearchParams({})
@@ -38,6 +51,11 @@ export function RegionPage() {
     if (category === 'all') return region.destinations
     return region.destinations.filter((d) => d.category === category)
   }, [region, category])
+  const heroImage = region
+    ? isDesktop
+      ? region.bannerImage
+      : (LOCAL_REGION_MOBILE_BANNERS[region.slug] ?? '')
+    : ''
 
   if (!region) {
     return (
@@ -61,24 +79,38 @@ export function RegionPage() {
   return (
     <div>
       <div
-        className="relative min-h-[620px] overflow-hidden md:h-[min(54vh,440px)] md:min-h-0"
+        className="relative min-h-[78svh] overflow-hidden md:h-[min(54vh,440px)] md:min-h-0"
+        style={
+          heroImage && !isDesktop
+            ? {
+                backgroundImage: `url(${heroImage})`,
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+              }
+            : undefined
+        }
         role="img"
         aria-label={region.name}
       >
-        <SmartImage
-          src={region.bannerImage}
-          alt={region.name}
-          fetchPriority="high"
-          decoding="async"
-          maxWidth={1400}
-          className="absolute inset-0 h-full w-full"
-          imgClassName="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/94 via-[var(--forest-deep)]/46 to-transparent" />
+        {heroImage && isDesktop && (
+          <SmartImage
+            src={heroImage}
+            alt={region.name}
+            fetchPriority="high"
+            decoding="async"
+            maxWidth={1400}
+            className="absolute inset-0 h-full w-full"
+            imgClassName="object-cover object-center"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/98 via-[var(--forest-deep)]/58 to-black/22 md:from-[var(--forest-deep)]/94 md:via-[var(--forest-deep)]/46 md:to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-[62%] bg-[linear-gradient(180deg,transparent,rgba(5,28,21,0.72)_42%,rgba(5,28,21,0.9)_100%)] md:hidden" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.14),transparent_24%)]" />
 
-        <div className="relative mx-auto flex min-h-[620px] max-w-6xl flex-col justify-end px-4 pb-8 pt-24 md:h-full md:min-h-0 md:pb-12">
+        <div className="relative mx-auto flex min-h-[78svh] max-w-6xl flex-col justify-end px-4 pb-8 pt-24 md:h-full md:min-h-0 md:pb-12">
           <Breadcrumbs
+            variant="onDark"
             items={[
               { label: 'Начало', to: '/' },
               { label: region.name },
@@ -88,42 +120,44 @@ export function RegionPage() {
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 font-display text-3xl font-semibold text-white md:text-5xl"
+            className="mt-4 font-display text-3xl font-semibold text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.7)] md:text-5xl"
           >
             {region.name}
           </motion.h1>
-          <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/90 md:mt-4 md:text-lg">
+          <p className="mt-3 max-w-2xl text-base font-semibold leading-relaxed text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.72)] md:mt-4 md:text-lg md:font-normal md:text-white/90">
             {region.description}
           </p>
           <ul className="mt-4 flex flex-wrap gap-2 md:mt-6">
             {region.highlights.map((highlight) => (
               <li
                 key={highlight}
-                className="rounded-full bg-white/18 px-3 py-1 text-xs font-medium text-white backdrop-blur"
+                className="rounded-full bg-white/28 px-3 py-1 text-xs font-semibold text-white shadow-[0_4px_14px_rgba(0,0,0,0.18)] backdrop-blur-sm md:bg-white/18 md:font-medium"
               >
                 {highlight}
               </li>
             ))}
           </ul>
           <div className="mt-4 flex flex-wrap gap-2 text-sm text-white/88 md:mt-6 md:gap-3">
-            <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur">
+            <span className="rounded-full border border-white/28 bg-white/22 px-3 py-1.5 font-semibold text-white shadow-[0_4px_14px_rgba(0,0,0,0.18)] backdrop-blur-sm md:bg-white/10 md:font-normal">
               {region.destinations.length} обекта
             </span>
-            <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur">
+            <span className="rounded-full border border-white/28 bg-white/22 px-3 py-1.5 font-semibold text-white shadow-[0_4px_14px_rgba(0,0,0,0.18)] backdrop-blur-sm md:bg-white/10 md:font-normal">
               Собствена карта на областта
             </span>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-9 md:py-16">
-        <RegionFocusMap
-          slug={region.slug}
-          regionName={region.name}
-          destinations={region.destinations}
-        />
+      <div className="mx-auto max-w-6xl px-4 pb-9 pt-7 md:py-16">
+        {isDesktop && (
+          <RegionFocusMap
+            slug={region.slug}
+            regionName={region.name}
+            destinations={region.destinations}
+          />
+        )}
 
-        <div className="mt-8 md:mt-10">
+        <div className="md:mt-10">
           <FilterBar
             category={category}
             onCategoryChange={setCategory}
@@ -155,7 +189,7 @@ export function RegionPage() {
           </p>
           <Link
             to="/#home-map"
-            className="text-sm font-medium text-[var(--forest)] hover:underline"
+            className="hidden text-sm font-medium text-[var(--forest)] hover:underline md:inline"
           >
             ← Към картата
           </Link>
