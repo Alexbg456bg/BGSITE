@@ -22,27 +22,6 @@ export function Footer() {
           aria-hidden
         />
 
-        <div className="relative rounded-[1.25rem] border border-white/70 bg-white/72 p-4 shadow-[0_22px_70px_rgba(15,61,46,0.08)] backdrop-blur md:flex md:items-center md:justify-between md:gap-8 md:rounded-[1.5rem] md:p-6">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--forest)] md:tracking-[0.22em]">
-              Пътеводител
-            </p>
-            <h2 className="mt-2 font-display text-[1.65rem] font-semibold leading-tight text-[var(--forest-deep)] md:text-3xl">
-              Открий следващото място в България
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--muted)]">
-              Разгледай областите, запази любими дестинации и се върни към тях,
-              когато планираш следващото пътуване.
-            </p>
-          </div>
-          <Link
-            to="/regions"
-            className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[var(--forest-deep)] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_32px_rgba(15,61,46,0.18)] transition hover:-translate-y-0.5 hover:bg-[var(--forest)] sm:w-auto md:mt-0"
-          >
-            Разгледай областите
-          </Link>
-        </div>
-
         <div className="relative mt-8 grid gap-7 md:mt-10 md:grid-cols-[1.4fr_0.8fr_1fr] md:gap-8">
           <div>
             <Link

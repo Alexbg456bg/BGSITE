@@ -42,8 +42,14 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 0;
   }
 
+  /* Improve scroll performance */
+  * {
+    scroll-margin-top: 0;
+  }
+  
   body {
     margin: 0;
     min-height: 100svh;
@@ -58,6 +64,9 @@
       linear-gradient(180deg, #f9fbf7 0%, #edf2eb 48%, #f4f6f2 100%);
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   img,
@@ -108,6 +117,34 @@
 
   .content-card:hover {
     will-change: transform;
+  }
+
+  /* GPU acceleration for animated elements */
+  .map-color-field,
+  .map-card-color-field,
+  .map-color-orb,
+  .hero-orb {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+  }
+
+  /* Minimal scroll optimizations */
+  .scroll-container {
+    overflow: hidden;
+  }
+
+  /* Static CSS for 360 FPS performance */
+  .hero-background {
+    background: linear-gradient(180deg, rgba(244,246,242,0.94), rgba(227,238,230,0.6) 42%, rgba(244,246,242,0.96));
+  }
+
+  .hero-radial-overlay {
+    background: radial-gradient(circle at 44% 40%, rgba(236,216,164,0.08), transparent 28%);
+  }
+
+  .bottom-fade {
+    background: linear-gradient(to top, var(--bg), transparent);
   }
 
   .glass-card {

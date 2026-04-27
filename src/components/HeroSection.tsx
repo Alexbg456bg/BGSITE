@@ -50,11 +50,11 @@ export function HeroSection() {
     target: sectionRef,
     offset: ['start start', 'end start'],
   })
-  const imageY = useTransform(scrollYProgress, [0, 1], [0, 120])
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1.06, 1.18])
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, -72])
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.72], [1, 0])
-  const shadeOpacity = useTransform(scrollYProgress, [0, 1], [0.08, 0.42])
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, 80])
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.12])
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -40])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0])
+  const shadeOpacity = useTransform(scrollYProgress, [0, 1], [0.08, 0.25])
 
   useEffect(() => {
     let cancelled = false
@@ -86,7 +86,7 @@ export function HeroSection() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         style={{ y: imageY, scale: imageScale }}
         className="absolute inset-0 will-change-transform"
         aria-hidden
@@ -108,47 +108,52 @@ export function HeroSection() {
         style={{ opacity: shadeOpacity }}
       />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(233,189,76,0.16),transparent_26%),radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_20%)]" />
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[var(--bg)] to-transparent" />
       <motion.div
-        className="absolute left-0 top-0 z-10 h-1 origin-left bg-[var(--sand)] shadow-[0_0_24px_rgba(236,216,164,0.52)]"
-        style={{ scaleX: scrollYProgress, width: '100%' }}
-        aria-hidden
+        className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[var(--bg)] via-[var(--forest)]/20 via-[var(--sky)]/10 to-transparent"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
       />
-
+      
       <motion.div
         className="relative mx-auto flex min-h-[640px] max-w-6xl items-end px-4 pb-14 pt-24 md:min-h-[760px] md:pb-28"
-        style={{ y: contentY, opacity: contentOpacity }}
+        style={{ 
+          y: contentY, 
+          opacity: contentOpacity,
+          transform: 'translateZ(0)',
+          willChange: 'transform, opacity',
+        }}
       >
         <div className="max-w-4xl">
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.04 }}
+            transition={{ delay: 0.04, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--sky-pale)] md:text-sm md:tracking-[0.34em]"
           >
             Места за отдих
           </motion.p>
           <motion.h1
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            transition={{ delay: 0.1, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="mt-4 max-w-4xl font-display text-[2.65rem] font-semibold leading-[0.96] tracking-tight text-white md:mt-5 md:text-6xl"
           >
             Разгледай България
           </motion.h1>
           <motion.p
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.18 }}
+            transition={{ delay: 0.18, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="mt-4 max-w-2xl text-base leading-relaxed text-white/88 md:mt-6 md:text-xl"
           >
             Тук ще намериш различни места из страната - за разходка,
             почивка или просто да смениш обстановката.
           </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.24 }}
+            transition={{ delay: 0.24, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="mt-7 flex flex-wrap gap-3 md:mt-9 md:gap-4"
           >
             <a
@@ -159,9 +164,9 @@ export function HeroSection() {
             </a>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.3, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="mt-10 grid max-w-3xl grid-cols-2 gap-3 md:mt-32 sm:grid-cols-3"
           >
             {highlights.map((item) => (
