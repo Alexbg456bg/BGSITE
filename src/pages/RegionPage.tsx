@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Breadcrumbs } from '../components/Breadcrumbs'
@@ -23,6 +23,7 @@ function parseCategory(s: string | null): DestinationCategory | 'all' {
 export function RegionPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
+  const resultsRef = useRef<HTMLDivElement>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const { getRegionBySlug, regions } = useSiteData()
   const region = slug ? getRegionBySlug(slug) : undefined
@@ -42,8 +43,15 @@ export function RegionPage() {
   }, [])
 
   const setCategory = (c: DestinationCategory | 'all') => {
-    if (c === 'all') setSearchParams({})
-    else setSearchParams({ category: c })
+    if (c === 'all') setSearchParams({}, { preventScrollReset: true })
+    else setSearchParams({ category: c }, { preventScrollReset: true })
+
+    window.setTimeout(() => {
+      resultsRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }, 80)
   }
 
   const filteredDestinations = useMemo(() => {
@@ -173,7 +181,10 @@ export function RegionPage() {
           />
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 md:mt-6 md:gap-4">
+        <div
+          ref={resultsRef}
+          className="mt-5 scroll-mt-24 flex flex-wrap items-center justify-between gap-3 md:mt-6 md:scroll-mt-28 md:gap-4"
+        >
           <p className="text-sm text-[var(--muted)]">
             {filteredDestinations.length}{' '}
             {filteredDestinations.length === 1 ? 'обект' : 'обекта'}
