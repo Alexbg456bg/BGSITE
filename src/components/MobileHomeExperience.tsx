@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { SearchBar } from './SearchBar'
 import { SmartImage } from './SmartImage'
 import { CATEGORY_LABELS } from '../data/categoryLabels'
 import { useSiteData } from '../hooks/useSiteData'
@@ -83,14 +82,12 @@ export function MobileHomeExperience() {
   return (
     <div className="bg-[var(--bg)]">
       <section 
-          className="relative isolate min-h-[500px] lg:min-h-[600px] overflow-hidden pb-4 pt-16 lg:pb-0 lg:pt-20"
+          className="relative isolate min-h-[500px] overflow-hidden pb-4 pt-16 lg:min-h-[600px] lg:pb-0 lg:pt-20"
           style={{
             backgroundImage: `url(${currentHeroImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
-            filter: 'brightness(1.2) saturate(1.1)',
-            transition: 'all 1s ease'
           }}
         >
         {/* Smart gradient overlays for perfect text readability */}
@@ -102,10 +99,10 @@ export function MobileHomeExperience() {
         
         {/* Text enhancement overlay */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-        
-        {/* Animated ambient orbs */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-[var(--sky)]/20 rounded-full blur-3xl animate-pulse-slow" />
-        <div className="absolute bottom-20 right-10 w-40 h-40 bg-[var(--sand)]/20 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }} />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-28 bg-[linear-gradient(180deg,transparent,rgba(244,246,242,0.22)_46%,var(--bg)_100%)]"
+          aria-hidden
+        />
         
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
@@ -127,7 +124,7 @@ export function MobileHomeExperience() {
               className="w-fit rounded-full border border-white/50 bg-black/30 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md shadow-[0_8px_20px_rgba(0,0,0,0.3)]"
             >
               <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
                 Пътеводител за България
               </span>
             </motion.div>
@@ -160,51 +157,34 @@ export function MobileHomeExperience() {
 
           {/* Right column - Search and stats directly on image */}
           <div className="flex flex-col justify-center lg:flex-1 lg:max-w-md px-4 lg:px-0">
-            {/* Enhanced search bar */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-8 lg:mt-0 group"
-            >
-              <div className="relative rounded-[1.5rem] border border-white/70 bg-white/20 p-4 shadow-[0_32px_80px_rgba(0,0,0,0.2)] backdrop-blur-2xl transition-all duration-300 hover:bg-white/30 hover:shadow-[0_40px_100px_rgba(0,0,0,0.3)]">
-                <div className="absolute inset-0 rounded-[1.5rem] bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <SearchBar className="relative z-10 w-full" />
-              </div>
-            </motion.div>
-
             {/* Enhanced stats cards */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="mt-6 lg:mt-8 grid grid-cols-3 gap-3"
+              className="mt-8 lg:mt-8 grid grid-cols-2 gap-3"
             >
               <motion.div
-                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 className="group relative"
               >
                 <Link
                   to="/regions"
-                  className="block rounded-2xl border border-white/60 bg-gradient-to-br from-white/25 to-white/15 px-3 py-4 text-center text-white backdrop-blur-md transition-all duration-300 hover:from-white/35 hover:to-white/25 hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
+                  className="block rounded-2xl border border-white/50 bg-white/18 px-3 py-4 text-center text-white backdrop-blur-sm transition-colors active:bg-white/24"
                 >
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent to-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <span className="relative z-10 block font-display text-2xl font-black drop-shadow-xl">28</span>
                   <span className="relative z-10 mt-1 block text-[11px] font-bold text-white uppercase tracking-[0.05em]">области</span>
                 </Link>
               </motion.div>
 
               <motion.div
-                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 className="group relative"
               >
                 <Link
                   to="/destinations"
-                  className="block rounded-2xl border border-white/60 bg-gradient-to-br from-white/25 to-white/15 px-3 py-4 text-center text-white backdrop-blur-md transition-all duration-300 hover:from-white/35 hover:to-white/25 hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
+                  className="block rounded-2xl border border-white/50 bg-white/18 px-3 py-4 text-center text-white backdrop-blur-sm transition-colors active:bg-white/24"
                 >
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent to-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <span className="relative z-10 block font-display text-2xl font-black drop-shadow-xl">
                     {allDestinations.length}
                   </span>
@@ -212,27 +192,17 @@ export function MobileHomeExperience() {
                 </Link>
               </motion.div>
 
-              <motion.div
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="group relative"
-              >
-                <a
-                  href="#mobile-regions"
-                  className="block rounded-2xl border border-white/60 bg-gradient-to-br from-white/25 to-white/15 px-3 py-4 text-center text-white backdrop-blur-md transition-all duration-300 hover:from-white/35 hover:to-white/25 hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
-                >
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent to-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <span className="relative z-10 block font-display text-xl font-black drop-shadow-xl">области</span>
-                  <span className="relative z-10 mt-1 block text-[11px] font-bold text-white uppercase tracking-[0.05em]">директория</span>
-                </a>
-              </motion.div>
             </motion.div>
           </div>
         </motion.div>
       </section>
 
-      <section className="py-6">
-        <div className="mx-auto max-w-md">
+      <section className="relative z-20 -mt-px bg-[var(--bg)] pb-6 pt-6">
+        <div
+          className="pointer-events-none absolute inset-x-0 -top-16 h-16 bg-[linear-gradient(180deg,transparent,rgba(244,246,242,0.58)_62%,var(--bg)_100%)]"
+          aria-hidden
+        />
+        <div className="relative z-10 mx-auto max-w-md">
           <div className="flex items-end justify-between gap-4 px-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
@@ -248,7 +218,7 @@ export function MobileHomeExperience() {
               <Link
                 key={item.category}
                 to={`/destinations?category=${item.category}`}
-                className={`relative min-h-32 overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${categoryTone[item.category]} p-4 text-white shadow-[0_16px_38px_rgba(15,61,46,0.12)] transition-all duration-500 active:scale-[0.97] hover:scale-[1.02]`}
+                className={`relative min-h-32 overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${categoryTone[item.category]} p-4 text-white shadow-[0_16px_38px_rgba(15,61,46,0.12)] active:scale-[0.98]`}
                 style={{
                   animationDelay: `${index * 100}ms`,
                   animation: showAllCategories && index >= 6 ? 'slideUp 0.5s ease-out forwards' : undefined
@@ -276,7 +246,7 @@ export function MobileHomeExperience() {
             <div className="mt-4 px-4">
               <button
                 onClick={() => setShowAllCategories(!showAllCategories)}
-                className="group relative w-full rounded-2xl border border-[var(--border)] bg-white px-4 py-3 text-xs font-bold text-[var(--ink-soft)] transition-all duration-300 hover:bg-gradient-to-r hover:from-[var(--mist)] hover:to-white hover:text-[var(--forest-deep)] hover:scale-[1.02] hover:shadow-[0_8px_20px_rgba(15,61,46,0.12)]"
+                className="w-full rounded-2xl border border-[var(--border)] bg-white px-4 py-3 text-xs font-bold text-[var(--ink-soft)] shadow-sm active:scale-[0.99]"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {showAllCategories ? 'По-малко категории' : 'Още категории'}
@@ -290,8 +260,6 @@ export function MobileHomeExperience() {
                   </svg>
                 </span>
                 
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[var(--forest)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </button>
             </div>
           )}
@@ -324,7 +292,7 @@ export function MobileHomeExperience() {
             <Link
               key={region.id}
               to={`/region/${region.slug}`}
-              className="group relative h-80 min-w-[85%] overflow-hidden rounded-[2rem] bg-gradient-to-br from-[var(--forest-deep)] to-[var(--forest)] shadow-[0_24px_60px_rgba(15,61,46,0.25)] transition-all duration-500 ease-out hover:scale-[1.02] hover:shadow-[0_32px_80px_rgba(15,61,46,0.35)] [scroll-snap-align:start]"
+              className="relative h-80 min-w-[85%] overflow-hidden rounded-[2rem] bg-gradient-to-br from-[var(--forest-deep)] to-[var(--forest)] shadow-[0_20px_46px_rgba(15,61,46,0.22)] [scroll-snap-align:start] active:scale-[0.99]"
               style={{
                 animationDelay: `${index * 150}ms`
               }}
@@ -336,21 +304,17 @@ export function MobileHomeExperience() {
                 loading="lazy"
                 decoding="async"
                 maxWidth={720}
-                className="absolute inset-0 h-full w-full transition-transform duration-700 group-hover:scale-110"
+                className="absolute inset-0 h-full w-full"
                 imgClassName="object-cover"
               />
               
               {/* Multi-layered gradient overlays */}
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/95 via-[var(--forest-deep)]/40 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent/50 via-transparent to-[var(--forest)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              {/* Shimmer effect on hover - removed */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
               
               {/* Enhanced badge with animation */}
-              <div className="absolute left-4 top-4 rounded-full border border-white/20 bg-white/20 backdrop-blur-md px-4 py-2 text-xs font-bold text-white shadow-[0_8px_20px_rgba(0,0,0,0.2)] transition-all duration-300 group-hover:scale-110 group-hover:bg-white/30">
+              <div className="absolute left-4 top-4 rounded-full border border-white/20 bg-white/20 backdrop-blur-sm px-4 py-2 text-xs font-bold text-white shadow-[0_8px_20px_rgba(0,0,0,0.18)]">
                 <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                  <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
                   {region.destinations.length} места
                 </span>
               </div>
@@ -358,28 +322,25 @@ export function MobileHomeExperience() {
               {/* Content with enhanced typography */}
               <div className="absolute inset-x-0 bottom-0 p-6 text-white">
                 <div className="space-y-3">
-                  <h3 className="font-display text-3xl font-bold leading-tight drop-shadow-lg transition-transform duration-300 group-hover:translate-x-1">
+                  <h3 className="font-display text-3xl font-bold leading-tight drop-shadow-lg">
                     {region.name}
                   </h3>
-                  <p className="line-clamp-2 text-sm leading-relaxed text-white/85 drop-shadow transition-all duration-300 group-hover:text-white/95">
+                  <p className="line-clamp-2 text-sm leading-relaxed text-white/85 drop-shadow">
                     {region.description}
                   </p>
                 </div>
                 
                 {/* Enhanced button with hover effects */}
                 <div className="mt-6 flex items-center gap-3">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-5 py-2.5 text-xs font-bold text-[var(--forest-deep)] shadow-[0_12px_24px_rgba(0,0,0,0.15)] transition-all duration-300 group-hover:bg-white group-hover:scale-105 group-hover:shadow-[0_16px_32px_rgba(0,0,0,0.2)]">
-                    <span className="transition-transform duration-300 group-hover:translate-x-0.5">Отвори областта</span>
-                    <svg className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-5 py-2.5 text-xs font-bold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(0,0,0,0.14)]">
+                    <span>Отвори областта</span>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </span>
                 </div>
               </div>
               
-              {/* Decorative corner elements */}
-              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="absolute bottom-0 left-0 w-12 h-12 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </Link>
           ))}
         </div>

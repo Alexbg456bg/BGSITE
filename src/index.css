@@ -189,6 +189,28 @@
     background: rgba(79, 140, 171, 0.38);
     animation-delay: -2.8s;
   }
+
+  .mobile-top-search input {
+    height: 2.25rem;
+    border-radius: 0.9rem;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 2rem;
+    padding-right: 0.75rem;
+    font-size: 0.78rem;
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .mobile-top-search > div > span {
+    left: 0.65rem;
+    font-size: 0.82rem;
+  }
+
+  .mobile-top-search ul {
+    left: -3.25rem;
+    right: -3.25rem;
+    margin-top: 0.65rem;
+  }
 }
 
 @keyframes surface-drift {

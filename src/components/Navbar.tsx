@@ -50,6 +50,10 @@ export function Navbar() {
           <span className="hidden sm:inline">Открий България</span>
         </Link>
 
+        <div className="min-w-0 flex-1 md:max-w-sm lg:hidden">
+          <SearchBar className="mobile-top-search w-full" />
+        </div>
+
         <nav
           className="hidden items-center gap-0.5 lg:flex xl:gap-1"
           aria-label="Основна навигация"
@@ -96,8 +100,7 @@ export function Navbar() {
             className="max-h-[calc(100svh-4rem)] overflow-auto border-t border-white/45 bg-white/88 backdrop-blur-2xl lg:hidden"
           >
             <div className="flex flex-col gap-2 px-4 py-4">
-              <div className="flex items-center justify-between">
-                <SearchBar className="w-full" />
+              <div className="flex items-center justify-end">
                 <ThemeToggle />
               </div>
               {links.map(({ to, label, end }) => (

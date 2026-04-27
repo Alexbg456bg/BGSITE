@@ -29,47 +29,74 @@ export function FilterBar({
     [],
   )
 
-  const visibleCategories = useMemo(() => {
-    if (showAllCategories) {
-      return categoryEntries
-    } else {
-      return categoryEntries.slice(0, 5) // Show first 5 categories by default
-    }
-  }, [categoryEntries, showAllCategories])
+  const visibleCategories = useMemo(
+    () => (showAllCategories ? categoryEntries : categoryEntries.slice(0, 5)),
+    [categoryEntries, showAllCategories],
+  )
 
   return (
-    <div className="flex flex-col gap-4 rounded-[1.35rem] border border-[var(--border)] bg-white/88 p-3 shadow-[0_16px_38px_rgba(15,61,46,0.06)] backdrop-blur md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6 md:rounded-2xl md:bg-[var(--surface)] md:p-5 md:shadow-none">
+    <div className="flex flex-col gap-5 rounded-[1.45rem] border border-[var(--border)] bg-white/92 p-3 shadow-[0_18px_44px_rgba(15,61,46,0.08)] backdrop-blur md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6 md:rounded-2xl md:bg-[var(--surface)] md:p-5 md:shadow-none">
       <div className="min-w-0 flex-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
           Категория
         </p>
-        <div className="mt-2 flex gap-2.5 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible md:pb-0">
+
+        <div className="mt-3 grid grid-cols-2 gap-2 md:hidden">
+          <button
+            type="button"
+            onClick={() => onCategoryChange('all')}
+            className={[
+              'min-h-11 rounded-2xl px-3 py-2 text-left text-xs font-bold transition active:scale-[0.98]',
+              category === 'all'
+                ? 'bg-[var(--forest-deep)] text-white shadow-[0_10px_22px_rgba(15,61,46,0.2)]'
+                : 'border border-[var(--border)] bg-white text-[var(--ink-soft)] shadow-sm',
+            ].join(' ')}
+          >
+            <span className="flex items-center gap-1.5">
+              {category === 'all' && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+              Всички
+            </span>
+          </button>
+
+          {categoryEntries.map(({ key, label }) => {
+            const active = category === key
+
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => onCategoryChange(key)}
+                className={[
+                  'min-h-11 rounded-2xl px-3 py-2 text-left text-xs font-bold leading-tight transition active:scale-[0.98]',
+                  active
+                    ? 'border border-[var(--forest-deep)] bg-[var(--forest-deep)] text-white shadow-[0_10px_22px_rgba(15,61,46,0.2)]'
+                    : 'border border-[var(--border)] bg-white text-[var(--ink-soft)] shadow-sm',
+                ].join(' ')}
+              >
+                <span className="flex items-center gap-1.5">
+                  {active && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white" />}
+                  <span>{label}</span>
+                </span>
+              </button>
+            )
+          })}
+        </div>
+
+        <div className="mt-2 hidden gap-2.5 overflow-x-auto pb-2 md:flex md:flex-wrap md:overflow-visible md:pb-0">
           <button
             type="button"
             onClick={() => onCategoryChange('all')}
             className={[
               'group relative shrink-0 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all duration-300 md:py-2 md:font-semibold',
               category === 'all'
-                ? 'bg-gradient-to-r from-[var(--forest-deep)] to-[var(--forest)] text-white shadow-[0_8px_20px_rgba(15,61,46,0.25)] scale-105'
-                : 'bg-white/80 text-[var(--ink-soft)] hover:bg-gradient-to-r hover:from-[var(--mist)] hover:to-white hover:text-[var(--forest-deep)] hover:scale-105 hover:shadow-[0_6px_16px_rgba(15,61,46,0.12)] border border-[var(--border)]/50',
+                ? 'scale-105 bg-gradient-to-r from-[var(--forest-deep)] to-[var(--forest)] text-white shadow-[0_8px_20px_rgba(15,61,46,0.25)]'
+                : 'border border-[var(--border)]/50 bg-white/80 text-[var(--ink-soft)] hover:bg-gradient-to-r hover:from-[var(--mist)] hover:to-white hover:text-[var(--forest-deep)] hover:shadow-[0_6px_16px_rgba(15,61,46,0.12)]',
             ].join(' ')}
           >
-            {/* Active indicator */}
-            {category === 'all' && (
-              <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-pulse" />
-            )}
-            
-            {/* Shimmer effect for active state - removed */}
-            {category === 'all' && (
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-            )}
-            
-            <span className="relative z-10 flex items-center gap-1.5">
-              {category === 'all' && <span className="w-1 h-1 bg-white rounded-full"></span>}
-              Всички
-            </span>
+            Всички
           </button>
-          {visibleCategories.map(({ key, label }, index) => (
+
+          {visibleCategories.map(({ key, label }) => (
             <button
               key={key}
               type="button"
@@ -77,52 +104,21 @@ export function FilterBar({
               className={[
                 'group relative shrink-0 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all duration-300 md:py-2 md:font-semibold',
                 category === key
-                  ? 'bg-gradient-to-r from-[var(--forest-deep)] to-[var(--forest)] text-white shadow-[0_8px_20px_rgba(15,61,46,0.25)] scale-105'
-                  : 'bg-white/80 text-[var(--ink-soft)] hover:bg-gradient-to-r hover:from-[var(--mist)] hover:to-white hover:text-[var(--forest-deep)] hover:scale-105 hover:shadow-[0_6px_16px_rgba(15,61,46,0.12)] border border-[var(--border)]/50',
+                  ? 'scale-105 bg-gradient-to-r from-[var(--forest-deep)] to-[var(--forest)] text-white shadow-[0_8px_20px_rgba(15,61,46,0.25)]'
+                  : 'border border-[var(--border)]/50 bg-white/80 text-[var(--ink-soft)] hover:bg-gradient-to-r hover:from-[var(--mist)] hover:to-white hover:text-[var(--forest-deep)] hover:shadow-[0_6px_16px_rgba(15,61,46,0.12)]',
               ].join(' ')}
-              style={{
-                animationDelay: `${index * 50}ms`
-              }}
             >
-              {/* Active indicator */}
-              {category === key && (
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-pulse" />
-              )}
-              
-              {/* Shimmer effect for active state - removed */}
-              {category === key && (
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-              )}
-              
-              {/* Hover glow effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[var(--forest)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              
-              <span className="relative z-10 flex items-center gap-1.5">
-                {category === key && <span className="w-1 h-1 bg-white rounded-full"></span>}
-                {label}
-              </span>
+              {label}
             </button>
           ))}
+
           {categoryEntries.length > 5 && (
             <button
               type="button"
               onClick={() => setShowAllCategories(!showAllCategories)}
-              className={[
-                'group relative shrink-0 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all duration-300 md:py-2 md:font-semibold',
-                'bg-white/80 text-[var(--ink-soft)] hover:bg-gradient-to-r hover:from-[var(--mist)] hover:to-white hover:text-[var(--forest-deep)] hover:scale-105 hover:shadow-[0_6px_16px_rgba(15,61,46,0.12)] border border-[var(--border)]/50',
-              ].join(' ')}
+              className="group relative shrink-0 rounded-2xl border border-[var(--border)]/50 bg-white/80 px-4 py-2.5 text-xs font-bold text-[var(--ink-soft)] transition-all duration-300 hover:bg-[var(--mist)] md:py-2 md:font-semibold"
             >
-              <span className="relative z-10 flex items-center gap-1.5">
-                {showAllCategories ? 'По-малко' : 'Още'}
-                <svg 
-                  className={`w-3 h-3 transition-transform duration-300 ${showAllCategories ? 'rotate-180' : ''}`} 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </span>
+              {showAllCategories ? 'По-малко' : 'Още'}
             </button>
           )}
         </div>
