@@ -5,7 +5,17 @@ import {
   type CustomDestinationEntry,
 } from './customDestinationsContext'
 
-const ADMIN_API = 'http://localhost:3001/api/admin/destinations'
+const ADMIN_API = '/api/admin/destinations'
+export const ADMIN_PASSWORD_STORAGE_KEY = 'bg_admin_password'
+
+function adminHeaders() {
+  const password = sessionStorage.getItem(ADMIN_PASSWORD_STORAGE_KEY)
+
+  return {
+    'content-type': 'application/json',
+    ...(password ? { 'x-admin-password': password } : {}),
+  }
+}
 
 function isCustomDestinationEntry(value: unknown): value is CustomDestinationEntry {
   const entry = value as Partial<CustomDestinationEntry>
@@ -51,7 +61,7 @@ export function CustomDestinationsProvider({
       saveCustomDestination: async (entry: CustomDestinationEntry) => {
         const response = await fetch(ADMIN_API, {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
+          headers: adminHeaders(),
           body: JSON.stringify(entry),
         })
 
@@ -67,11 +77,17 @@ export function CustomDestinationsProvider({
         id: string,
         options?: { regionSlug?: string; name?: string },
       ) => {
-        const url = new URL(`${ADMIN_API}/${encodeURIComponent(id)}`)
+        const url = new URL(
+          `${ADMIN_API}/${encodeURIComponent(id)}`,
+          window.location.origin,
+        )
         if (options?.regionSlug) url.searchParams.set('regionSlug', options.regionSlug)
         if (options?.name) url.searchParams.set('name', options.name)
 
-        const response = await fetch(url.toString(), { method: 'DELETE' })
+        const response = await fetch(url.toString(), {
+          method: 'DELETE',
+          headers: adminHeaders(),
+        })
 
         if (!response.ok) {
           const details = await response.json().catch(() => null)

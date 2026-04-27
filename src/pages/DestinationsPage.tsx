@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Breadcrumbs } from '../components/Breadcrumbs'
@@ -18,6 +18,7 @@ function parseCategory(value: string | null): DestinationCategory | 'all' {
 
 export function DestinationsPage() {
   const navigate = useNavigate()
+  const resultsRef = useRef<HTMLDivElement>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const { allDestinations, destinationIdsByRegionSlug, regionByDestinationId } =
     useSiteData()
@@ -31,7 +32,7 @@ export function DestinationsPage() {
   const updateFilters = (next: {
     category?: DestinationCategory | 'all'
     regionSlug?: string | 'all'
-  }) => {
+  }, scrollToResults = false) => {
     const nextCategory = next.category ?? category
     const nextRegionSlug = next.regionSlug ?? regionSlug
     const params = new URLSearchParams()
@@ -41,7 +42,16 @@ export function DestinationsPage() {
 
     setCategoryState(nextCategory)
     setRegionSlugState(nextRegionSlug)
-    setSearchParams(params, { replace: true })
+    setSearchParams(params, { replace: true, preventScrollReset: true })
+
+    if (scrollToResults) {
+      window.setTimeout(() => {
+        resultsRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        })
+      }, 80)
+    }
   }
 
   const filtered = useMemo(() => {
@@ -112,9 +122,11 @@ export function DestinationsPage() {
         <div className="sticky top-[4.4rem] z-30 -mx-1 rounded-[1.5rem] bg-[var(--bg)]/82 p-1 backdrop-blur-xl md:static md:mx-0 md:bg-transparent md:p-0 md:backdrop-blur-0">
           <FilterBar
             category={category}
-            onCategoryChange={(nextCategory) => updateFilters({ category: nextCategory })}
+            onCategoryChange={(nextCategory) =>
+              updateFilters({ category: nextCategory }, true)
+            }
             regionSlug={regionSlug}
-            onRegionChange={(slug) => updateFilters({ regionSlug: slug })}
+            onRegionChange={(slug) => updateFilters({ regionSlug: slug }, true)}
           />
         </div>
 
@@ -136,7 +148,10 @@ export function DestinationsPage() {
           )}
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 md:mt-10 md:gap-6 lg:grid-cols-3">
+        <div
+          ref={resultsRef}
+          className="mt-6 scroll-mt-24 grid gap-4 sm:grid-cols-2 md:mt-10 md:scroll-mt-28 md:gap-6 lg:grid-cols-3"
+        >
           {filtered.map((d, i) => {
             const region = regionByDestinationId.get(d.id)
             if (!region) return null

@@ -10,6 +10,7 @@ import { FilterBar } from '../components/FilterBar'
 import { SmartImage } from '../components/SmartImage'
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../data/categoryLabels'
 import { regions as staticRegions } from '../data/regions'
+import { ADMIN_PASSWORD_STORAGE_KEY } from '../context/CustomDestinationsProvider'
 import { useCustomDestinations } from '../context/customDestinationsContext'
 import { useSiteData } from '../hooks/useSiteData'
 import type { Destination, DestinationCategory } from '../types'
@@ -124,6 +125,10 @@ export function AdminPage() {
   const [query, setQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<DestinationCategory | 'all'>('all')
   const [regionFilter, setRegionFilter] = useState<string | 'all'>('all')
+  const [adminPassword, setAdminPassword] = useState(() =>
+    sessionStorage.getItem(ADMIN_PASSWORD_STORAGE_KEY) ?? '',
+  )
+  const [passwordInput, setPasswordInput] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const customIds = useMemo(
@@ -197,6 +202,27 @@ export function AdminPage() {
       lat: coords?.lat ?? current.lat,
       lng: coords?.lng ?? current.lng,
     }))
+  }
+
+  const onUnlock = (event: FormEvent) => {
+    event.preventDefault()
+    const value = passwordInput.trim()
+    if (!value) {
+      setStatus('Въведи админ паролата.')
+      return
+    }
+
+    sessionStorage.setItem(ADMIN_PASSWORD_STORAGE_KEY, value)
+    setAdminPassword(value)
+    setPasswordInput('')
+    setStatus('')
+  }
+
+  const onLock = () => {
+    sessionStorage.removeItem(ADMIN_PASSWORD_STORAGE_KEY)
+    setAdminPassword('')
+    setPasswordInput('')
+    setStatus('')
   }
 
   const removeImage = (index: number) => {
@@ -277,7 +303,7 @@ export function AdminPage() {
       setStatus(
         error instanceof Error
           ? `Неуспешен запис: ${error.message}`
-          : 'Пусни admin server-а с npm run admin и опитай пак.',
+          : 'Провери админ паролата и Supabase настройките.',
       )
     }
   }
@@ -299,9 +325,45 @@ export function AdminPage() {
       setStatus(
         error instanceof Error
           ? `Неуспешно изтриване: ${error.message}`
-          : 'Пусни admin server-а с npm run admin и опитай пак.',
+          : 'Провери админ паролата и Supabase настройките.',
       )
     }
+  }
+
+  if (!adminPassword) {
+    return (
+      <div className="mx-auto flex min-h-[calc(100svh-5rem)] max-w-md items-center px-4 py-12">
+        <form
+          onSubmit={onUnlock}
+          className="w-full rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm"
+        >
+          <Breadcrumbs items={[{ label: 'Начало', to: '/' }, { label: 'Админ' }]} />
+          <h1 className="mt-4 font-display text-3xl font-semibold text-[var(--forest-deep)]">
+            Админ достъп
+          </h1>
+          <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
+            Въведи паролата, за да редактираш дестинациите.
+          </p>
+          <label className="mt-5 block text-sm font-medium text-[var(--ink)]">
+            Парола
+            <input
+              value={passwordInput}
+              onChange={(event) => setPasswordInput(event.target.value)}
+              type="password"
+              autoComplete="current-password"
+              className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 outline-none focus:border-[var(--forest)]"
+            />
+          </label>
+          <button
+            type="submit"
+            className="mt-4 w-full rounded-xl bg-[var(--forest)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--forest-deep)]"
+          >
+            Влез
+          </button>
+          {status && <p className="mt-3 text-sm text-[var(--muted)]">{status}</p>}
+        </form>
+      </div>
+    )
   }
 
   return (
@@ -313,9 +375,15 @@ export function AdminPage() {
             Редакция на дестинации
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted)] md:text-base">
-            За запис във файловете пусни отделно <span className="font-semibold text-[var(--ink)]">npm run admin</span>.
-            Снимките се записват в public/images/destinations, а текстовете в src/data/adminDestinations.json.
+            Промените се записват през защитения онлайн API и се показват в сайта без локален admin server.
           </p>
+          <button
+            type="button"
+            onClick={onLock}
+            className="mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-2 text-sm font-semibold text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)]"
+          >
+            Изход
+          </button>
         </div>
       </section>
 

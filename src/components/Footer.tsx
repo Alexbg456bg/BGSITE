@@ -4,7 +4,6 @@ const footerLinks = [
   { to: '/regions', label: 'Области' },
   { to: '/destinations', label: 'Дестинации' },
   { to: '/favorites', label: 'Любими' },
-  { to: '/admin', label: 'Админ' },
 ]
 
 export function Footer() {

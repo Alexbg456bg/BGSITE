@@ -181,10 +181,7 @@ export function RegionPage() {
           />
         </div>
 
-        <div
-          ref={resultsRef}
-          className="mt-5 scroll-mt-24 flex flex-wrap items-center justify-between gap-3 md:mt-6 md:scroll-mt-28 md:gap-4"
-        >
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 md:mt-6 md:gap-4">
           <p className="text-sm text-[var(--muted)]">
             {filteredDestinations.length}{' '}
             {filteredDestinations.length === 1 ? 'обект' : 'обекта'}
@@ -206,7 +203,10 @@ export function RegionPage() {
           </Link>
         </div>
 
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 md:mt-10 md:gap-6 lg:grid-cols-3">
+        <div
+          ref={resultsRef}
+          className="mt-7 scroll-mt-24 grid gap-4 sm:grid-cols-2 md:mt-10 md:scroll-mt-28 md:gap-6 lg:grid-cols-3"
+        >
           {filteredDestinations.map((destination, index) => (
             <DestinationCard
               key={destination.id}

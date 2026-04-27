@@ -16,7 +16,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
   const fav = isFavorite(d.id)
 
   return (
-    <article className="content-card h-full overflow-hidden rounded-[1.35rem] border border-[var(--border)] bg-white shadow-sm transition hover:shadow-md md:rounded-2xl">
+    <article className="content-card h-full overflow-hidden rounded-[1.35rem] border border-[var(--border)] bg-white shadow-sm [contain-intrinsic-size:430px] [content-visibility:auto] md:rounded-2xl md:transition md:hover:shadow-md">
       <Link
         to={`/destination/${d.id}`}
         state={{ fromRegion: regionSlug }}
@@ -32,9 +32,9 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             maxWidth={720}
             className="h-full w-full"
-            imgClassName="transition duration-700 hover:scale-105"
+            imgClassName="md:transition md:duration-700 md:hover:scale-105"
           />
-          <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-medium text-[var(--forest-deep)] shadow-sm backdrop-blur md:px-3 md:text-xs">
+          <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-medium text-[var(--forest-deep)] shadow-sm md:px-3 md:text-xs md:backdrop-blur">
             {CATEGORY_LABELS[d.category]}
           </span>
           <button
@@ -44,7 +44,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
               event.stopPropagation()
               toggleFavorite(d.id)
             }}
-            className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-lg shadow-sm backdrop-blur transition hover:scale-105"
+            className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-lg shadow-sm md:backdrop-blur md:transition md:hover:scale-105"
             aria-label={fav ? 'Премахни от любими' : 'Добави в любими'}
             title={fav ? 'В любими' : 'Запази'}
           >

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { SmartImage } from './SmartImage'
 import { CATEGORY_LABELS } from '../data/categoryLabels'
 import { useSiteData } from '../hooks/useSiteData'
@@ -57,24 +57,24 @@ const categoryTone: Record<DestinationCategory, string> = {
 
 export function MobileHomeExperience() {
   const [showAllCategories, setShowAllCategories] = useState(false)
-  const [currentHeroImage, setCurrentHeroImage] = useState('')
   const { regions, allDestinations } = useSiteData()
-
-  // Random hero image selection on component mount
-  useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * heroImages.length)
-    setCurrentHeroImage(heroImages[randomIndex])
-  }, [])
+  const currentHeroImage = heroImages[0]
   const featuredRegions = featureRegionSlugs
     .map((slug) => regions.find((region) => region.slug === slug))
     .filter((region): region is Region => Boolean(region))
   const featuredDestinations = allDestinations.slice(0, 6)
-  const categoryCounts = categoryOrder.map((category) => ({
-    category,
-    label: CATEGORY_LABELS[category],
-    count: allDestinations.filter((destination) => destination.category === category)
-      .length,
-  }))
+  const categoryCounts = useMemo(() => {
+    const counts = new Map<DestinationCategory, number>()
+    allDestinations.forEach((destination) => {
+      counts.set(destination.category, (counts.get(destination.category) ?? 0) + 1)
+    })
+
+    return categoryOrder.map((category) => ({
+      category,
+      label: CATEGORY_LABELS[category],
+      count: counts.get(category) ?? 0,
+    }))
+  }, [allDestinations])
   
   // Show only first 6 categories by default, rest on demand
   const visibleCategories = showAllCategories ? categoryCounts : categoryCounts.slice(0, 6)

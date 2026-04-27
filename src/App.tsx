@@ -52,19 +52,47 @@ function LazyRoute({ children }: { children: ReactNode }) {
 
 export default function App() {
   useEffect(() => {
-    const preload = () => {
+    const connection = (
+      navigator as Navigator & {
+        connection?: { saveData?: boolean; effectiveType?: string }
+      }
+    ).connection
+    const isConstrainedConnection =
+      connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType ?? '')
+
+    if (isConstrainedConnection) return
+
+    const preloadCoreRoutes = () => {
       void loadRegionsPage()
       void loadDestinationsPage()
       void loadFavoritesPage()
-      void loadAdminPage()
       void loadRegionPage()
       void loadDestinationPage()
+    }
+
+    const preloadColdRoutes = () => {
       void loadNotFoundPage()
+      void loadAdminPage()
       void loadBulgariaGeoJson()
     }
 
-    const timeoutId = window.setTimeout(preload, 320)
-    return () => window.clearTimeout(timeoutId)
+    const scheduleIdle = (callback: () => void, timeout: number) => {
+      if ('requestIdleCallback' in window) {
+        const id = window.requestIdleCallback(callback, { timeout })
+        return () => window.cancelIdleCallback(id)
+      }
+
+      const id = globalThis.setTimeout(callback, timeout)
+      return () => globalThis.clearTimeout(id)
+    }
+
+    const cancelCore = scheduleIdle(preloadCoreRoutes, 1800)
+    const cancelCold = scheduleIdle(preloadColdRoutes, 6500)
+
+    return () => {
+      cancelCore()
+      cancelCold()
+    }
   }, [])
 
   return (
