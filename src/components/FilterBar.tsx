@@ -59,9 +59,9 @@ export function FilterBar({
               <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-pulse" />
             )}
             
-            {/* Shimmer effect for active state */}
+            {/* Shimmer effect for active state - removed */}
             {category === 'all' && (
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
             )}
             
             <span className="relative z-10 flex items-center gap-1.5">
@@ -89,9 +89,9 @@ export function FilterBar({
                 <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-pulse" />
               )}
               
-              {/* Shimmer effect for active state */}
+              {/* Shimmer effect for active state - removed */}
               {category === key && (
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
               )}
               
               {/* Hover glow effect */}

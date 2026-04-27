@@ -344,8 +344,8 @@ export function MobileHomeExperience() {
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/95 via-[var(--forest-deep)]/40 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-br from-transparent/50 via-transparent to-[var(--forest)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
-              {/* Shimmer effect on hover */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-shimmer" />
+              {/* Shimmer effect on hover - removed */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
               
               {/* Enhanced badge with animation */}
               <div className="absolute left-4 top-4 rounded-full border border-white/20 bg-white/20 backdrop-blur-md px-4 py-2 text-xs font-bold text-white shadow-[0_8px_20px_rgba(0,0,0,0.2)] transition-all duration-300 group-hover:scale-110 group-hover:bg-white/30">
@@ -434,6 +434,7 @@ export function MobileHomeExperience() {
           </div>
         </div>
       </section>
+
     </div>
   )
 }
