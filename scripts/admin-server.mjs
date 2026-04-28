@@ -6,8 +6,11 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(__dirname, '..')
 const dataFile = path.join(repoRoot, 'src', 'data', 'adminDestinations.json')
+const ratingsFile = path.join(repoRoot, 'src', 'data', 'destinationRatings.json')
 const imagesDir = path.join(repoRoot, 'public', 'images', 'destinations')
 const port = Number(process.env.ADMIN_PORT ?? 3001)
+const ratingRateLimitMs = 60 * 1000
+const recentVoteTtlMs = 10 * 60 * 1000
 
 const categoryValues = new Set([
   'monument',
@@ -34,6 +37,31 @@ async function readEntries() {
 
 async function writeEntries(entries) {
   await writeFile(dataFile, `${JSON.stringify(entries, null, 2)}\n`)
+}
+
+async function readRatingState() {
+  try {
+    const raw = await readFile(ratingsFile, 'utf8')
+    const parsed = JSON.parse(raw)
+    return {
+      ratings:
+        parsed && typeof parsed.ratings === 'object' && !Array.isArray(parsed.ratings)
+          ? parsed.ratings
+          : {},
+      recentVotes:
+        parsed &&
+        typeof parsed.recentVotes === 'object' &&
+        !Array.isArray(parsed.recentVotes)
+          ? parsed.recentVotes
+          : {},
+    }
+  } catch {
+    return { ratings: {}, recentVotes: {} }
+  }
+}
+
+async function writeRatingState(state) {
+  await writeFile(ratingsFile, `${JSON.stringify(state, null, 2)}\n`)
 }
 
 function sendJson(res, status, value) {
@@ -78,6 +106,87 @@ function slugify(value) {
     .replace(/[^a-z0-9а-я]+/gi, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 56)
+}
+
+function summarizeRating(id, value) {
+  const total = Number(value?.total ?? 0)
+  const count = Number(value?.count ?? 0)
+
+  return {
+    id,
+    total: Number.isFinite(total) && total > 0 ? total : 0,
+    count: Number.isFinite(count) && count > 0 ? count : 0,
+    average:
+      Number.isFinite(total) && Number.isFinite(count) && count > 0
+        ? Math.round((total / count) * 10) / 10
+        : 0,
+  }
+}
+
+function summarizeRatings(ratings) {
+  return Object.fromEntries(
+    Object.entries(ratings).map(([id, value]) => [id, summarizeRating(id, value)]),
+  )
+}
+
+function pruneRecentVotes(recentVotes, now) {
+  return Object.fromEntries(
+    Object.entries(recentVotes).filter(
+      ([, timestamp]) => now - Number(timestamp) < recentVoteTtlMs,
+    ),
+  )
+}
+
+async function saveRating(req, body) {
+  const id = String(body?.id ?? '').trim()
+  const rating = Number(body?.rating)
+
+  if (!id || id.length > 120 || !/^[a-z0-9-]+$/i.test(id)) {
+    throw new Error('Invalid destination id')
+  }
+
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+    throw new Error('Invalid rating')
+  }
+
+  const now = Date.now()
+  const ip =
+    String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim() ||
+    req.socket.remoteAddress ||
+    'local'
+  const userAgent = String(req.headers['user-agent'] ?? 'unknown')
+  const voterKey = `${id}:${Buffer.from(`${ip}:${userAgent}`).toString('base64')}`
+  const state = await readRatingState()
+  const recentVotes = pruneRecentVotes(state.recentVotes, now)
+  const lastVoteAt = Number(recentVotes[voterKey] ?? 0)
+
+  if (lastVoteAt && now - lastVoteAt < ratingRateLimitMs) {
+    const error = new Error('Please wait before rating again')
+    error.statusCode = 429
+    error.retryAfterSeconds = Math.ceil(
+      (ratingRateLimitMs - (now - lastVoteAt)) / 1000,
+    )
+    throw error
+  }
+
+  const current = summarizeRating(id, state.ratings[id])
+  const nextRatings = {
+    ...state.ratings,
+    [id]: {
+      total: current.total + rating,
+      count: current.count + 1,
+    },
+  }
+
+  await writeRatingState({
+    ratings: nextRatings,
+    recentVotes: {
+      ...recentVotes,
+      [voterKey]: now,
+    },
+  })
+
+  return summarizeRating(id, nextRatings[id])
 }
 
 function extensionFromDataUrl(dataUrl) {
@@ -175,6 +284,18 @@ const server = createServer(async (req, res) => {
       return
     }
 
+    if (req.method === 'GET' && url.pathname === '/api/ratings') {
+      const state = await readRatingState()
+      sendJson(res, 200, summarizeRatings(state.ratings))
+      return
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/ratings') {
+      const body = await readBody(req)
+      sendJson(res, 200, await saveRating(req, JSON.parse(body)))
+      return
+    }
+
     if (req.method === 'POST' && url.pathname === '/api/admin/destinations') {
       const body = await readBody(req)
       const entry = await normalizeEntry(JSON.parse(body))
@@ -224,7 +345,10 @@ const server = createServer(async (req, res) => {
 
     sendError(res, 404, 'Not found')
   } catch (error) {
-    sendError(res, 400, error instanceof Error ? error.message : 'Unknown error')
+    sendJson(res, error.statusCode || 400, {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      retryAfterSeconds: error.retryAfterSeconds,
+    })
   }
 })
 

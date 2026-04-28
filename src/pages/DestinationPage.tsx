@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { SmartImage } from '../components/SmartImage'
 import { ImageGallery } from '../components/ImageGallery'
+import { DestinationRating } from '../components/DestinationRating'
 import { CATEGORY_LABELS } from '../data/categoryLabels'
 import { TRAIL_DETAILS } from '../data/trailDetails'
 import { useSiteData } from '../hooks/useSiteData'
@@ -94,6 +95,7 @@ export function DestinationPage() {
           <p className="mt-4 text-base leading-relaxed text-[var(--muted)] md:mt-6 md:text-lg">
             {d.shortDescription}
           </p>
+          <DestinationRating destinationId={d.id} />
           {trailDetails && (
             <section className="mt-5 space-y-3 md:mt-6">
               <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">

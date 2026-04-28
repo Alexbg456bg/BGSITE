@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
 import { SmartImage } from './SmartImage'
+import { TopRatedDestinationsSection } from './TopRatedDestinationsSection'
 import { CATEGORY_LABELS } from '../data/categoryLabels'
 import { useSiteData } from '../hooks/useSiteData'
 import type { DestinationCategory, Region } from '../types'
@@ -346,6 +347,8 @@ export function MobileHomeExperience() {
         </div>
 
               </section>
+
+      <TopRatedDestinationsSection variant="mobile" />
 
       <section className="px-4 py-6">
         <div className="mx-auto max-w-md">

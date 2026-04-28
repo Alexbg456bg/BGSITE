@@ -8,6 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/admin': 'http://localhost:3001',
+      '/api/ratings': 'http://localhost:3001',
     },
   },
 })

@@ -8,6 +8,7 @@ import { HeroSection } from '../components/HeroSection'
 import { BulgariaMap } from '../components/BulgariaMap'
 import { RegionCard } from '../components/RegionCard'
 import { MobileHomeExperience } from '../components/MobileHomeExperience'
+import { TopRatedDestinationsSection } from '../components/TopRatedDestinationsSection'
 import { useSiteData } from '../hooks/useSiteData'
 
 const featuredRegionSlugs = [
@@ -150,6 +151,8 @@ export function HomePage() {
           </motion.div>
         </div>
       </motion.section>
+
+      <TopRatedDestinationsSection variant="desktop" />
 
       <motion.section
         ref={regionsSectionRef}

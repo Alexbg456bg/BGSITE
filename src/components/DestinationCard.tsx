@@ -4,6 +4,7 @@ import type { Destination } from '../types'
 import { CATEGORY_LABELS } from '../data/categoryLabels'
 import { useFavorites } from '../hooks/useFavorites'
 import { SmartImage } from './SmartImage'
+import { DestinationRating } from './DestinationRating'
 
 type Props = {
   destination: Destination
@@ -67,6 +68,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
           <p className="mt-1 text-xs font-medium text-[var(--forest)]">
             {d.location}
           </p>
+          <DestinationRating destinationId={d.id} compact />
           <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-[var(--muted)]">
             {d.shortDescription}
           </p>
