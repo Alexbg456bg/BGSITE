@@ -22,6 +22,12 @@ The API stores destination metadata in:
 admin-data/admin-destinations.json
 ```
 
+Destination ratings are stored in:
+
+```text
+admin-data/destination-ratings.json
+```
+
 ## 3. Add Vercel environment variables
 
 In Vercel Project Settings -> Environment Variables, add:
@@ -31,6 +37,7 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 SUPABASE_STORAGE_BUCKET=destination-images
 SUPABASE_ADMIN_DATA_BUCKET=admin-data
+SUPABASE_RATINGS_DATA_PATH=destination-ratings.json
 ADMIN_PASSWORD=choose-a-strong-password
 GITHUB_SYNC_TOKEN=your-github-token
 GITHUB_REPO_OWNER=Alexbg456bg

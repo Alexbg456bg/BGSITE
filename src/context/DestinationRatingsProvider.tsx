@@ -3,6 +3,7 @@ import {
   DestinationRatingsContext,
   type DestinationRating,
 } from './ratingsContext'
+import bundledRatings from '../data/destinationRatings.json'
 
 const RATINGS_API = '/api/ratings'
 
@@ -42,7 +43,7 @@ export function DestinationRatingsProvider({
   children: ReactNode
 }) {
   const [ratings, setRatings] = useState<Map<string, DestinationRating>>(
-    () => new Map(),
+    () => normalizeRatings(bundledRatings.ratings),
   )
 
   useEffect(() => {
