@@ -7,6 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(__dirname, '..')
 const dataFile = path.join(repoRoot, 'src', 'data', 'adminDestinations.json')
 const ratingsFile = path.join(repoRoot, 'src', 'data', 'destinationRatings.json')
+const analyticsFile = path.join(repoRoot, 'src', 'data', 'siteAnalytics.json')
 const imagesDir = path.join(repoRoot, 'public', 'images', 'destinations')
 const port = Number(process.env.ADMIN_PORT ?? 3001)
 const ratingCooldownMs = 60 * 1000
@@ -71,6 +72,84 @@ async function readRatingState() {
 
 async function writeRatingState(state) {
   await writeFile(ratingsFile, `${JSON.stringify(state, null, 2)}\n`)
+}
+
+function analyticsDayKey(date = new Date()) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Sofia',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date)
+}
+
+function previousAnalyticsDays(count) {
+  return Array.from({ length: count }, (_, index) => {
+    const date = new Date()
+    date.setDate(date.getDate() - index)
+    return analyticsDayKey(date)
+  })
+}
+
+async function readAnalyticsState() {
+  try {
+    const raw = await readFile(analyticsFile, 'utf8')
+    const parsed = JSON.parse(raw)
+    return {
+      days:
+        parsed && typeof parsed.days === 'object' && !Array.isArray(parsed.days)
+          ? parsed.days
+          : {},
+    }
+  } catch {
+    return { days: {} }
+  }
+}
+
+async function writeAnalyticsState(state) {
+  await writeFile(analyticsFile, `${JSON.stringify(state, null, 2)}\n`)
+}
+
+function summarizeAnalytics(days) {
+  const todayKey = analyticsDayKey()
+  const weekKeys = previousAnalyticsDays(7)
+  const weeklyVisitors = new Set()
+
+  for (const key of weekKeys) {
+    const visitors = Array.isArray(days[key]) ? days[key] : []
+    visitors.forEach((visitor) => weeklyVisitors.add(visitor))
+  }
+
+  return {
+    today: Array.isArray(days[todayKey]) ? days[todayKey].length : 0,
+    week: weeklyVisitors.size,
+    todayKey,
+  }
+}
+
+async function recordVisit(req, body) {
+  const todayKey = analyticsDayKey()
+  const ip =
+    String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim() ||
+    req.socket.remoteAddress ||
+    'local'
+  const userAgent = String(req.headers['user-agent'] ?? 'unknown')
+  const visitorId = String(body?.visitorId ?? '').slice(0, 120)
+  const visitorKey = Buffer.from(`${visitorId}:${ip}:${userAgent}`).toString('base64')
+  const state = await readAnalyticsState()
+  const visitors = new Set(
+    Array.isArray(state.days[todayKey]) ? state.days[todayKey] : [],
+  )
+  visitors.add(visitorKey)
+
+  const keepKeys = new Set(previousAnalyticsDays(60))
+  const days = Object.fromEntries(
+    Object.entries(state.days).filter(([key]) => keepKeys.has(key)),
+  )
+  days[todayKey] = Array.from(visitors)
+  await writeAnalyticsState({ days })
+
+  return summarizeAnalytics(days)
 }
 
 function sendJson(res, status, value) {
@@ -249,6 +328,11 @@ async function normalizeEntry(entry) {
   const name = String(destination.name ?? '').trim()
   const location = String(destination.location ?? '').trim()
   const shortDescription = String(destination.shortDescription ?? '').trim()
+  const trailSights = String(destination.trailDetails?.sights ?? '').trim()
+  const trailRoute = String(destination.trailDetails?.route ?? '').trim()
+  const trailSuitableFor = String(
+    destination.trailDetails?.suitableFor ?? '',
+  ).trim()
   const category = String(destination.category ?? 'natural')
 
   if (!regionSlug) throw new Error('Missing region')
@@ -283,6 +367,14 @@ async function normalizeEntry(entry) {
       name,
       category,
       shortDescription,
+      trailDetails:
+        trailSights || trailRoute || trailSuitableFor
+          ? {
+              sights: trailSights,
+              route: trailRoute,
+              suitableFor: trailSuitableFor,
+            }
+          : undefined,
       location,
       image: savedImages[0],
       images: savedImages,
@@ -312,6 +404,18 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/api/ratings') {
       const state = await readRatingState()
       sendJson(res, 200, summarizeRatings(state.ratings))
+      return
+    }
+
+    if (req.method === 'GET' && url.pathname === '/api/analytics') {
+      const state = await readAnalyticsState()
+      sendJson(res, 200, summarizeAnalytics(state.days))
+      return
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/analytics') {
+      const body = await readBody(req)
+      sendJson(res, 200, await recordVisit(req, JSON.parse(body || '{}')))
       return
     }
 

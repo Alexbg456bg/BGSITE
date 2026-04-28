@@ -181,6 +181,11 @@ async function normalizeEntry(entry) {
   const name = String(destination.name ?? '').trim()
   const location = String(destination.location ?? '').trim()
   const shortDescription = String(destination.shortDescription ?? '').trim()
+  const trailSights = String(destination.trailDetails?.sights ?? '').trim()
+  const trailRoute = String(destination.trailDetails?.route ?? '').trim()
+  const trailSuitableFor = String(
+    destination.trailDetails?.suitableFor ?? '',
+  ).trim()
   const category = String(destination.category ?? 'natural')
 
   if (!regionSlug) throw new Error('Missing region')
@@ -215,6 +220,14 @@ async function normalizeEntry(entry) {
       name,
       category,
       shortDescription,
+      trailDetails:
+        trailSights || trailRoute || trailSuitableFor
+          ? {
+              sights: trailSights,
+              route: trailRoute,
+              suitableFor: trailSuitableFor,
+            }
+          : undefined,
       location,
       image: savedImages[0],
       images: savedImages,

@@ -15,6 +15,11 @@ export interface Destination {
   name: string
   category: DestinationCategory
   shortDescription: string
+  trailDetails?: {
+    sights: string
+    route: string
+    suitableFor: string
+  }
   location: string
   image: string
   images?: string[]

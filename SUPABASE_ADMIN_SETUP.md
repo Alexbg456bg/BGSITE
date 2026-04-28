@@ -28,6 +28,12 @@ Destination ratings are stored in:
 admin-data/destination-ratings.json
 ```
 
+Visitor analytics are stored in:
+
+```text
+admin-data/site-analytics.json
+```
+
 ## 3. Add Vercel environment variables
 
 In Vercel Project Settings -> Environment Variables, add:
@@ -38,6 +44,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 SUPABASE_STORAGE_BUCKET=destination-images
 SUPABASE_ADMIN_DATA_BUCKET=admin-data
 SUPABASE_RATINGS_DATA_PATH=destination-ratings.json
+SUPABASE_ANALYTICS_DATA_PATH=site-analytics.json
 ADMIN_PASSWORD=choose-a-strong-password
 GITHUB_SYNC_TOKEN=your-github-token
 GITHUB_REPO_OWNER=Alexbg456bg

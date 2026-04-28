@@ -1,17 +1,21 @@
 import {
+  useEffect,
   useMemo,
   useRef,
   useState,
   type ChangeEvent,
   type FormEvent,
 } from 'react'
+import { Link } from 'react-router-dom'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { FilterBar } from '../components/FilterBar'
 import { SmartImage } from '../components/SmartImage'
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../data/categoryLabels'
 import { regions as staticRegions } from '../data/regions'
+import { TRAIL_DETAILS } from '../data/trailDetails'
 import { ADMIN_PASSWORD_STORAGE_KEY } from '../context/CustomDestinationsProvider'
 import { useCustomDestinations } from '../context/customDestinationsContext'
+import { useDestinationRatings } from '../hooks/useDestinationRatings'
 import { useSiteData } from '../hooks/useSiteData'
 import type { Destination, DestinationCategory } from '../types'
 
@@ -22,6 +26,9 @@ type FormState = {
   category: DestinationCategory
   location: string
   shortDescription: string
+  trailSights: string
+  trailRoute: string
+  trailSuitableFor: string
   mapsUrl: string
   lat: string
   lng: string
@@ -35,6 +42,9 @@ const blankForm: FormState = {
   category: 'natural',
   location: '',
   shortDescription: '',
+  trailSights: '',
+  trailRoute: '',
+  trailSuitableFor: '',
   mapsUrl: '',
   lat: '',
   lng: '',
@@ -63,6 +73,8 @@ function formFromDestination(
   destination: Destination,
   regionSlug: string,
 ): FormState {
+  const trailDetails = destination.trailDetails ?? TRAIL_DETAILS[destination.id]
+
   return {
     id: destination.id,
     name: destination.name,
@@ -70,6 +82,9 @@ function formFromDestination(
     category: destination.category,
     location: destination.location,
     shortDescription: destination.shortDescription,
+    trailSights: trailDetails?.sights ?? '',
+    trailRoute: trailDetails?.route ?? '',
+    trailSuitableFor: trailDetails?.suitableFor ?? '',
     mapsUrl: destination.mapsUrl ?? '',
     lat: destination.coords?.lat ? String(destination.coords.lat) : '',
     lng: destination.coords?.lng ? String(destination.coords.lng) : '',
@@ -119,9 +134,13 @@ export function AdminPage() {
     customDestinations,
     saveCustomDestination,
     removeCustomDestination,
+    reloadCustomDestinations,
   } = useCustomDestinations()
+  const { ratings } = useDestinationRatings()
   const [form, setForm] = useState<FormState>(blankForm)
   const [status, setStatus] = useState('')
+  const [isReloading, setIsReloading] = useState(false)
+  const [analytics, setAnalytics] = useState({ today: 0, week: 0 })
   const [query, setQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<DestinationCategory | 'all'>('all')
   const [regionFilter, setRegionFilter] = useState<string | 'all'>('all')
@@ -133,6 +152,14 @@ export function AdminPage() {
 
   const customIds = useMemo(
     () => new Set(customDestinations.map((entry) => entry.destination.id)),
+    [customDestinations],
+  )
+  const activeCustomCount = useMemo(
+    () => customDestinations.filter((entry) => !entry.deleted).length,
+    [customDestinations],
+  )
+  const hiddenCount = useMemo(
+    () => customDestinations.filter((entry) => entry.deleted).length,
     [customDestinations],
   )
 
@@ -167,6 +194,81 @@ export function AdminPage() {
   const selectedRegion = staticRegions.find(
     (region) => region.slug === form.regionSlug,
   )
+  const selectedDestinationUrl = form.id ? `/destination/${form.id}` : ''
+  const formChecks = useMemo(
+    () => [
+      {
+        label: 'Име, локация и описание',
+        ok: Boolean(
+          form.name.trim() &&
+            form.location.trim() &&
+            form.shortDescription.trim(),
+        ),
+      },
+      {
+        label: 'Описание поне 90 символа',
+        ok: form.shortDescription.trim().length >= 90,
+      },
+      {
+        label: 'Подробни секции',
+        ok: Boolean(
+          form.trailSights.trim() &&
+            form.trailRoute.trim() &&
+            form.trailSuitableFor.trim(),
+        ),
+      },
+      {
+        label: 'Поне една снимка',
+        ok: form.images.length > 0,
+      },
+      {
+        label: 'Галерия с 2+ снимки',
+        ok: form.images.length >= 2,
+      },
+      {
+        label: 'Google Maps линк',
+        ok: Boolean(form.mapsUrl.trim()),
+      },
+      {
+        label: 'Координати за картата',
+        ok: Boolean(form.lat.trim() && form.lng.trim()),
+      },
+    ],
+    [
+      form.images.length,
+      form.lat,
+      form.lng,
+      form.location,
+      form.mapsUrl,
+      form.name,
+      form.shortDescription,
+      form.trailRoute,
+      form.trailSights,
+      form.trailSuitableFor,
+    ],
+  )
+
+  useEffect(() => {
+    if (!adminPassword) return
+
+    async function loadAnalytics() {
+      try {
+        const response = await fetch('/api/analytics', {
+          headers: { 'x-admin-password': adminPassword },
+        })
+        if (!response.ok) return
+        const data = await response.json()
+        setAnalytics({
+          today: Number(data?.today ?? 0),
+          week: Number(data?.week ?? 0),
+        })
+      } catch {
+        // Analytics are optional in local/static environments.
+      }
+    }
+
+    void loadAnalytics()
+  }, [adminPassword])
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((current) => ({ ...current, [key]: value }))
@@ -225,6 +327,40 @@ export function AdminPage() {
     setStatus('')
   }
 
+  const onReload = async () => {
+    setIsReloading(true)
+    setStatus('Презареждане от API...')
+    try {
+      await reloadCustomDestinations()
+      const response = await fetch('/api/analytics', {
+        headers: { 'x-admin-password': adminPassword },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setAnalytics({
+          today: Number(data?.today ?? 0),
+          week: Number(data?.week ?? 0),
+        })
+      }
+      setStatus('Данните са презаредени.')
+    } catch (error) {
+      setStatus(
+        error instanceof Error
+          ? `Неуспешно презареждане: ${error.message}`
+          : 'Неуспешно презареждане.',
+      )
+    } finally {
+      setIsReloading(false)
+    }
+  }
+
+  const copyDestinationId = async () => {
+    if (!form.id) return
+
+    await navigator.clipboard?.writeText(form.id)
+    setStatus('ID-то е копирано.')
+  }
+
   const removeImage = (index: number) => {
     const removed = form.images[index]
     setForm((current) => ({
@@ -278,6 +414,14 @@ export function AdminPage() {
     const lat = Number(form.lat)
     const lng = Number(form.lng)
     const id = form.id || `custom-${slugify(form.name) || Date.now()}`
+    const trailDetails = {
+      sights: form.trailSights.trim(),
+      route: form.trailRoute.trim(),
+      suitableFor: form.trailSuitableFor.trim(),
+    }
+    const hasTrailDetails = Boolean(
+      trailDetails.sights || trailDetails.route || trailDetails.suitableFor,
+    )
 
     try {
       await saveCustomDestination({
@@ -288,6 +432,7 @@ export function AdminPage() {
           category: form.category,
           location: form.location.trim(),
           shortDescription: form.shortDescription.trim(),
+          trailDetails: hasTrailDetails ? trailDetails : undefined,
           image: form.images[0],
           images: form.images,
           mapsUrl: form.mapsUrl.trim() || undefined,
@@ -384,7 +529,61 @@ export function AdminPage() {
           >
             Изход
           </button>
+          <button
+            type="button"
+            onClick={onReload}
+            disabled={isReloading}
+            className="ml-3 mt-4 rounded-xl border border-[var(--border)] bg-white px-4 py-2 text-sm font-semibold text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)] disabled:opacity-60"
+          >
+            Презареди данните
+          </button>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pt-8">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--forest)]">
+              Общо места
+            </p>
+            <p className="mt-2 font-display text-3xl font-semibold text-[var(--forest-deep)]">
+              {allDestinations.length}
+            </p>
+            <p className="mt-1 text-xs text-[var(--muted)]">
+              {activeCustomCount} добавени/редактирани
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--forest)]">
+              Посетители днес
+            </p>
+            <p className="mt-2 font-display text-3xl font-semibold text-[var(--forest-deep)]">
+              {analytics.today}
+            </p>
+            <p className="mt-1 text-xs text-[var(--muted)]">уникални за деня</p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--forest)]">
+              Посетители 7 дни
+            </p>
+            <p className="mt-2 font-display text-3xl font-semibold text-[var(--forest-deep)]">
+              {analytics.week}
+            </p>
+            <p className="mt-1 text-xs text-[var(--muted)]">уникални за седмицата</p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--forest)]">
+              Оценки
+            </p>
+            <p className="mt-2 font-display text-3xl font-semibold text-[var(--forest-deep)]">
+              {ratings.reduce((sum, rating) => sum + rating.count, 0)}
+            </p>
+            <p className="mt-1 text-xs text-[var(--muted)]">
+              {hiddenCount} скрити места
+            </p>
+          </div>
+        </div>
+
       </section>
 
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 lg:grid-cols-[0.8fr_1.2fr]">
@@ -463,6 +662,57 @@ export function AdminPage() {
           onSubmit={onSubmit}
           className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm md:p-6"
         >
+          <div className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="font-display text-xl font-semibold text-[var(--forest-deep)]">
+                  Проверка на записа
+                </h2>
+                <p className="mt-1 text-xs text-[var(--muted)]">
+                  Бърз списък с неща, които правят дестинацията по-пълна.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {selectedDestinationUrl && (
+                  <Link
+                    to={selectedDestinationUrl}
+                    className="rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-xs font-semibold text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)]"
+                  >
+                    Преглед
+                  </Link>
+                )}
+                {form.id && (
+                  <button
+                    type="button"
+                    onClick={copyDestinationId}
+                    className="rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-xs font-semibold text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)]"
+                  >
+                    Копирай ID
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {formChecks.map((check) => (
+                <div
+                  key={check.label}
+                  className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm"
+                >
+                  <span
+                    className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold ${
+                      check.ok
+                        ? 'bg-[var(--forest)] text-white'
+                        : 'bg-amber-100 text-amber-700'
+                    }`}
+                  >
+                    {check.ok ? '✓' : '!'}
+                  </span>
+                  <span className="text-[var(--ink-soft)]">{check.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="grid gap-4 md:grid-cols-2">
             <label className="block text-sm font-medium text-[var(--ink)]">
               Име
@@ -525,6 +775,52 @@ export function AdminPage() {
               className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 outline-none focus:border-[var(--forest)]"
             />
           </label>
+
+          <section className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4">
+            <div>
+              <h3 className="font-display text-xl font-semibold text-[var(--forest-deep)]">
+                Подробно описание
+              </h3>
+              <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
+                Тези полета се показват като отделни карти в страницата на
+                дестинацията.
+              </p>
+            </div>
+            <div className="mt-4 grid gap-4">
+              <label className="block text-sm font-medium text-[var(--ink)]">
+                Какво ще видиш
+                <textarea
+                  value={form.trailSights}
+                  onChange={(event) => setField('trailSights', event.target.value)}
+                  rows={3}
+                  placeholder="Борови гори, мостчета, гледки, езера..."
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
+                />
+              </label>
+              <label className="block text-sm font-medium text-[var(--ink)]">
+                Каква е пътеката
+                <textarea
+                  value={form.trailRoute}
+                  onChange={(event) => setField('trailRoute', event.target.value)}
+                  rows={3}
+                  placeholder="Откъде тръгва, какъв е теренът, колко е трудна..."
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
+                />
+              </label>
+              <label className="block text-sm font-medium text-[var(--ink)]">
+                Подходящо за
+                <textarea
+                  value={form.trailSuitableFor}
+                  onChange={(event) =>
+                    setField('trailSuitableFor', event.target.value)
+                  }
+                  rows={3}
+                  placeholder="Семейства, начинаещи, целодневен преход..."
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
+                />
+              </label>
+            </div>
+          </section>
 
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             <label className="block text-sm font-medium text-[var(--ink)]">
@@ -684,3 +980,4 @@ export function AdminPage() {
     </div>
   )
 }
+

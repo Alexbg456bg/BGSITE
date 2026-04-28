@@ -33,7 +33,7 @@ export function DestinationPage() {
 
   const { destination: d, region } = found
   const fav = isFavorite(d.id)
-  const trailDetails = TRAIL_DETAILS[d.id]
+  const trailDetails = d.trailDetails ?? TRAIL_DETAILS[d.id]
   const galleryImages = [d.image, ...(d.images ?? [])].filter(
     (image, index, all): image is string =>
       Boolean(image) && all.indexOf(image) === index,

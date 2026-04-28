@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, type ReactNode } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { loadBulgariaGeoJson } from './data/bulgariaGeoJson'
@@ -51,6 +51,8 @@ function LazyRoute({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation()
+
   useEffect(() => {
     const connection = (
       navigator as Navigator & {
@@ -94,6 +96,38 @@ export default function App() {
       cancelCold()
     }
   }, [])
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/admin')) return
+
+    const today = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/Sofia',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date())
+    const trackedKey = `bg_analytics_tracked_${today}`
+
+    if (sessionStorage.getItem(trackedKey)) return
+
+    const visitorStorageKey = 'bg_analytics_visitor_id'
+    let visitorId = localStorage.getItem(visitorStorageKey)
+    if (!visitorId) {
+      visitorId =
+        crypto.randomUUID?.() ??
+        `${Date.now()}-${Math.random().toString(36).slice(2)}`
+      localStorage.setItem(visitorStorageKey, visitorId)
+    }
+
+    sessionStorage.setItem(trackedKey, '1')
+    void fetch('/api/analytics', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ visitorId }),
+    }).catch(() => {
+      sessionStorage.removeItem(trackedKey)
+    })
+  }, [location.pathname])
 
   return (
     <ThemeProvider>

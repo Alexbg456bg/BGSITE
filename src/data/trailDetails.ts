@@ -1,4 +1,4 @@
-type TrailDetail = {
+export type TrailDetail = {
   sights: string
   route: string
   suitableFor: string
