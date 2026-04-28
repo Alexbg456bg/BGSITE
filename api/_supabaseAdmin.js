@@ -1,6 +1,7 @@
 const DEFAULT_IMAGE_BUCKET = 'destination-images'
 const DEFAULT_DATA_BUCKET = 'admin-data'
 const DEFAULT_MANIFEST_PATH = 'admin-destinations.json'
+const DEFAULT_GITHUB_SYNC_PATH = 'src/data/adminDestinations.json'
 
 const categoryValues = new Set([
   'monument',
@@ -31,6 +32,12 @@ function getConfig() {
       process.env.SUPABASE_ADMIN_DATA_BUCKET || DEFAULT_DATA_BUCKET,
     manifestPath:
       process.env.SUPABASE_ADMIN_DATA_PATH || DEFAULT_MANIFEST_PATH,
+    githubToken: process.env.GITHUB_SYNC_TOKEN || '',
+    githubRepoOwner: process.env.GITHUB_REPO_OWNER || '',
+    githubRepoName: process.env.GITHUB_REPO_NAME || '',
+    githubBranch: process.env.GITHUB_SYNC_BRANCH || 'main',
+    githubSyncPath:
+      process.env.GITHUB_SYNC_PATH || DEFAULT_GITHUB_SYNC_PATH,
   }
 }
 
@@ -259,6 +266,61 @@ async function writeManifest(entries) {
   if (!response.ok) {
     const details = await response.text().catch(() => '')
     throw new Error(details || 'Admin manifest upload failed')
+  }
+
+  await syncGitHubFile(entries, config)
+}
+
+async function syncGitHubFile(entries, config = getConfig()) {
+  if (
+    !config.githubToken ||
+    !config.githubRepoOwner ||
+    !config.githubRepoName
+  ) {
+    return
+  }
+
+  const path = config.githubSyncPath
+  const baseUrl = `https://api.github.com/repos/${config.githubRepoOwner}/${config.githubRepoName}/contents/${path}`
+  const refQuery = `?ref=${encodeURIComponent(config.githubBranch)}`
+  let sha
+
+  const existing = await fetch(`${baseUrl}${refQuery}`, {
+    headers: {
+      authorization: `Bearer ${config.githubToken}`,
+      accept: 'application/vnd.github+json',
+      'user-agent': 'bgsite-admin-sync',
+    },
+  })
+
+  if (existing.ok) {
+    const details = await existing.json()
+    sha = details?.sha
+  } else if (existing.status !== 404) {
+    const details = await existing.text().catch(() => '')
+    throw new Error(details || 'GitHub sync read failed')
+  }
+
+  const content = `${JSON.stringify(entries, null, 2)}\n`
+  const response = await fetch(baseUrl, {
+    method: 'PUT',
+    headers: {
+      authorization: `Bearer ${config.githubToken}`,
+      accept: 'application/vnd.github+json',
+      'content-type': 'application/json',
+      'user-agent': 'bgsite-admin-sync',
+    },
+    body: JSON.stringify({
+      message: `Sync admin destinations (${entries.length} entries)`,
+      content: Buffer.from(content, 'utf8').toString('base64'),
+      branch: config.githubBranch,
+      ...(sha ? { sha } : {}),
+    }),
+  })
+
+  if (!response.ok) {
+    const details = await response.text().catch(() => '')
+    throw new Error(details || 'GitHub sync write failed')
   }
 }
 
