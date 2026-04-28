@@ -2,8 +2,7 @@ import crypto from 'node:crypto'
 
 const DEFAULT_DATA_BUCKET = 'admin-data'
 const DEFAULT_RATINGS_PATH = 'destination-ratings.json'
-const RATE_LIMIT_MS = 60 * 1000
-const RECENT_VOTE_TTL_MS = 10 * 60 * 1000
+const RATING_COOLDOWN_MS = 60 * 1000
 
 function getConfig() {
   const supabaseUrl = process.env.SUPABASE_URL
@@ -36,14 +35,24 @@ function normalizeState(value) {
     value && typeof value.ratings === 'object' && !Array.isArray(value.ratings)
       ? value.ratings
       : {}
-  const recentVotes =
+  const votedVisitors =
     value &&
-    typeof value.recentVotes === 'object' &&
-    !Array.isArray(value.recentVotes)
-      ? value.recentVotes
+    typeof value.votedVisitors === 'object' &&
+    !Array.isArray(value.votedVisitors)
+      ? value.votedVisitors
+      : value &&
+          typeof value.recentVotes === 'object' &&
+          !Array.isArray(value.recentVotes)
+        ? value.recentVotes
+      : {}
+  const lastRatingByVisitor =
+    value &&
+    typeof value.lastRatingByVisitor === 'object' &&
+    !Array.isArray(value.lastRatingByVisitor)
+      ? value.lastRatingByVisitor
       : {}
 
-  return { ratings, recentVotes }
+  return { ratings, votedVisitors, lastRatingByVisitor }
 }
 
 async function readState(config = getConfig()) {
@@ -137,12 +146,15 @@ function summarizeAll(ratings) {
   )
 }
 
-function pruneRecentVotes(recentVotes, now) {
-  return Object.fromEntries(
-    Object.entries(recentVotes).filter(
-      ([, timestamp]) => now - Number(timestamp) < RECENT_VOTE_TTL_MS,
-    ),
+function getLastRatingAtForVisitor(state, visitorHash) {
+  const saved = Number(state.lastRatingByVisitor[visitorHash] ?? 0)
+  const fromDestinationVotes = Object.entries(state.votedVisitors).reduce(
+    (latest, [key, timestamp]) =>
+      key.endsWith(`:${visitorHash}`) ? Math.max(latest, Number(timestamp) || 0) : latest,
+    0,
   )
+
+  return Math.max(saved, fromDestinationVotes)
 }
 
 export async function readRatings() {
@@ -155,16 +167,26 @@ export async function saveRating(req, rawBody) {
   const id = cleanDestinationId(rawBody?.id)
   const rating = normalizeRatingValue(rawBody?.rating)
   const now = Date.now()
-  const voterKey = `${id}:${getClientHash(req, config)}`
+  const visitorHash = getClientHash(req, config)
+  const voterKey = `${id}:${visitorHash}`
   const state = await readState(config)
-  const recentVotes = pruneRecentVotes(state.recentVotes, now)
-  const lastVoteAt = Number(recentVotes[voterKey] ?? 0)
+  const hasAlreadyVoted = Boolean(state.votedVisitors[voterKey])
+  const lastRatingAt = getLastRatingAtForVisitor(state, visitorHash)
 
-  if (lastVoteAt && now - lastVoteAt < RATE_LIMIT_MS) {
-    const retryAfterSeconds = Math.ceil((RATE_LIMIT_MS - (now - lastVoteAt)) / 1000)
-    const error = new Error('Please wait before rating again')
+  if (hasAlreadyVoted) {
+    const error = new Error('You have already rated this destination')
+    error.statusCode = 409
+    error.code = 'already_rated'
+    throw error
+  }
+
+  if (lastRatingAt && now - lastRatingAt < RATING_COOLDOWN_MS) {
+    const error = new Error('Please wait before rating another destination')
     error.statusCode = 429
-    error.retryAfterSeconds = retryAfterSeconds
+    error.code = 'rating_cooldown'
+    error.retryAfterSeconds = Math.ceil(
+      (RATING_COOLDOWN_MS - (now - lastRatingAt)) / 1000,
+    )
     throw error
   }
 
@@ -180,9 +202,13 @@ export async function saveRating(req, rawBody) {
   await writeState(
     {
       ratings: nextRatings,
-      recentVotes: {
-        ...recentVotes,
+      votedVisitors: {
+        ...state.votedVisitors,
         [voterKey]: now,
+      },
+      lastRatingByVisitor: {
+        ...state.lastRatingByVisitor,
+        [visitorHash]: now,
       },
     },
     config,

@@ -6,6 +6,9 @@ import {
 import bundledRatings from '../data/destinationRatings.json'
 
 const RATINGS_API = '/api/ratings'
+const USER_RATED_STORAGE_KEY = 'bg_destination_rated_ids'
+const LAST_RATING_STORAGE_KEY = 'bg_destination_last_rating_at'
+const RATING_COOLDOWN_MS = 60 * 1000
 
 function normalizeRating(value: unknown): DestinationRating | null {
   const rating = value as Partial<DestinationRating>
@@ -37,6 +40,32 @@ function normalizeRatings(value: unknown) {
   )
 }
 
+function readRatedIds() {
+  if (typeof window === 'undefined') return new Set<string>()
+
+  try {
+    const parsed = JSON.parse(localStorage.getItem(USER_RATED_STORAGE_KEY) ?? '[]')
+    return new Set(Array.isArray(parsed) ? parsed.filter((id) => typeof id === 'string') : [])
+  } catch {
+    return new Set<string>()
+  }
+}
+
+function writeRatedIds(ids: Set<string>) {
+  localStorage.setItem(USER_RATED_STORAGE_KEY, JSON.stringify(Array.from(ids)))
+}
+
+function readLastRatingAt() {
+  if (typeof window === 'undefined') return 0
+
+  const value = Number(localStorage.getItem(LAST_RATING_STORAGE_KEY) ?? 0)
+  return Number.isFinite(value) && value > 0 ? value : 0
+}
+
+function writeLastRatingAt(value: number) {
+  localStorage.setItem(LAST_RATING_STORAGE_KEY, String(value))
+}
+
 export function DestinationRatingsProvider({
   children,
 }: {
@@ -45,6 +74,8 @@ export function DestinationRatingsProvider({
   const [ratings, setRatings] = useState<Map<string, DestinationRating>>(
     () => normalizeRatings(bundledRatings.ratings),
   )
+  const [userRatedIds, setUserRatedIds] = useState<Set<string>>(() => readRatedIds())
+  const [lastRatingAt, setLastRatingAt] = useState(() => readLastRatingAt())
 
   useEffect(() => {
     let cancelled = false
@@ -71,10 +102,42 @@ export function DestinationRatingsProvider({
     (destinationId: string) => ratings.get(destinationId),
     [ratings],
   )
+  const hasUserRated = useCallback(
+    (destinationId: string) => userRatedIds.has(destinationId),
+    [userRatedIds],
+  )
   const ratingsList = useMemo(() => Array.from(ratings.values()), [ratings])
+
+  const rememberUserRating = useCallback((destinationId: string) => {
+    setUserRatedIds((current) => {
+      if (current.has(destinationId)) return current
+
+      const next = new Set(current)
+      next.add(destinationId)
+      writeRatedIds(next)
+      return next
+    })
+  }, [])
 
   const submitRating = useCallback(
     async (destinationId: string, rating: number) => {
+      const now = Date.now()
+
+      if (userRatedIds.has(destinationId)) {
+        const error = new Error('already_rated')
+        ;(error as Error & { code?: string }).code = 'already_rated'
+        throw error
+      }
+
+      if (lastRatingAt && now - lastRatingAt < RATING_COOLDOWN_MS) {
+        const error = new Error('rating_cooldown')
+        ;(error as Error & { code?: string; retryAfterSeconds?: number }).code =
+          'rating_cooldown'
+        ;(error as Error & { retryAfterSeconds?: number }).retryAfterSeconds =
+          Math.ceil((RATING_COOLDOWN_MS - (now - lastRatingAt)) / 1000)
+        throw error
+      }
+
       const response = await fetch(RATINGS_API, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -84,8 +147,13 @@ export function DestinationRatingsProvider({
 
       if (!response.ok) {
         const error = new Error(data?.error ?? 'Rating failed')
+        ;(error as Error & { code?: string; retryAfterSeconds?: number }).code =
+          data?.code
         ;(error as Error & { retryAfterSeconds?: number }).retryAfterSeconds =
           data?.retryAfterSeconds
+        if (data?.code === 'already_rated') {
+          rememberUserRating(destinationId)
+        }
         throw error
       }
 
@@ -97,15 +165,18 @@ export function DestinationRatingsProvider({
         next.set(saved.id, saved)
         return next
       })
+      rememberUserRating(destinationId)
+      setLastRatingAt(Date.now())
+      writeLastRatingAt(Date.now())
 
       return saved
     },
-    [],
+    [lastRatingAt, rememberUserRating, userRatedIds],
   )
 
   const value = useMemo(
-    () => ({ ratings: ratingsList, getRating, submitRating }),
-    [getRating, ratingsList, submitRating],
+    () => ({ ratings: ratingsList, getRating, hasUserRated, submitRating }),
+    [getRating, hasUserRated, ratingsList, submitRating],
   )
 
   return (

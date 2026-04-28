@@ -9,8 +9,7 @@ const dataFile = path.join(repoRoot, 'src', 'data', 'adminDestinations.json')
 const ratingsFile = path.join(repoRoot, 'src', 'data', 'destinationRatings.json')
 const imagesDir = path.join(repoRoot, 'public', 'images', 'destinations')
 const port = Number(process.env.ADMIN_PORT ?? 3001)
-const ratingRateLimitMs = 60 * 1000
-const recentVoteTtlMs = 10 * 60 * 1000
+const ratingCooldownMs = 60 * 1000
 
 const categoryValues = new Set([
   'monument',
@@ -48,15 +47,25 @@ async function readRatingState() {
         parsed && typeof parsed.ratings === 'object' && !Array.isArray(parsed.ratings)
           ? parsed.ratings
           : {},
-      recentVotes:
+      votedVisitors:
         parsed &&
-        typeof parsed.recentVotes === 'object' &&
-        !Array.isArray(parsed.recentVotes)
-          ? parsed.recentVotes
+        typeof parsed.votedVisitors === 'object' &&
+        !Array.isArray(parsed.votedVisitors)
+          ? parsed.votedVisitors
+          : parsed &&
+              typeof parsed.recentVotes === 'object' &&
+              !Array.isArray(parsed.recentVotes)
+            ? parsed.recentVotes
+          : {},
+      lastRatingByVisitor:
+        parsed &&
+        typeof parsed.lastRatingByVisitor === 'object' &&
+        !Array.isArray(parsed.lastRatingByVisitor)
+          ? parsed.lastRatingByVisitor
           : {},
     }
   } catch {
-    return { ratings: {}, recentVotes: {} }
+    return { ratings: {}, votedVisitors: {}, lastRatingByVisitor: {} }
   }
 }
 
@@ -129,12 +138,15 @@ function summarizeRatings(ratings) {
   )
 }
 
-function pruneRecentVotes(recentVotes, now) {
-  return Object.fromEntries(
-    Object.entries(recentVotes).filter(
-      ([, timestamp]) => now - Number(timestamp) < recentVoteTtlMs,
-    ),
+function getLastRatingAtForVisitor(state, visitorHash) {
+  const saved = Number(state.lastRatingByVisitor[visitorHash] ?? 0)
+  const fromDestinationVotes = Object.entries(state.votedVisitors).reduce(
+    (latest, [key, timestamp]) =>
+      key.endsWith(`:${visitorHash}`) ? Math.max(latest, Number(timestamp) || 0) : latest,
+    0,
   )
+
+  return Math.max(saved, fromDestinationVotes)
 }
 
 async function saveRating(req, body) {
@@ -155,16 +167,25 @@ async function saveRating(req, body) {
     req.socket.remoteAddress ||
     'local'
   const userAgent = String(req.headers['user-agent'] ?? 'unknown')
-  const voterKey = `${id}:${Buffer.from(`${ip}:${userAgent}`).toString('base64')}`
+  const visitorHash = Buffer.from(`${ip}:${userAgent}`).toString('base64')
+  const voterKey = `${id}:${visitorHash}`
   const state = await readRatingState()
-  const recentVotes = pruneRecentVotes(state.recentVotes, now)
-  const lastVoteAt = Number(recentVotes[voterKey] ?? 0)
+  const hasAlreadyVoted = Boolean(state.votedVisitors[voterKey])
+  const lastRatingAt = getLastRatingAtForVisitor(state, visitorHash)
 
-  if (lastVoteAt && now - lastVoteAt < ratingRateLimitMs) {
-    const error = new Error('Please wait before rating again')
+  if (hasAlreadyVoted) {
+    const error = new Error('You have already rated this destination')
+    error.statusCode = 409
+    error.code = 'already_rated'
+    throw error
+  }
+
+  if (lastRatingAt && now - lastRatingAt < ratingCooldownMs) {
+    const error = new Error('Please wait before rating another destination')
     error.statusCode = 429
+    error.code = 'rating_cooldown'
     error.retryAfterSeconds = Math.ceil(
-      (ratingRateLimitMs - (now - lastVoteAt)) / 1000,
+      (ratingCooldownMs - (now - lastRatingAt)) / 1000,
     )
     throw error
   }
@@ -180,9 +201,13 @@ async function saveRating(req, body) {
 
   await writeRatingState({
     ratings: nextRatings,
-    recentVotes: {
-      ...recentVotes,
+    votedVisitors: {
+      ...state.votedVisitors,
       [voterKey]: now,
+    },
+    lastRatingByVisitor: {
+      ...state.lastRatingByVisitor,
+      [visitorHash]: now,
     },
   })
 
@@ -347,6 +372,7 @@ const server = createServer(async (req, res) => {
   } catch (error) {
     sendJson(res, error.statusCode || 400, {
       error: error instanceof Error ? error.message : 'Unknown error',
+      code: error.code,
       retryAfterSeconds: error.retryAfterSeconds,
     })
   }

@@ -24,13 +24,17 @@ function StarIcon({ filled }: { filled: boolean }) {
 }
 
 export function DestinationRating({ destinationId, compact = false }: Props) {
-  const { getRating, submitRating } = useDestinationRatings()
+  const { getRating, hasUserRated, submitRating } = useDestinationRatings()
   const rating = getRating(destinationId)
+  const alreadyRated = hasUserRated(destinationId)
   const [hovered, setHovered] = useState(0)
   const [selected, setSelected] = useState(0)
   const [status, setStatus] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const displayValue = hovered || selected || Math.round(rating?.average ?? 0)
+  const displayValue =
+    alreadyRated || isSubmitting
+      ? Math.round(rating?.average ?? 0)
+      : hovered || selected || Math.round(rating?.average ?? 0)
 
   if (compact) {
     return (
@@ -68,11 +72,13 @@ export function DestinationRating({ destinationId, compact = false }: Props) {
               key={value}
               type="button"
               className="rounded-lg p-1 transition hover:scale-110 disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={isSubmitting}
+              disabled={isSubmitting || alreadyRated}
               onMouseEnter={() => setHovered(value)}
               onFocus={() => setHovered(value)}
               onBlur={() => setHovered(0)}
               onClick={async () => {
+                if (alreadyRated) return
+
                 setSelected(value)
                 setStatus('')
                 setIsSubmitting(true)
@@ -80,13 +86,16 @@ export function DestinationRating({ destinationId, compact = false }: Props) {
                   await submitRating(destinationId, value)
                   setStatus('Благодарим за оценката!')
                 } catch (error) {
-                  const retryAfterSeconds = (
-                    error as Error & { retryAfterSeconds?: number }
-                  ).retryAfterSeconds
+                  const { code, retryAfterSeconds } = error as Error & {
+                    code?: string
+                    retryAfterSeconds?: number
+                  }
                   setStatus(
-                    retryAfterSeconds
-                      ? `Може да оцениш пак след ${retryAfterSeconds} сек.`
-                      : 'Оценката не беше записана. Опитай пак след малко.',
+                    code === 'already_rated'
+                      ? 'Вече си оценил тази дестинация.'
+                      : code === 'rating_cooldown'
+                        ? `Може да оцениш друга дестинация след ${retryAfterSeconds ?? 60} сек.`
+                        : 'Оценката не беше записана. Опитай пак след малко.',
                   )
                 } finally {
                   setIsSubmitting(false)
@@ -102,6 +111,11 @@ export function DestinationRating({ destinationId, compact = false }: Props) {
       </div>
       {status && (
         <p className="mt-3 text-sm font-medium text-[var(--forest)]">{status}</p>
+      )}
+      {!status && alreadyRated && (
+        <p className="mt-3 text-sm font-medium text-[var(--forest)]">
+          Вече си оценил тази дестинация.
+        </p>
       )}
     </section>
   )

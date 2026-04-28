@@ -18,6 +18,7 @@ export default async function handler(req, res) {
   } catch (error) {
     sendJson(res, error.statusCode || 400, {
       error: error instanceof Error ? error.message : 'Unknown error',
+      code: error.code,
       retryAfterSeconds: error.retryAfterSeconds,
     })
   }

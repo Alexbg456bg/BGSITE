@@ -10,6 +10,7 @@ export type DestinationRating = {
 export type DestinationRatingsContextValue = {
   ratings: DestinationRating[]
   getRating: (destinationId: string) => DestinationRating | undefined
+  hasUserRated: (destinationId: string) => boolean
   submitRating: (destinationId: string, rating: number) => Promise<DestinationRating>
 }
 
