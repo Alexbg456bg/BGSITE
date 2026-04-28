@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { geoBounds, geoContains, geoMercator, geoPath } from 'd3-geo'
 import type { Feature, FeatureCollection, Geometry } from 'geojson'
 import { motion } from 'framer-motion'
@@ -408,71 +408,6 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
           </motion.article>
         )}
       </div>
-
-      {!loadError && (
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          {markers.length === 0 ? (
-            <p className="rounded-[1.2rem] border border-dashed border-[var(--border)] bg-white/72 px-4 py-5 text-sm text-[var(--muted)]">
-              Няма намерени координати за обектите в тази област.
-            </p>
-          ) : (
-            markers.map((marker, index) => (
-              <motion.div
-                key={`list-${marker.id}`}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.03 }}
-                className="content-card overflow-hidden rounded-[1.2rem] border border-[var(--border)] bg-white shadow-[0_16px_30px_rgba(15,61,46,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_36px_rgba(15,61,46,0.08)]"
-              >
-                <div className="flex gap-3 p-3">
-                  <SmartImage
-                    src={marker.image}
-                    alt={marker.name}
-                    maxWidth={320}
-                    className="h-20 w-24 shrink-0 rounded-xl"
-                    imgClassName="rounded-xl object-cover"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start gap-2">
-                      <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[var(--forest)] text-xs font-semibold text-white">
-                        {index + 1}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="line-clamp-2 font-semibold leading-snug text-[var(--ink)]">
-                          {marker.name}
-                        </p>
-                        <p className="text-xs text-[var(--muted)]">{marker.location}</p>
-                      </div>
-                    </div>
-                    <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[var(--muted)]">
-                      {marker.shortDescription}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2 border-t border-[var(--border)] bg-[var(--surface-2)]/45 px-3 py-3">
-                  <Link
-                    to={`/destination/${marker.id}`}
-                    className="rounded-full bg-[var(--forest)] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[var(--forest-deep)]"
-                  >
-                    Виж детайли
-                  </Link>
-                  {marker.mapsUrl && (
-                    <a
-                      href={marker.mapsUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-semibold text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)]"
-                    >
-                      Google Maps
-                    </a>
-                  )}
-                </div>
-              </motion.div>
-            ))
-          )}
-        </div>
-      )}
     </section>
   )
 }
