@@ -14,7 +14,11 @@ export default async function handler(req, res) {
     }
 
     requireAdmin(req)
-    const id = Array.isArray(req.query.id) ? req.query.id[0] : req.query.id
+    const pathname = new URL(req.url, 'http://localhost').pathname
+    const fallbackId = decodeURIComponent(pathname.split('/').pop() ?? '')
+    const id = Array.isArray(req.query.id)
+      ? req.query.id[0]
+      : req.query.id || fallbackId
     await deleteEntry(id, {
       regionSlug: req.query.regionSlug,
       name: req.query.name,

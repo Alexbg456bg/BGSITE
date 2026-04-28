@@ -25,3 +25,4 @@ dist-ssr
 
 # Локално генериране на GeoJSON от Natural Earth (голям файл)
 scripts/ne_admin1.json
+.vercel

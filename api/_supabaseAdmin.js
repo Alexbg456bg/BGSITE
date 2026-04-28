@@ -1,5 +1,6 @@
-const DEFAULT_TABLE = 'admin_destinations'
-const DEFAULT_BUCKET = 'destination-images'
+const DEFAULT_IMAGE_BUCKET = 'destination-images'
+const DEFAULT_DATA_BUCKET = 'admin-data'
+const DEFAULT_MANIFEST_PATH = 'admin-destinations.json'
 
 const categoryValues = new Set([
   'monument',
@@ -25,8 +26,11 @@ function getConfig() {
   return {
     supabaseUrl: supabaseUrl.replace(/\/$/, ''),
     serviceRoleKey,
-    table: process.env.SUPABASE_DESTINATIONS_TABLE || DEFAULT_TABLE,
-    bucket: process.env.SUPABASE_STORAGE_BUCKET || DEFAULT_BUCKET,
+    imageBucket: process.env.SUPABASE_STORAGE_BUCKET || DEFAULT_IMAGE_BUCKET,
+    dataBucket:
+      process.env.SUPABASE_ADMIN_DATA_BUCKET || DEFAULT_DATA_BUCKET,
+    manifestPath:
+      process.env.SUPABASE_ADMIN_DATA_PATH || DEFAULT_MANIFEST_PATH,
   }
 }
 
@@ -112,6 +116,23 @@ async function supabaseFetch(path, options = {}) {
   return response.json().catch(() => null)
 }
 
+async function supabaseFetchText(path, options = {}) {
+  const config = getConfig()
+  const response = await fetch(`${config.supabaseUrl}${path}`, {
+    ...options,
+    headers: supabaseHeaders(config, options.headers),
+  })
+
+  if (!response.ok) {
+    const details = await response.text().catch(() => '')
+    const error = new Error(details || `Supabase request failed: ${response.status}`)
+    error.statusCode = response.status
+    throw error
+  }
+
+  return response.text()
+}
+
 async function uploadImage(config, id, index, value) {
   if (typeof value !== 'string') return null
   if (!value.startsWith('data:image/')) return value
@@ -126,7 +147,7 @@ async function uploadImage(config, id, index, value) {
   const fileName = `${id}${suffix}${ext}`
   const contentType = contentTypeFromDataUrl(value)
   const response = await fetch(
-    `${config.supabaseUrl}/storage/v1/object/${config.bucket}/${fileName}`,
+    `${config.supabaseUrl}/storage/v1/object/${config.imageBucket}/${fileName}`,
     {
       method: 'POST',
       headers: supabaseHeaders(config, {
@@ -143,7 +164,7 @@ async function uploadImage(config, id, index, value) {
     throw new Error(details || 'Image upload failed')
   }
 
-  return `${config.supabaseUrl}/storage/v1/object/public/${config.bucket}/${fileName}`
+  return `${config.supabaseUrl}/storage/v1/object/public/${config.imageBucket}/${fileName}`
 }
 
 async function normalizeEntry(entry) {
@@ -200,82 +221,92 @@ async function normalizeEntry(entry) {
 }
 
 function rowToEntry(row) {
-  return {
-    regionSlug: row.region_slug,
-    destination: row.destination,
-    deleted: row.deleted || undefined,
+  return row
+}
+
+async function readManifest() {
+  const config = getConfig()
+
+  try {
+    const raw = await supabaseFetchText(
+      `/storage/v1/object/${config.dataBucket}/${config.manifestPath}`,
+    )
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed.map(rowToEntry) : []
+  } catch (error) {
+    if (error?.statusCode === 400 || error?.statusCode === 404) {
+      return []
+    }
+
+    throw error
+  }
+}
+
+async function writeManifest(entries) {
+  const config = getConfig()
+  const response = await fetch(
+    `${config.supabaseUrl}/storage/v1/object/${config.dataBucket}/${config.manifestPath}`,
+    {
+      method: 'POST',
+      headers: supabaseHeaders(config, {
+        'content-type': 'application/json; charset=utf-8',
+        'x-upsert': 'true',
+      }),
+      body: JSON.stringify(entries, null, 2),
+    },
+  )
+
+  if (!response.ok) {
+    const details = await response.text().catch(() => '')
+    throw new Error(details || 'Admin manifest upload failed')
   }
 }
 
 export async function readEntries() {
-  const config = getConfig()
-  const rows = await supabaseFetch(
-    `/rest/v1/${config.table}?select=region_slug,destination,deleted&order=updated_at.desc`,
-  )
-  return Array.isArray(rows) ? rows.map(rowToEntry) : []
+  return readManifest()
 }
 
 export async function saveEntry(rawEntry) {
-  const config = getConfig()
   const entry = await normalizeEntry(rawEntry)
-  const rows = await supabaseFetch(`/rest/v1/${config.table}?on_conflict=id`, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      prefer: 'resolution=merge-duplicates,return=representation',
-    },
-    body: JSON.stringify({
-      id: entry.destination.id,
-      region_slug: entry.regionSlug,
-      destination: entry.destination,
-      deleted: false,
-      updated_at: new Date().toISOString(),
-    }),
-  })
-
-  if (!Array.isArray(rows) || rows.length === 0) return entry
-  return rowToEntry(rows[0])
+  const entries = await readManifest()
+  const next = [
+    entry,
+    ...entries.filter((item) => item?.destination?.id !== entry.destination.id),
+  ]
+  await writeManifest(next)
+  return entry
 }
 
 export async function deleteEntry(id, options = {}) {
-  const config = getConfig()
   const cleanId = String(id ?? '').trim()
   if (!cleanId) throw new Error('Missing destination id')
 
+  const entries = await readManifest()
+  const withoutEntry = entries.filter((item) => item?.destination?.id !== cleanId)
+
   if (cleanId.startsWith('custom-')) {
-    await supabaseFetch(`/rest/v1/${config.table}?id=eq.${encodeURIComponent(cleanId)}`, {
-      method: 'DELETE',
-      headers: { prefer: 'return=minimal' },
-    })
+    await writeManifest(withoutEntry)
     return null
   }
 
   const regionSlug = String(options.regionSlug ?? '').trim()
   const name = String(options.name ?? cleanId).trim()
 
-  const rows = await supabaseFetch(`/rest/v1/${config.table}?on_conflict=id`, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      prefer: 'resolution=merge-duplicates,return=representation',
-    },
-    body: JSON.stringify({
+  const deletedEntry = {
+    regionSlug,
+    deleted: true,
+    destination: {
       id: cleanId,
-      region_slug: regionSlug,
-      deleted: true,
-      destination: {
-        id: cleanId,
-        name,
-        category: 'natural',
-        shortDescription: '',
-        location: '',
-        image: '',
-      },
-      updated_at: new Date().toISOString(),
-    }),
-  })
+      name,
+      category: 'natural',
+      shortDescription: '',
+      location: '',
+      image: '',
+    },
+  }
 
-  return Array.isArray(rows) && rows[0] ? rowToEntry(rows[0]) : null
+  await writeManifest([deletedEntry, ...withoutEntry])
+  return deletedEntry
 }
 
 export async function parseJsonBody(req) {

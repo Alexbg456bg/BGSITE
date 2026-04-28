@@ -77,10 +77,8 @@ export function CustomDestinationsProvider({
         id: string,
         options?: { regionSlug?: string; name?: string },
       ) => {
-        const url = new URL(
-          `${ADMIN_API}/${encodeURIComponent(id)}`,
-          window.location.origin,
-        )
+        const url = new URL(ADMIN_API, window.location.origin)
+        url.searchParams.set('id', id)
         if (options?.regionSlug) url.searchParams.set('regionSlug', options.regionSlug)
         if (options?.name) url.searchParams.set('name', options.name)
 
