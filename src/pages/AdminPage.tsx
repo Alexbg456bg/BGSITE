@@ -38,6 +38,10 @@ type FormState = {
   mapsUrl: string
   lat: string
   lng: string
+  weatherEnabled: boolean
+  weatherQuery: string
+  weatherLat: string
+  weatherLng: string
   images: string[]
 }
 
@@ -60,6 +64,10 @@ const blankForm: FormState = {
   mapsUrl: '',
   lat: '',
   lng: '',
+  weatherEnabled: true,
+  weatherQuery: '',
+  weatherLat: '',
+  weatherLng: '',
   images: [],
 }
 
@@ -107,6 +115,14 @@ function formFromDestination(
     mapsUrl: destination.mapsUrl ?? '',
     lat: destination.coords?.lat ? String(destination.coords.lat) : '',
     lng: destination.coords?.lng ? String(destination.coords.lng) : '',
+    weatherEnabled: destination.weather?.enabled !== false,
+    weatherQuery: destination.weather?.query ?? '',
+    weatherLat: destination.weather?.coords?.lat
+      ? String(destination.weather.coords.lat)
+      : '',
+    weatherLng: destination.weather?.coords?.lng
+      ? String(destination.weather.coords.lng)
+      : '',
     images: [
       destination.image,
       ...(destination.images ?? []),
@@ -432,6 +448,8 @@ export function AdminPage() {
 
     const lat = Number(form.lat)
     const lng = Number(form.lng)
+    const weatherLat = Number(form.weatherLat)
+    const weatherLng = Number(form.weatherLng)
     const id = form.id || `custom-${slugify(form.name) || Date.now()}`
     const trailDetails = {
       sights: form.trailSights.trim(),
@@ -487,6 +505,20 @@ export function AdminPage() {
           coords:
             Number.isFinite(lat) && Number.isFinite(lng)
               ? { lat, lng }
+              : undefined,
+          weather:
+            form.weatherEnabled ||
+            form.weatherQuery.trim() ||
+            form.weatherLat.trim() ||
+            form.weatherLng.trim()
+              ? {
+                  enabled: form.weatherEnabled,
+                  query: form.weatherQuery.trim() || undefined,
+                  coords:
+                    Number.isFinite(weatherLat) && Number.isFinite(weatherLng)
+                      ? { lat: weatherLat, lng: weatherLng }
+                      : undefined,
+                }
               : undefined,
         },
       })
@@ -964,6 +996,66 @@ export function AdminPage() {
               />
             </label>
           </div>
+
+          <section className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h3 className="font-display text-xl font-semibold text-[var(--forest-deep)]">
+                  Прогноза за времето
+                </h3>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
+                  Тези настройки управляват weather блока в страницата на
+                  дестинацията. Ако координатите са празни, ще се използват
+                  координатите от картата.
+                </p>
+              </div>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--ink-soft)]">
+                <input
+                  type="checkbox"
+                  checked={form.weatherEnabled}
+                  onChange={(event) =>
+                    setField('weatherEnabled', event.target.checked)
+                  }
+                  className="h-4 w-4 accent-[var(--forest)]"
+                />
+                Показвай времето
+              </label>
+            </div>
+
+            <label className="mt-4 block text-sm font-medium text-[var(--ink)]">
+              Локация за Google Weather
+              <input
+                value={form.weatherQuery}
+                onChange={(event) => setField('weatherQuery', event.target.value)}
+                placeholder={form.location || selectedRegion?.name}
+                className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
+              />
+              <span className="mt-1 block text-xs font-normal text-[var(--muted)]">
+                Пример: Плевен Център, Плевен или Seven Rila Lakes.
+              </span>
+            </label>
+
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <label className="block text-sm font-medium text-[var(--ink)]">
+                Weather Latitude
+                <input
+                  value={form.weatherLat}
+                  onChange={(event) => setField('weatherLat', event.target.value)}
+                  placeholder={form.lat}
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
+                />
+              </label>
+              <label className="block text-sm font-medium text-[var(--ink)]">
+                Weather Longitude
+                <input
+                  value={form.weatherLng}
+                  onChange={(event) => setField('weatherLng', event.target.value)}
+                  placeholder={form.lng}
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
+                />
+              </label>
+            </div>
+          </section>
 
           <div className="mt-4">
             <div className="flex items-center justify-between gap-3">

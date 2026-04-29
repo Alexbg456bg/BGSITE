@@ -4,6 +4,7 @@ import { Breadcrumbs } from '../components/Breadcrumbs'
 import { SmartImage } from '../components/SmartImage'
 import { ImageGallery } from '../components/ImageGallery'
 import { DestinationRating } from '../components/DestinationRating'
+import { DestinationWeather } from '../components/DestinationWeather'
 import { getCategoryLabels } from '../data/categoryLabels'
 import { TRAIL_DETAILS } from '../data/trailDetails'
 import { useSiteData } from '../hooks/useSiteData'
@@ -127,6 +128,7 @@ export function DestinationPage() {
               </div>
             </section>
           )}
+          <DestinationWeather destination={d} />
           <div className="mt-5 grid gap-3 sm:grid-cols-2 md:mt-6">
             <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">

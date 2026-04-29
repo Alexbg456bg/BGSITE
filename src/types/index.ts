@@ -25,6 +25,11 @@ export interface Destination {
   images?: string[]
   coords?: { lat: number; lng: number }
   mapsUrl?: string
+  weather?: {
+    enabled?: boolean
+    query?: string
+    coords?: { lat: number; lng: number }
+  }
   translations?: Partial<
     Record<
       'bg' | 'en',
