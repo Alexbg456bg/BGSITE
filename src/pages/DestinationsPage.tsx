@@ -6,7 +6,8 @@ import { DestinationCard } from '../components/DestinationCard'
 import { FilterBar } from '../components/FilterBar'
 import { useSiteData } from '../hooks/useSiteData'
 import type { DestinationCategory } from '../types'
-import { ALL_CATEGORIES, CATEGORY_LABELS } from '../data/categoryLabels'
+import { ALL_CATEGORIES, getCategoryLabels } from '../data/categoryLabels'
+import { useI18n } from '../i18n/LanguageContext'
 
 function parseCategory(value: string | null): DestinationCategory | 'all' {
   if (value && ALL_CATEGORIES.includes(value as DestinationCategory)) {
@@ -22,6 +23,8 @@ export function DestinationsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const { allDestinations, destinationIdsByRegionSlug, regionByDestinationId } =
     useSiteData()
+  const { language, t } = useI18n()
+  const labels = getCategoryLabels(language)
   const [category, setCategoryState] = useState<DestinationCategory | 'all'>(
     () => parseCategory(searchParams.get('category')),
   )
@@ -71,7 +74,11 @@ export function DestinationsPage() {
   }, [allDestinations, category, destinationIdsByRegionSlug, regionSlug])
 
   const activeCategoryLabel =
-    category === 'all' ? 'Всички категории' : CATEGORY_LABELS[category]
+    category === 'all'
+      ? language === 'en'
+        ? 'All categories'
+        : 'Всички категории'
+      : labels[category]
 
   return (
     <div className="pb-14 md:pb-20">
@@ -82,37 +89,44 @@ export function DestinationsPage() {
         />
         <div className="mx-auto max-w-6xl px-4">
           <Breadcrumbs
-            items={[{ label: 'Начало', to: '/' }, { label: 'Дестинации' }]}
+            items={[{ label: t('navHome'), to: '/' }, { label: t('navDestinations') }]}
           />
           <motion.h1
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             className="mt-4 font-display text-[1.9rem] font-semibold leading-tight text-[var(--forest-deep)] md:text-4xl"
           >
-            Всички дестинации
+            {language === 'en' ? 'All destinations' : 'Всички дестинации'}
           </motion.h1>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted)] md:text-base">
-            Филтрирай по категория и област, после отвори конкретно място с
-            описание и снимки.
+            {language === 'en'
+              ? 'Filter by category and region, then open a specific place with descriptions and photos.'
+              : 'Филтрирай по категория и област, после отвори конкретно място с описание и снимки.'}
           </p>
           <div className="mt-5 grid grid-cols-3 gap-2 md:hidden">
             <div className="rounded-2xl border border-white/70 bg-white/72 px-3 py-3 shadow-sm">
               <p className="font-display text-xl font-semibold text-[var(--forest-deep)]">
                 {allDestinations.length}
               </p>
-              <p className="text-[11px] text-[var(--muted)]">общо</p>
+              <p className="text-[11px] text-[var(--muted)]">
+                {language === 'en' ? 'total' : 'общо'}
+              </p>
             </div>
             <div className="rounded-2xl border border-white/70 bg-white/72 px-3 py-3 shadow-sm">
               <p className="font-display text-xl font-semibold text-[var(--forest-deep)]">
                 {filtered.length}
               </p>
-              <p className="text-[11px] text-[var(--muted)]">показани</p>
+              <p className="text-[11px] text-[var(--muted)]">
+                {language === 'en' ? 'shown' : 'показани'}
+              </p>
             </div>
             <div className="rounded-2xl border border-white/70 bg-white/72 px-3 py-3 shadow-sm">
               <p className="font-display text-xl font-semibold text-[var(--forest-deep)]">
                 28
               </p>
-              <p className="text-[11px] text-[var(--muted)]">области</p>
+              <p className="text-[11px] text-[var(--muted)]">
+                {language === 'en' ? 'regions' : 'области'}
+              </p>
             </div>
           </div>
         </div>
@@ -135,7 +149,7 @@ export function DestinationsPage() {
             <span className="font-semibold text-[var(--forest-deep)]">
               {filtered.length}
             </span>{' '}
-            обекта · {activeCategoryLabel}
+            {language === 'en' ? 'places' : 'обекта'} · {activeCategoryLabel}
           </p>
           {regionSlug !== 'all' && (
             <button
@@ -143,7 +157,7 @@ export function DestinationsPage() {
               className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-[var(--forest)] shadow-sm"
               onClick={() => navigate(`/region/${regionSlug}`)}
             >
-              Отвори областта
+              {language === 'en' ? 'Open region' : 'Отвори областта'}
             </button>
           )}
         </div>

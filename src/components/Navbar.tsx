@@ -3,6 +3,8 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SearchBar } from './SearchBar'
 import { ThemeToggle } from './ThemeToggle'
+import { LanguageToggle } from './LanguageToggle'
+import { useI18n } from '../i18n/LanguageContext'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -12,17 +14,17 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       : 'text-[var(--forest-deep)] [text-shadow:0_1px_10px_rgba(255,255,255,0.72)] hover:bg-white/48 hover:text-[var(--forest-deep)]',
   ].join(' ')
 
-const links: { to: string; label: string; end?: boolean }[] = [
-  { to: '/', label: 'Начало', end: true },
-  { to: '/regions', label: 'Области' },
-  { to: '/destinations', label: 'Дестинации' },
-  { to: '/favorites', label: 'Любими' },
-]
-
 export function Navbar() {
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
   const isHome = pathname === '/'
+  const { t } = useI18n()
+  const links: { to: string; label: string; end?: boolean }[] = [
+    { to: '/', label: t('navHome'), end: true },
+    { to: '/regions', label: t('navRegions') },
+    { to: '/destinations', label: t('navDestinations') },
+    { to: '/favorites', label: t('navFavorites') },
+  ]
 
   return (
     <header
@@ -46,7 +48,7 @@ export function Navbar() {
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--forest)] to-[var(--sky-deep)] text-sm text-white shadow-md">
             BG
           </span>
-          <span className="hidden sm:inline">Открий България</span>
+          <span className="hidden sm:inline">{t('brand')}</span>
         </Link>
 
         <div className="min-w-0 flex-1 md:max-w-sm lg:hidden">
@@ -55,7 +57,7 @@ export function Navbar() {
 
         <nav
           className="hidden items-center gap-0.5 lg:flex xl:gap-1"
-          aria-label="Основна навигация"
+          aria-label={t('navAria')}
         >
           {links.map(({ to, label, end }) => (
             <NavLink key={to} to={to} end={end} className={navLinkClass}>
@@ -72,12 +74,15 @@ export function Navbar() {
           <div className="hidden lg:block">
             <ThemeToggle />
           </div>
+          <div className="hidden lg:block">
+            <LanguageToggle />
+          </div>
           
           <button
             type="button"
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] shadow-sm lg:hidden"
             aria-expanded={open}
-            aria-label={open ? 'Затвори меню' : 'Отвори меню'}
+            aria-label={open ? t('closeMenu') : t('openMenu')}
             onClick={() => setOpen((o) => !o)}
           >
             {open ? 
@@ -99,7 +104,8 @@ export function Navbar() {
             className="max-h-[calc(100svh-4rem)] overflow-auto border-t border-white/45 bg-white/88 backdrop-blur-2xl lg:hidden"
           >
             <div className="flex flex-col gap-2 px-4 py-4">
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-end gap-2">
+                <LanguageToggle />
                 <ThemeToggle />
               </div>
               {links.map(({ to, label, end }) => (

@@ -8,9 +8,10 @@ import { RegionFocusMap } from '../components/RegionFocusMap'
 import { SmartImage } from '../components/SmartImage'
 import { ImageGallery } from '../components/ImageGallery'
 import { useSiteData } from '../hooks/useSiteData'
-import { ALL_CATEGORIES, CATEGORY_LABELS } from '../data/categoryLabels'
+import { ALL_CATEGORIES, getCategoryLabels } from '../data/categoryLabels'
 import { LOCAL_REGION_MOBILE_BANNERS } from '../data/localRegionImages'
 import type { DestinationCategory } from '../types'
+import { useI18n } from '../i18n/LanguageContext'
 
 function parseCategory(s: string | null): DestinationCategory | 'all' {
   if (!s) return 'all'
@@ -26,6 +27,8 @@ export function RegionPage() {
   const resultsRef = useRef<HTMLDivElement>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const { getRegionBySlug, regions } = useSiteData()
+  const { language, t } = useI18n()
+  const labels = getCategoryLabels(language)
   const region = slug ? getRegionBySlug(slug) : undefined
 
   const category = parseCategory(searchParams.get('category'))
@@ -69,16 +72,18 @@ export function RegionPage() {
     return (
       <div className="mx-auto max-w-6xl px-4 py-24 text-center">
         <h1 className="font-display text-2xl font-semibold text-[var(--ink)]">
-          Областта не е намерена
+          {language === 'en' ? 'Region not found' : 'Областта не е намерена'}
         </h1>
         <p className="mt-2 text-[var(--muted)]">
-          Провери адреса или се върни към картата.
+          {language === 'en'
+            ? 'Check the address or go back to the map.'
+            : 'Провери адреса или се върни към картата.'}
         </p>
         <Link
           to="/"
           className="mt-6 inline-block rounded-full bg-[var(--forest)] px-6 py-3 text-sm font-semibold text-white"
         >
-          Към началото
+          {language === 'en' ? 'Back home' : 'Към началото'}
         </Link>
       </div>
     )
@@ -120,7 +125,7 @@ export function RegionPage() {
           <Breadcrumbs
             variant="onDark"
             items={[
-              { label: 'Начало', to: '/' },
+              { label: t('navHome'), to: '/' },
               { label: region.name },
             ]}
           />
@@ -147,10 +152,10 @@ export function RegionPage() {
           </ul>
           <div className="mt-4 flex flex-wrap gap-2 text-sm text-white/88 md:mt-6 md:gap-3">
             <span className="rounded-full border border-white/28 bg-white/22 px-3 py-1.5 font-semibold text-white shadow-[0_4px_14px_rgba(0,0,0,0.18)] backdrop-blur-sm md:bg-white/10 md:font-normal">
-              {region.destinations.length} обекта
+              {region.destinations.length} {language === 'en' ? 'places' : 'обекта'}
             </span>
             <span className="rounded-full border border-white/28 bg-white/22 px-3 py-1.5 font-semibold text-white shadow-[0_4px_14px_rgba(0,0,0,0.18)] backdrop-blur-sm md:bg-white/10 md:font-normal">
-              Собствена карта на областта
+              {language === 'en' ? 'Dedicated region map' : 'Собствена карта на областта'}
             </span>
           </div>
         </div>
@@ -184,13 +189,19 @@ export function RegionPage() {
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 md:mt-6 md:gap-4">
           <p className="text-sm text-[var(--muted)]">
             {filteredDestinations.length}{' '}
-            {filteredDestinations.length === 1 ? 'обект' : 'обекта'}
+            {language === 'en'
+              ? filteredDestinations.length === 1
+                ? 'place'
+                : 'places'
+              : filteredDestinations.length === 1
+                ? 'обект'
+                : 'обекта'}
             {category !== 'all' && (
               <>
                 {' '}
-                · филтър:{' '}
+                · {language === 'en' ? 'filter' : 'филтър'}:{' '}
                 <span className="font-medium text-[var(--forest)]">
-                  {CATEGORY_LABELS[category]}
+                  {labels[category]}
                 </span>
               </>
             )}
@@ -199,7 +210,7 @@ export function RegionPage() {
             to="/#home-map"
             className="hidden text-sm font-medium text-[var(--forest)] hover:underline md:inline"
           >
-            ← Към картата
+            {language === 'en' ? '<- Back to map' : '← Към картата'}
           </Link>
         </div>
 
@@ -219,14 +230,15 @@ export function RegionPage() {
 
         {filteredDestinations.length === 0 && (
           <p className="mt-12 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--mist)]/50 py-12 text-center text-[var(--muted)]">
-            Няма обекти в тази категория за област {region.name}. Избери друга
-            категория или{' '}
+            {language === 'en'
+              ? `No places in this category for ${region.name}. Choose another category or `
+              : `Няма обекти в тази категория за област ${region.name}. Избери друга категория или `}
             <button
               type="button"
               className="font-medium text-[var(--forest)] underline"
               onClick={() => setCategory('all')}
             >
-              виж всички
+              {language === 'en' ? 'see all' : 'виж всички'}
             </button>
             .
           </p>
@@ -235,12 +247,12 @@ export function RegionPage() {
         {region.images && region.images.length > 1 && (
           <section className="mt-12 md:mt-16">
             <h2 className="font-display text-xl font-semibold text-[var(--forest-deep)]">
-              Галерия {region.name}
+              {language === 'en' ? `${region.name} gallery` : `Галерия ${region.name}`}
             </h2>
             <div className="mt-6">
               <ImageGallery
                 images={region.images}
-                alt={`Галерия ${region.name}`}
+                alt={language === 'en' ? `${region.name} gallery` : `Галерия ${region.name}`}
               />
             </div>
           </section>
@@ -248,7 +260,7 @@ export function RegionPage() {
 
         <section className="mt-14 border-t border-[var(--border)] pt-8 md:mt-20 md:pt-12">
           <h2 className="font-display text-xl font-semibold text-[var(--forest-deep)]">
-            Други области
+            {language === 'en' ? 'Other regions' : 'Други области'}
           </h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {regions

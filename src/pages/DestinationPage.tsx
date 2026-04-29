@@ -4,28 +4,31 @@ import { Breadcrumbs } from '../components/Breadcrumbs'
 import { SmartImage } from '../components/SmartImage'
 import { ImageGallery } from '../components/ImageGallery'
 import { DestinationRating } from '../components/DestinationRating'
-import { CATEGORY_LABELS } from '../data/categoryLabels'
+import { getCategoryLabels } from '../data/categoryLabels'
 import { TRAIL_DETAILS } from '../data/trailDetails'
 import { useSiteData } from '../hooks/useSiteData'
 import { useFavorites } from '../hooks/useFavorites'
+import { useI18n } from '../i18n/LanguageContext'
 
 export function DestinationPage() {
   const { id } = useParams<{ id: string }>()
   const { isFavorite, toggleFavorite } = useFavorites()
   const { getDestinationWithRegion } = useSiteData()
+  const { language, t } = useI18n()
+  const labels = getCategoryLabels(language)
   const found = id ? getDestinationWithRegion(id) : undefined
 
   if (!found) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-24 text-center">
         <h1 className="font-display text-2xl font-semibold text-[var(--ink)]">
-          Дестинацията не е намерена
+          {language === 'en' ? 'Destination not found' : 'Дестинацията не е намерена'}
         </h1>
         <Link
           to="/"
           className="mt-6 inline-block rounded-full bg-[var(--forest)] px-6 py-3 text-sm font-semibold text-white"
         >
-          Към началото
+          {language === 'en' ? 'Back home' : 'Към началото'}
         </Link>
       </div>
     )
@@ -44,7 +47,7 @@ export function DestinationPage() {
       <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
         <Breadcrumbs
           items={[
-            { label: 'Начало', to: '/' },
+            { label: t('navHome'), to: '/' },
             { label: region.name, to: `/region/${region.slug}` },
             { label: d.name },
           ]}
@@ -84,7 +87,7 @@ export function DestinationPage() {
           className="flex flex-col"
         >
           <span className="w-fit rounded-full bg-[var(--forest)]/10 px-3 py-1 text-xs font-semibold text-[var(--forest)]">
-            {CATEGORY_LABELS[d.category]}
+            {labels[d.category]}
           </span>
           <h1 className="mt-4 font-display text-2xl font-semibold leading-tight text-[var(--forest-deep)] md:text-4xl">
             {d.name}
@@ -100,7 +103,7 @@ export function DestinationPage() {
             <section className="mt-5 space-y-3 md:mt-6">
               <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
-                  Какво ще видиш
+                  {language === 'en' ? 'What you will see' : 'Какво ще видиш'}
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
                   {trailDetails.sights}
@@ -108,7 +111,7 @@ export function DestinationPage() {
               </div>
               <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
-                  Каква е пътеката
+                  {language === 'en' ? 'What the trail is like' : 'Каква е пътеката'}
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
                   {trailDetails.route}
@@ -116,7 +119,7 @@ export function DestinationPage() {
               </div>
               <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
-                  Подходящо за
+                  {language === 'en' ? 'Suitable for' : 'Подходящо за'}
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
                   {trailDetails.suitableFor}
@@ -127,15 +130,15 @@ export function DestinationPage() {
           <div className="mt-5 grid gap-3 sm:grid-cols-2 md:mt-6">
             <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
-                Категория
+                {t('category')}
               </p>
               <p className="mt-2 font-display text-xl font-semibold text-[var(--forest-deep)]">
-                {CATEGORY_LABELS[d.category]}
+                {labels[d.category]}
               </p>
             </div>
             <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
-                Област
+                {t('region')}
               </p>
               <p className="mt-2 font-display text-xl font-semibold text-[var(--forest-deep)]">
                 {region.name}
@@ -156,7 +159,7 @@ export function DestinationPage() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /> 
                   </svg>
                 }
-                {fav ? 'В любими' : 'Запази'}
+                {fav ? t('inFavorites') : t('saved')}
               </span>
             </button>
             {d.mapsUrl && (
@@ -166,14 +169,14 @@ export function DestinationPage() {
                 rel="noreferrer"
                 className="inline-flex w-full items-center justify-center rounded-xl bg-[var(--forest)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--forest-deep)] sm:w-auto"
               >
-                Отвори в Google Maps
+                {language === 'en' ? 'Open in Google Maps' : 'Отвори в Google Maps'}
               </a>
             )}
             <Link
               to={`/region/${region.slug}`}
               className="inline-flex w-full items-center justify-center rounded-xl border border-[var(--border)] px-5 py-3 text-center text-sm font-medium text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)] sm:w-auto"
             >
-              Всички обекти в областта
+              {language === 'en' ? 'All places in the region' : 'Всички обекти в областта'}
             </Link>
           </div>
         </motion.div>

@@ -25,6 +25,17 @@ export interface Destination {
   images?: string[]
   coords?: { lat: number; lng: number }
   mapsUrl?: string
+  translations?: Partial<
+    Record<
+      'bg' | 'en',
+      Partial<
+        Pick<
+          Destination,
+          'name' | 'shortDescription' | 'location' | 'trailDetails'
+        >
+      >
+    >
+  >
 }
 
 export interface Region {
@@ -37,6 +48,9 @@ export interface Region {
   /** Кратки акценти за hero на областта */
   highlights: string[]
   destinations: Destination[]
+  translations?: Partial<
+    Record<'bg' | 'en', Partial<Pick<Region, 'name' | 'description' | 'highlights'>>>
+  >
 }
 
 /** Геометрия за SVG картата — лесно се добавят нови области */

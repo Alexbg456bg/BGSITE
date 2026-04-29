@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { SmartImage } from './SmartImage'
+import { useI18n } from '../i18n/LanguageContext'
 
 const heroImages = [
   {
@@ -43,6 +44,7 @@ const highlights = [
 ]
 
 export function HeroSection() {
+  const { language } = useI18n()
   const sectionRef = useRef<HTMLElement>(null)
   const candidates = useMemo(() => shuffledHeroImages(), [])
   const [heroImage, setHeroImage] = useState(candidates[0])
@@ -131,7 +133,7 @@ export function HeroSection() {
             transition={{ delay: 0.04, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--sky-pale)] md:text-sm md:tracking-[0.34em]"
           >
-            Места за отдих
+            {language === 'en' ? 'Places to unwind' : 'Места за отдих'}
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
@@ -139,7 +141,7 @@ export function HeroSection() {
             transition={{ delay: 0.1, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="mt-4 max-w-4xl font-display text-[2.65rem] font-semibold leading-[0.96] tracking-tight text-white md:mt-5 md:text-6xl"
           >
-            Разгледай България
+            {language === 'en' ? 'Explore Bulgaria' : 'Разгледай България'}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
@@ -147,8 +149,9 @@ export function HeroSection() {
             transition={{ delay: 0.18, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="mt-4 max-w-2xl text-base leading-relaxed text-white/88 md:mt-6 md:text-xl"
           >
-            Тук ще намериш различни места из страната - за разходка,
-            почивка или просто да смениш обстановката.
+            {language === 'en'
+              ? 'Find different places across the country for walks, rest or a simple change of scenery.'
+              : 'Тук ще намериш различни места из страната - за разходка, почивка или просто да смениш обстановката.'}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -160,7 +163,7 @@ export function HeroSection() {
               href="#home-map"
               className="inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_20px_40px_rgba(0,0,0,0.18)] transition hover:-translate-y-0.5 hover:bg-[var(--mist)] md:px-8 md:py-3.5"
             >
-              Към картата
+              {language === 'en' ? 'To the map' : 'Към картата'}
             </a>
           </motion.div>
           <motion.div
@@ -177,7 +180,13 @@ export function HeroSection() {
                 <p className="font-display text-2xl font-semibold text-white md:text-3xl">
                   {item.value}
                 </p>
-                <p className="mt-1 text-sm text-white/72">{item.label}</p>
+                <p className="mt-1 text-sm text-white/72">
+                  {language === 'en'
+                    ? item.value === '28'
+                      ? 'regions'
+                      : 'places to discover'
+                    : item.label}
+                </p>
               </div>
             ))}
           </motion.div>

@@ -3,8 +3,9 @@ import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
 import { SmartImage } from './SmartImage'
 import { TopRatedDestinationsSection } from './TopRatedDestinationsSection'
-import { CATEGORY_LABELS } from '../data/categoryLabels'
+import { getCategoryLabels } from '../data/categoryLabels'
 import { useSiteData } from '../hooks/useSiteData'
+import { useI18n } from '../i18n/LanguageContext'
 import type { DestinationCategory, Region } from '../types'
 
 // Hero rotation images array
@@ -59,6 +60,8 @@ const categoryTone: Record<DestinationCategory, string> = {
 export function MobileHomeExperience() {
   const [showAllCategories, setShowAllCategories] = useState(false)
   const { regions, allDestinations } = useSiteData()
+  const { language, t } = useI18n()
+  const labels = getCategoryLabels(language)
   const currentHeroImage = heroImages[0]
   const featuredRegions = featureRegionSlugs
     .map((slug) => regions.find((region) => region.slug === slug))
@@ -72,10 +75,10 @@ export function MobileHomeExperience() {
 
     return categoryOrder.map((category) => ({
       category,
-      label: CATEGORY_LABELS[category],
+      label: labels[category],
       count: counts.get(category) ?? 0,
     }))
-  }, [allDestinations])
+  }, [allDestinations, labels])
   
   // Show only first 6 categories by default, rest on demand
   const visibleCategories = showAllCategories ? categoryCounts : categoryCounts.slice(0, 6)
@@ -126,7 +129,7 @@ export function MobileHomeExperience() {
             >
               <span className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
-                Пътеводител за България
+                {language === 'en' ? 'Guide to Bulgaria' : 'Пътеводител за България'}
               </span>
             </motion.div>
             
@@ -137,10 +140,10 @@ export function MobileHomeExperience() {
               transition={{ duration: 0.7, delay: 0.3 }}
               className="mt-6 font-display text-[3.2rem] lg:text-[4.5rem] xl:text-[5rem] font-black leading-[0.9] text-white drop-shadow-2xl"
             >
-              Откривай
+              {language === 'en' ? 'Discover' : 'Откривай'}
               <br />
               <span className="text-white">
-                места по-лесно
+                {language === 'en' ? 'places more easily' : 'места по-лесно'}
               </span>
             </motion.h1>
             
@@ -151,8 +154,9 @@ export function MobileHomeExperience() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mt-6 text-lg lg:text-xl leading-relaxed text-white font-semibold drop-shadow-xl"
             >
-              Области, категории и подбрани места в структура, направена за
-              телефон.
+              {language === 'en'
+                ? 'Regions, categories and selected places in a structure made for mobile.'
+                : 'Области, категории и подбрани места в структура, направена за телефон.'}
             </motion.p>
           </div>
 
@@ -174,7 +178,7 @@ export function MobileHomeExperience() {
                   className="block rounded-2xl border border-white/50 bg-white/18 px-3 py-4 text-center text-white backdrop-blur-sm transition-colors active:bg-white/24"
                 >
                   <span className="relative z-10 block font-display text-2xl font-black drop-shadow-xl">28</span>
-                  <span className="relative z-10 mt-1 block text-[11px] font-bold text-white uppercase tracking-[0.05em]">области</span>
+                  <span className="relative z-10 mt-1 block text-[11px] font-bold text-white uppercase tracking-[0.05em]">{language === 'en' ? 'regions' : 'области'}</span>
                 </Link>
               </motion.div>
 
@@ -189,7 +193,7 @@ export function MobileHomeExperience() {
                   <span className="relative z-10 block font-display text-2xl font-black drop-shadow-xl">
                     {allDestinations.length}
                   </span>
-                  <span className="relative z-10 mt-1 block text-[11px] font-bold text-white uppercase tracking-[0.05em]">места</span>
+                  <span className="relative z-10 mt-1 block text-[11px] font-bold text-white uppercase tracking-[0.05em]">{language === 'en' ? 'places' : 'места'}</span>
                 </Link>
               </motion.div>
 
@@ -207,10 +211,10 @@ export function MobileHomeExperience() {
           <div className="flex items-end justify-between gap-4 px-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
-                Категории
+                {t('categories')}
               </p>
               <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--forest-deep)]">
-                Избери преживяване
+                {language === 'en' ? 'Choose an experience' : 'Избери преживяване'}
               </h2>
             </div>
                       </div>
@@ -228,14 +232,14 @@ export function MobileHomeExperience() {
                 <span className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/20" />
                 <div className="relative z-10">
                   <span className="inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-white/80 bg-white/10 px-2 py-1 rounded-full backdrop-blur-sm">
-                    {item.count} места
+                    {item.count} {language === 'en' ? 'places' : 'места'}
                   </span>
                   <span className="relative mt-3 block font-display text-lg font-semibold leading-tight">
                     {item.label}
                   </span>
                   <span className="relative mt-2 inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-1.5 text-[10px] font-semibold backdrop-blur">
                     <span className="w-1 h-1 bg-white rounded-full"></span>
-                    разгледай
+                    {language === 'en' ? 'explore' : 'разгледай'}
                   </span>
                 </div>
               </Link>
@@ -250,7 +254,13 @@ export function MobileHomeExperience() {
                 className="w-full rounded-2xl border border-[var(--border)] bg-white px-4 py-3 text-xs font-bold text-[var(--ink-soft)] shadow-sm active:scale-[0.99]"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  {showAllCategories ? 'По-малко категории' : 'Още категории'}
+                  {showAllCategories
+                    ? language === 'en'
+                      ? 'Fewer categories'
+                      : 'По-малко категории'
+                    : language === 'en'
+                      ? 'More categories'
+                      : 'Още категории'}
                   <svg 
                     className={`w-4 h-4 transition-transform duration-300 ${showAllCategories ? 'rotate-180' : ''}`} 
                     fill="none" 
@@ -272,19 +282,20 @@ export function MobileHomeExperience() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
-                Области
+                {t('navRegions')}
               </p>
               <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--forest-deep)]">
-                Избери област
+                {language === 'en' ? 'Choose a region' : 'Избери област'}
               </h2>
             </div>
             <Link to="/regions" className="text-sm font-semibold text-[var(--forest)]">
-              всички
+              {language === 'en' ? 'all' : 'всички'}
             </Link>
           </div>
           <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-            Подредени като удобни карти за докосване, без тежка карта на малък
-            екран.
+            {language === 'en'
+              ? 'Arranged as touch-friendly cards, without a heavy map on a small screen.'
+              : 'Подредени като удобни карти за докосване, без тежка карта на малък екран.'}
           </p>
         </div>
 
@@ -316,7 +327,7 @@ export function MobileHomeExperience() {
               <div className="absolute left-4 top-4 rounded-full border border-white/20 bg-white/20 backdrop-blur-sm px-4 py-2 text-xs font-bold text-white shadow-[0_8px_20px_rgba(0,0,0,0.18)]">
                 <span className="flex items-center gap-1">
                   <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
-                  {region.destinations.length} места
+                  {region.destinations.length} {language === 'en' ? 'places' : 'места'}
                 </span>
               </div>
               
@@ -334,7 +345,7 @@ export function MobileHomeExperience() {
                 {/* Enhanced button with hover effects */}
                 <div className="mt-6 flex items-center gap-3">
                   <span className="inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-5 py-2.5 text-xs font-bold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(0,0,0,0.14)]">
-                    <span>Отвори областта</span>
+                    <span>{language === 'en' ? 'Open region' : 'Отвори областта'}</span>
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
@@ -355,14 +366,14 @@ export function MobileHomeExperience() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
-                Подбрано
+                {language === 'en' ? 'Selected' : 'Подбрано'}
               </p>
               <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--forest-deep)]">
-                Места за старт
+                {language === 'en' ? 'Places to start' : 'Места за старт'}
               </h2>
             </div>
             <Link to="/destinations" className="text-sm font-semibold text-[var(--forest)]">
-              още
+              {language === 'en' ? 'more' : 'още'}
             </Link>
           </div>
 
@@ -384,7 +395,7 @@ export function MobileHomeExperience() {
                 />
                 <div className="min-w-0 py-1 pr-1">
                   <p className="truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--forest)]">
-                    {CATEGORY_LABELS[destination.category]}
+                    {labels[destination.category]}
                   </p>
                   <h3 className="mt-1 line-clamp-2 font-display text-lg font-semibold leading-tight text-[var(--forest-deep)]">
                     {destination.name}

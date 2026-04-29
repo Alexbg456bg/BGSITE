@@ -1,10 +1,11 @@
 import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import type { Destination } from '../types'
-import { CATEGORY_LABELS } from '../data/categoryLabels'
+import { getCategoryLabels } from '../data/categoryLabels'
 import { useFavorites } from '../hooks/useFavorites'
 import { SmartImage } from './SmartImage'
 import { DestinationRating } from './DestinationRating'
+import { useI18n } from '../i18n/LanguageContext'
 
 type Props = {
   destination: Destination
@@ -14,6 +15,8 @@ type Props = {
 
 function DestinationCardComponent({ destination: d, regionSlug }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites()
+  const { language, t } = useI18n()
+  const labels = getCategoryLabels(language)
   const fav = isFavorite(d.id)
 
   return (
@@ -22,7 +25,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
         to={`/destination/${d.id}`}
         state={{ fromRegion: regionSlug }}
         className="flex h-full flex-col text-inherit"
-        aria-label={`Отвори ${d.name}`}
+        aria-label={`${t('openDestination')} ${d.name}`}
       >
         <div className="relative aspect-[16/10] overflow-hidden">
           <SmartImage
@@ -36,7 +39,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
             imgClassName="md:transition md:duration-700 md:hover:scale-105"
           />
           <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-medium text-[var(--forest-deep)] shadow-sm md:px-3 md:text-xs md:backdrop-blur">
-            {CATEGORY_LABELS[d.category]}
+            {labels[d.category]}
           </span>
           <button
             type="button"
@@ -46,8 +49,8 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
               toggleFavorite(d.id)
             }}
             className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-lg shadow-sm md:backdrop-blur md:transition md:hover:scale-105"
-            aria-label={fav ? 'Премахни от любими' : 'Добави в любими'}
-            title={fav ? 'В любими' : 'Запази'}
+            aria-label={fav ? t('removeFavorite') : t('addFavorite')}
+            title={fav ? t('inFavorites') : t('saved')}
           >
             {fav ? 
               <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /> 
@@ -60,7 +63,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
 
         <div className="flex flex-1 flex-col p-4 md:p-5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--forest)]/75 md:text-[11px] md:tracking-[0.22em]">
-            Подбрано място
+            {t('featuredPlace')}
           </p>
           <h3 className="font-display text-[1.05rem] font-semibold leading-snug text-[var(--ink)] md:text-lg">
             {d.name}
@@ -74,7 +77,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <span className="inline-flex flex-1 items-center justify-center rounded-xl bg-[var(--forest)] px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-[var(--forest-deep)]">
-              Виж повече
+              {t('seeMore')}
             </span>
             {d.mapsUrl && (
               <a
@@ -84,7 +87,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
                 onClick={(event) => event.stopPropagation()}
                 className="inline-flex flex-1 items-center justify-center rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)] sm:flex-none"
               >
-                Карта
+                {t('map')}
               </a>
             )}
           </div>

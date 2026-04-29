@@ -6,6 +6,7 @@ import { Breadcrumbs } from '../components/Breadcrumbs'
 import { RegionCard } from '../components/RegionCard'
 import { SmartImage } from '../components/SmartImage'
 import { useSiteData } from '../hooks/useSiteData'
+import { useI18n } from '../i18n/LanguageContext'
 
 const smoothEase = [0.22, 1, 0.36, 1] as const
 
@@ -73,6 +74,7 @@ const cardReveal: Variants = {
 export function RegionsPage() {
   const collectionRef = useRef<HTMLDivElement>(null)
   const { regions } = useSiteData()
+  const { language, t } = useI18n()
   const { scrollYProgress: collectionScroll } = useScroll({
     target: collectionRef,
     offset: ['start 86%', 'end 18%'],
@@ -93,8 +95,8 @@ export function RegionsPage() {
         <div className="mx-auto max-w-6xl px-4">
           <Breadcrumbs
             items={[
-              { label: '\u041d\u0430\u0447\u0430\u043b\u043e', to: '/' },
-              { label: '\u041e\u0431\u043b\u0430\u0441\u0442\u0438' },
+              { label: t('navHome'), to: '/' },
+              { label: t('navRegions') },
             ]}
           />
 
@@ -108,23 +110,23 @@ export function RegionsPage() {
               variants={heroItemReveal}
               className="w-fit rounded-full border border-[var(--border)] bg-white/80 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--forest)] shadow-sm md:px-4 md:text-[11px] md:tracking-[0.22em]"
             >
-              {'\u041f\u044a\u0442\u0435\u0432\u043e\u0434\u0438\u0442\u0435\u043b \u043f\u043e \u0411\u044a\u043b\u0433\u0430\u0440\u0438\u044f'}
+              {language === 'en' ? 'Guide to Bulgaria' : 'Пътеводител по България'}
             </motion.p>
 
             <motion.h1
               variants={heroItemReveal}
               className="mt-4 max-w-3xl font-display text-3xl font-semibold leading-[0.95] text-[var(--forest-deep)] md:text-5xl"
             >
-              {'\u0412\u0441\u0438\u0447\u043a\u0438 \u043e\u0431\u043b\u0430\u0441\u0442\u0438'}
+              {language === 'en' ? 'All regions' : 'Всички области'}
             </motion.h1>
 
             <motion.p
               variants={heroItemReveal}
               className="mt-4 max-w-2xl text-sm leading-relaxed text-[var(--muted)] md:text-lg"
             >
-              {
-                '\u0418\u0437\u0431\u0435\u0440\u0438 \u043e\u0431\u043b\u0430\u0441\u0442 \u0438 \u043e\u0442\u0432\u043e\u0440\u0438 \u043d\u0435\u0439\u043d\u0430\u0442\u0430 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u0441 \u043c\u0435\u0441\u0442\u0430\u0442\u0430, \u0430\u043a\u0446\u0435\u043d\u0442\u0438\u0442\u0435 \u0438 \u0441\u043d\u0438\u043c\u043a\u0438\u0442\u0435 \u0432 \u043d\u0435\u044f. \u041f\u043e\u0434\u0440\u0435\u0434\u0438\u0445\u043c\u0435 \u043a\u0430\u0440\u0442\u0438\u0442\u0435 \u0442\u0430\u043a\u0430, \u0447\u0435 \u0434\u0430 \u0441\u0435 \u0440\u0430\u0437\u0433\u043b\u0435\u0436\u0434\u0430\u0442 \u043f\u043e-\u043b\u0435\u0441\u043d\u043e \u0438 \u043f\u043e-\u043f\u0440\u0438\u044f\u0442\u043d\u043e.'
-              }
+              {language === 'en'
+                ? 'Choose a region and open its page with places, highlights and photos. The cards are arranged for easier browsing.'
+                : 'Избери област и отвори нейната страница с местата, акцентите и снимките в нея. Подредихме картите така, че да се разглеждат по-лесно и по-приятно.'}
             </motion.p>
           </motion.div>
         </div>
@@ -135,10 +137,10 @@ export function RegionsPage() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
-                Популярни области
+                {language === 'en' ? 'Popular regions' : 'Популярни области'}
               </p>
               <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--forest-deep)]">
-                Започни оттук
+                {language === 'en' ? 'Start here' : 'Започни оттук'}
               </h2>
             </div>
             <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[var(--muted)] shadow-sm">
@@ -167,7 +169,7 @@ export function RegionsPage() {
                 </div>
                 <div className="min-w-0 py-1 pr-1">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--forest)]">
-                    {region.destinations.length} места
+                    {region.destinations.length} {language === 'en' ? 'places' : 'места'}
                   </p>
                   <h3 className="mt-1 font-display text-xl font-semibold leading-tight text-[var(--forest-deep)]">
                     {region.name}
@@ -176,7 +178,7 @@ export function RegionsPage() {
                     {region.description}
                   </p>
                   <span className="mt-3 inline-flex rounded-full bg-[var(--mist)] px-3 py-1 text-xs font-semibold text-[var(--forest)]">
-                    отвори
+                    {language === 'en' ? 'open' : 'отвори'}
                   </span>
                 </div>
               </Link>
@@ -196,10 +198,10 @@ export function RegionsPage() {
         <motion.div className="mb-6 md:mb-8" variants={heroItemReveal}>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--forest)] md:tracking-[0.2em]">
-              {'\u041a\u043e\u043b\u0435\u043a\u0446\u0438\u044f'}
+              {language === 'en' ? 'Collection' : 'Колекция'}
             </p>
             <h2 className="mt-2 font-display text-[1.65rem] font-semibold leading-tight text-[var(--forest-deep)] md:text-3xl">
-              {'\u0420\u0430\u0437\u0433\u043b\u0435\u0434\u0430\u0439 \u043e\u0431\u043b\u0430\u0441\u0442\u0438\u0442\u0435 \u043f\u043e \u043a\u0430\u0440\u0442\u0438'}
+              {language === 'en' ? 'Browse regions by cards' : 'Разгледай областите по карти'}
             </h2>
           </div>
         </motion.div>

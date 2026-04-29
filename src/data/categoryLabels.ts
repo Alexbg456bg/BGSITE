@@ -1,4 +1,5 @@
 import type { DestinationCategory } from '../types'
+import { categoryLabels, type Language } from '../i18n/translations'
 
 export const CATEGORY_LABELS: Record<DestinationCategory, string> = {
   monument: 'Паметници',
@@ -25,3 +26,7 @@ export const ALL_CATEGORIES: DestinationCategory[] = [
   'reservoir_lake_view',
   'resort',
 ]
+
+export function getCategoryLabels(language: Language) {
+  return categoryLabels[language]
+}

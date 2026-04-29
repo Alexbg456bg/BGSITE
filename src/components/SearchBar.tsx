@@ -1,8 +1,9 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CATEGORY_LABELS } from '../data/categoryLabels'
+import { getCategoryLabels } from '../data/categoryLabels'
 import { useSiteData } from '../hooks/useSiteData'
+import { useI18n } from '../i18n/LanguageContext'
 
 type Props = { className?: string }
 
@@ -12,6 +13,8 @@ export function SearchBar({ className = '' }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const deferredQuery = useDeferredValue(q)
   const { allDestinations, regionByDestinationId } = useSiteData()
+  const { language, t } = useI18n()
+  const labels = getCategoryLabels(language)
 
   const indexedDestinations = useMemo(
     () =>
@@ -21,12 +24,12 @@ export function SearchBar({ className = '' }: Props) {
           destination.name,
           destination.location,
           destination.shortDescription,
-          CATEGORY_LABELS[destination.category],
+          labels[destination.category],
         ]
           .join(' ')
           .toLowerCase(),
       })),
-    [allDestinations],
+    [allDestinations, labels],
   )
 
   const results = useMemo(() => {
@@ -54,7 +57,7 @@ export function SearchBar({ className = '' }: Props) {
   return (
     <div ref={wrapRef} className={`relative ${className}`}>
       <label className="sr-only" htmlFor="site-search">
-        Търсене на дестинации
+        {t('searchLabel')}
       </label>
       <div className="relative">
         <span
@@ -67,7 +70,7 @@ export function SearchBar({ className = '' }: Props) {
           id="site-search"
           type="search"
           autoComplete="off"
-          placeholder="Търси обект, град или категория..."
+          placeholder={t('searchPlaceholder')}
           value={q}
           onChange={(e) => {
             setQ(e.target.value)
@@ -89,7 +92,7 @@ export function SearchBar({ className = '' }: Props) {
           >
             {results.length === 0 ? (
               <li className="px-4 py-3 text-sm text-[var(--muted)]">
-                Няма резултати. Опитай с друга дума.
+                {t('noResults')}
               </li>
             ) : (
               results.map((d) => {
@@ -108,7 +111,7 @@ export function SearchBar({ className = '' }: Props) {
                         {d.name}
                       </span>
                       <span className="text-xs text-[var(--muted)]">
-                        {region?.name} · {CATEGORY_LABELS[d.category]}
+                        {region?.name} · {labels[d.category]}
                       </span>
                     </Link>
                   </li>

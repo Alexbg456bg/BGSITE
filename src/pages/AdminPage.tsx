@@ -22,13 +22,19 @@ import type { Destination, DestinationCategory } from '../types'
 type FormState = {
   id: string
   name: string
+  nameEn: string
   regionSlug: string
   category: DestinationCategory
   location: string
+  locationEn: string
   shortDescription: string
+  shortDescriptionEn: string
   trailSights: string
+  trailSightsEn: string
   trailRoute: string
+  trailRouteEn: string
   trailSuitableFor: string
+  trailSuitableForEn: string
   mapsUrl: string
   lat: string
   lng: string
@@ -38,13 +44,19 @@ type FormState = {
 const blankForm: FormState = {
   id: '',
   name: '',
+  nameEn: '',
   regionSlug: staticRegions[0]?.slug ?? '',
   category: 'natural',
   location: '',
+  locationEn: '',
   shortDescription: '',
+  shortDescriptionEn: '',
   trailSights: '',
+  trailSightsEn: '',
   trailRoute: '',
+  trailRouteEn: '',
   trailSuitableFor: '',
+  trailSuitableForEn: '',
   mapsUrl: '',
   lat: '',
   lng: '',
@@ -74,17 +86,24 @@ function formFromDestination(
   regionSlug: string,
 ): FormState {
   const trailDetails = destination.trailDetails ?? TRAIL_DETAILS[destination.id]
+  const english = destination.translations?.en
 
   return {
     id: destination.id,
     name: destination.name,
+    nameEn: english?.name ?? '',
     regionSlug,
     category: destination.category,
     location: destination.location,
+    locationEn: english?.location ?? '',
     shortDescription: destination.shortDescription,
+    shortDescriptionEn: english?.shortDescription ?? '',
     trailSights: trailDetails?.sights ?? '',
+    trailSightsEn: english?.trailDetails?.sights ?? '',
     trailRoute: trailDetails?.route ?? '',
+    trailRouteEn: english?.trailDetails?.route ?? '',
     trailSuitableFor: trailDetails?.suitableFor ?? '',
+    trailSuitableForEn: english?.trailDetails?.suitableFor ?? '',
     mapsUrl: destination.mapsUrl ?? '',
     lat: destination.coords?.lat ? String(destination.coords.lat) : '',
     lng: destination.coords?.lng ? String(destination.coords.lng) : '',
@@ -419,8 +438,21 @@ export function AdminPage() {
       route: form.trailRoute.trim(),
       suitableFor: form.trailSuitableFor.trim(),
     }
+    const trailDetailsEn = {
+      sights: form.trailSightsEn.trim(),
+      route: form.trailRouteEn.trim(),
+      suitableFor: form.trailSuitableForEn.trim(),
+    }
     const hasTrailDetails = Boolean(
       trailDetails.sights || trailDetails.route || trailDetails.suitableFor,
+    )
+    const hasEnglishTranslation = Boolean(
+      form.nameEn.trim() ||
+        form.locationEn.trim() ||
+        form.shortDescriptionEn.trim() ||
+        trailDetailsEn.sights ||
+        trailDetailsEn.route ||
+        trailDetailsEn.suitableFor,
     )
 
     try {
@@ -433,6 +465,22 @@ export function AdminPage() {
           location: form.location.trim(),
           shortDescription: form.shortDescription.trim(),
           trailDetails: hasTrailDetails ? trailDetails : undefined,
+          translations: hasEnglishTranslation
+            ? {
+                en: {
+                  name: form.nameEn.trim() || form.name.trim(),
+                  location: form.locationEn.trim() || form.location.trim(),
+                  shortDescription:
+                    form.shortDescriptionEn.trim() || form.shortDescription.trim(),
+                  trailDetails: {
+                    sights: trailDetailsEn.sights || trailDetails.sights,
+                    route: trailDetailsEn.route || trailDetails.route,
+                    suitableFor:
+                      trailDetailsEn.suitableFor || trailDetails.suitableFor,
+                  },
+                },
+              }
+            : undefined,
           image: form.images[0],
           images: form.images,
           mapsUrl: form.mapsUrl.trim() || undefined,
@@ -776,6 +824,45 @@ export function AdminPage() {
             />
           </label>
 
+          <section className="mt-4 rounded-2xl border border-[var(--border)] bg-white p-4">
+            <h3 className="font-display text-xl font-semibold text-[var(--forest-deep)]">
+              English translation
+            </h3>
+            <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
+              These fields are shown when visitors switch the site to English.
+              If a field is empty, the Bulgarian text remains as a fallback.
+            </p>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <label className="block text-sm font-medium text-[var(--ink)]">
+                Name EN
+                <input
+                  value={form.nameEn}
+                  onChange={(event) => setField('nameEn', event.target.value)}
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 outline-none focus:border-[var(--forest)]"
+                />
+              </label>
+              <label className="block text-sm font-medium text-[var(--ink)]">
+                Location EN
+                <input
+                  value={form.locationEn}
+                  onChange={(event) => setField('locationEn', event.target.value)}
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 outline-none focus:border-[var(--forest)]"
+                />
+              </label>
+            </div>
+            <label className="mt-4 block text-sm font-medium text-[var(--ink)]">
+              Description EN
+              <textarea
+                value={form.shortDescriptionEn}
+                onChange={(event) =>
+                  setField('shortDescriptionEn', event.target.value)
+                }
+                rows={4}
+                className="mt-1 w-full rounded-xl border border-[var(--border)] px-3 py-2 outline-none focus:border-[var(--forest)]"
+              />
+            </label>
+          </section>
+
           <section className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4">
             <div>
               <h3 className="font-display text-xl font-semibold text-[var(--forest-deep)]">
@@ -798,12 +885,30 @@ export function AdminPage() {
                 />
               </label>
               <label className="block text-sm font-medium text-[var(--ink)]">
+                What you will see EN
+                <textarea
+                  value={form.trailSightsEn}
+                  onChange={(event) => setField('trailSightsEn', event.target.value)}
+                  rows={3}
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
+                />
+              </label>
+              <label className="block text-sm font-medium text-[var(--ink)]">
                 Каква е пътеката
                 <textarea
                   value={form.trailRoute}
                   onChange={(event) => setField('trailRoute', event.target.value)}
                   rows={3}
                   placeholder="Откъде тръгва, какъв е теренът, колко е трудна..."
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
+                />
+              </label>
+              <label className="block text-sm font-medium text-[var(--ink)]">
+                What the trail is like EN
+                <textarea
+                  value={form.trailRouteEn}
+                  onChange={(event) => setField('trailRouteEn', event.target.value)}
+                  rows={3}
                   className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
                 />
               </label>
@@ -816,6 +921,17 @@ export function AdminPage() {
                   }
                   rows={3}
                   placeholder="Семейства, начинаещи, целодневен преход..."
+                  className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
+                />
+              </label>
+              <label className="block text-sm font-medium text-[var(--ink)]">
+                Suitable for EN
+                <textarea
+                  value={form.trailSuitableForEn}
+                  onChange={(event) =>
+                    setField('trailSuitableForEn', event.target.value)
+                  }
+                  rows={3}
                   className="mt-1 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 outline-none focus:border-[var(--forest)]"
                 />
               </label>

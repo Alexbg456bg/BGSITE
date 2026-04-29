@@ -59,6 +59,37 @@ const REGION_BANNER_OVERRIDE: Record<string, string> = {
   yambol: 'Kabile Bulgaria.JPG',
 }
 
+const REGION_ENGLISH_NAMES: Record<string, string> = {
+  blagoevgrad: 'Blagoevgrad',
+  burgas: 'Burgas',
+  varna: 'Varna',
+  'veliko-tarnovo': 'Veliko Tarnovo',
+  vidin: 'Vidin',
+  vratsa: 'Vratsa',
+  gabrovo: 'Gabrovo',
+  dobrich: 'Dobrich',
+  kardzhali: 'Kardzhali',
+  kyustendil: 'Kyustendil',
+  lovech: 'Lovech',
+  montana: 'Montana',
+  pazardzhik: 'Pazardzhik',
+  pernik: 'Pernik',
+  pleven: 'Pleven',
+  plovdiv: 'Plovdiv',
+  razgrad: 'Razgrad',
+  ruse: 'Ruse',
+  silistra: 'Silistra',
+  sliven: 'Sliven',
+  smolyan: 'Smolyan',
+  'sofia-grad': 'Sofia City',
+  'sofia-oblast': 'Sofia Region',
+  'stara-zagora': 'Stara Zagora',
+  targovishte: 'Targovishte',
+  haskovo: 'Haskovo',
+  shumen: 'Shumen',
+  yambol: 'Yambol',
+}
+
 export const regions: Region[] = OBLASTI_META.map((m) => {
   const destinations = (DESTINATIONS_BY_SLUG[m.slug] ?? []).map(
     withRealDestinationImages,
@@ -87,6 +118,11 @@ export const regions: Region[] = OBLASTI_META.map((m) => {
     images,
     highlights: [...m.highlights],
     destinations,
+    translations: {
+      en: {
+        name: REGION_ENGLISH_NAMES[m.slug] ?? m.name,
+      },
+    },
   }
 })
 

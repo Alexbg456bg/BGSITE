@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
 import type { DestinationCategory } from '../types'
-import { ALL_CATEGORIES, CATEGORY_LABELS } from '../data/categoryLabels'
-import { regions } from '../data/regions'
+import { ALL_CATEGORIES, getCategoryLabels } from '../data/categoryLabels'
+import { useI18n } from '../i18n/LanguageContext'
+import { useSiteData } from '../hooks/useSiteData'
 
 type Props = {
   category: DestinationCategory | 'all'
@@ -19,14 +20,17 @@ export function FilterBar({
   showRegionFilter = true,
 }: Props) {
   const [showAllCategories, setShowAllCategories] = useState(false)
+  const { language, t } = useI18n()
+  const { regions } = useSiteData()
+  const labels = getCategoryLabels(language)
 
   const categoryEntries = useMemo(
     () =>
       ALL_CATEGORIES.map((key) => ({
         key,
-        label: CATEGORY_LABELS[key],
+        label: labels[key],
       })),
-    [],
+    [labels],
   )
 
   const visibleCategories = useMemo(
@@ -38,7 +42,7 @@ export function FilterBar({
     <div className="flex flex-col gap-5 rounded-[1.45rem] border border-[var(--border)] bg-white/92 p-3 shadow-[0_18px_44px_rgba(15,61,46,0.08)] backdrop-blur md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6 md:rounded-2xl md:bg-[var(--surface)] md:p-5 md:shadow-none">
       <div className="min-w-0 flex-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
-          Категория
+          {t('category')}
         </p>
 
         <div className="mt-3 grid grid-cols-2 gap-2 md:hidden">
@@ -54,7 +58,7 @@ export function FilterBar({
           >
             <span className="flex items-center gap-1.5">
               {category === 'all' && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
-              Всички
+              {t('all')}
             </span>
           </button>
 
@@ -93,7 +97,7 @@ export function FilterBar({
                 : 'border border-[var(--border)]/50 bg-white/80 text-[var(--ink-soft)] hover:bg-gradient-to-r hover:from-[var(--mist)] hover:to-white hover:text-[var(--forest-deep)] hover:shadow-[0_6px_16px_rgba(15,61,46,0.12)]',
             ].join(' ')}
           >
-            Всички
+            {t('all')}
           </button>
 
           {visibleCategories.map(({ key, label }) => (
@@ -118,7 +122,7 @@ export function FilterBar({
               onClick={() => setShowAllCategories(!showAllCategories)}
               className="group relative shrink-0 rounded-2xl border border-[var(--border)]/50 bg-white/80 px-4 py-2.5 text-xs font-bold text-[var(--ink-soft)] transition-all duration-300 hover:bg-[var(--mist)] md:py-2 md:font-semibold"
             >
-              {showAllCategories ? 'По-малко' : 'Още'}
+              {showAllCategories ? t('less') : t('more')}
             </button>
           )}
         </div>
@@ -130,7 +134,7 @@ export function FilterBar({
             htmlFor="filter-region"
             className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]"
           >
-            Област
+            {t('region')}
           </label>
           <select
             id="filter-region"
@@ -138,7 +142,7 @@ export function FilterBar({
             onChange={(e) => onRegionChange(e.target.value as string | 'all')}
             className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-white px-3 py-3 text-sm font-medium text-[var(--ink)] outline-none ring-[var(--forest)]/20 focus:ring-4 md:rounded-xl md:py-2.5"
           >
-            <option value="all">Всички области</option>
+            <option value="all">{t('allRegions')}</option>
             {regions.map((r) => (
               <option key={r.id} value={r.slug}>
                 {r.name}

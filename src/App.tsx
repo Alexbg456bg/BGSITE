@@ -3,6 +3,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { loadBulgariaGeoJson } from './data/bulgariaGeoJson'
+import { useI18n } from './i18n/LanguageContext'
 
 const loadHomePage = () => import('./pages/HomePage')
 const loadRegionsPage = () => import('./pages/RegionsPage')
@@ -39,9 +40,11 @@ const NotFoundPage = lazy(async () => ({
 }))
 
 function RouteLoader() {
+  const { t } = useI18n()
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 text-sm text-[var(--muted)]">
-      Зареждане...
+      {t('loading')}
     </div>
   )
 }

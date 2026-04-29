@@ -2,14 +2,15 @@ import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import type { Region } from '../types'
 import { SmartImage } from './SmartImage'
+import { useI18n } from '../i18n/LanguageContext'
 
 type Props = { region: Region; index?: number; priority?: boolean }
 
 function RegionCardComponent({ region, priority = false }: Props) {
-  const openRegionLabel = '\u041e\u0442\u0432\u043e\u0440\u0438 \u043e\u0431\u043b\u0430\u0441\u0442'
-  const placesLabel = '\u043c\u0435\u0441\u0442\u0430'
-  const ctaLabel =
-    '\u041a\u044a\u043c \u043e\u0431\u043b\u0430\u0441\u0442\u0442\u0430 \u2192'
+  const { language } = useI18n()
+  const openRegionLabel = language === 'en' ? 'Open region' : 'Отвори област'
+  const placesLabel = language === 'en' ? 'places' : 'места'
+  const ctaLabel = language === 'en' ? 'To region ->' : 'Към областта →'
 
   return (
     <Link

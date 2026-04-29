@@ -10,6 +10,7 @@ import { RegionCard } from '../components/RegionCard'
 import { MobileHomeExperience } from '../components/MobileHomeExperience'
 import { TopRatedDestinationsSection } from '../components/TopRatedDestinationsSection'
 import { useSiteData } from '../hooks/useSiteData'
+import { useI18n } from '../i18n/LanguageContext'
 
 const featuredRegionSlugs = [
   'sofia-grad',
@@ -86,6 +87,7 @@ export function HomePage() {
   const mapSectionRef = useRef<HTMLElement>(null)
   const regionsSectionRef = useRef<HTMLElement>(null)
   const { regions } = useSiteData()
+  const { language, t } = useI18n()
   const featuredRegions = regions.filter((region) =>
     featuredRegionSlugs.includes(region.slug),
   )
@@ -168,20 +170,22 @@ export function HomePage() {
         >
           <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--forest)] md:tracking-[0.3em]">
-              Области
+              {t('navRegions')}
             </p>
               <h2 className="mt-3 font-display text-2xl font-semibold text-[var(--forest-deep)] md:text-4xl">
-              Разгледай регионите
+              {language === 'en' ? 'Explore the regions' : 'Разгледай регионите'}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] md:text-base">
-              Всяка област предлага различни места за посещение.
+              {language === 'en'
+                ? 'Every region offers different places to visit.'
+                : 'Всяка област предлага различни места за посещение.'}
             </p>
           </div>
           <Link
             to="/regions"
             className="text-sm font-semibold text-[var(--forest)] hover:underline"
           >
-            Всички области →
+            {language === 'en' ? 'All regions ->' : 'Всички области →'}
           </Link>
         </motion.div>
 

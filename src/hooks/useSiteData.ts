@@ -3,10 +3,13 @@ import {
   regions as staticRegions,
 } from '../data/regions'
 import { useCustomDestinations } from '../context/customDestinationsContext'
+import { useI18n } from '../i18n/LanguageContext'
+import { localizeDestination, localizeRegion } from '../i18n/localize'
 import type { Destination, Region } from '../types'
 
 export function useSiteData() {
   const { customDestinations } = useCustomDestinations()
+  const { language } = useI18n()
 
   return useMemo(() => {
     const customByRegion = new Map<string, Destination[]>()
@@ -19,12 +22,13 @@ export function useSiteData() {
         continue
       }
       const list = customByRegion.get(entry.regionSlug) ?? []
-      list.push(entry.destination)
+      list.push(localizeDestination(entry.destination, language))
       customByRegion.set(entry.regionSlug, list)
       customById.set(entry.destination.id, entry.destination)
     }
 
-    const regions = staticRegions.map((region) => {
+    const regions = staticRegions.map((staticRegion) => {
+      const region = localizeRegion(staticRegion, language)
       const custom = customByRegion.get(region.slug) ?? []
       const customIds = new Set(custom.map((destination) => destination.id))
       const staticDestinations = region.destinations
@@ -79,5 +83,5 @@ export function useSiteData() {
       ): { destination: Destination; region: Region } | undefined =>
         destinationWithRegionById.get(id),
     }
-  }, [customDestinations])
+  }, [customDestinations, language])
 }

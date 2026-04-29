@@ -4,6 +4,7 @@ import { geoCentroid, geoMercator, geoPath } from 'd3-geo'
 import type { Feature, FeatureCollection, Geometry } from 'geojson'
 import { motion } from 'framer-motion'
 import { loadBulgariaGeoJson } from '../data/bulgariaGeoJson'
+import { useI18n } from '../i18n/LanguageContext'
 
 const PAD = 3
 
@@ -22,6 +23,37 @@ const LABEL_OVERRIDES: Record<
       large: 9.5,
     },
   },
+}
+
+const MAP_REGION_NAMES_EN: Record<string, string> = {
+  blagoevgrad: 'Blagoevgrad',
+  burgas: 'Burgas',
+  varna: 'Varna',
+  'veliko-tarnovo': 'Veliko Tarnovo',
+  vidin: 'Vidin',
+  vratsa: 'Vratsa',
+  gabrovo: 'Gabrovo',
+  dobrich: 'Dobrich',
+  kardzhali: 'Kardzhali',
+  kyustendil: 'Kyustendil',
+  lovech: 'Lovech',
+  montana: 'Montana',
+  pazardzhik: 'Pazardzhik',
+  pernik: 'Pernik',
+  pleven: 'Pleven',
+  plovdiv: 'Plovdiv',
+  razgrad: 'Razgrad',
+  ruse: 'Ruse',
+  silistra: 'Silistra',
+  sliven: 'Sliven',
+  smolyan: 'Smolyan',
+  'sofia-grad': 'Sofia City',
+  'sofia-oblast': 'Sofia Region',
+  'stara-zagora': 'Stara Zagora',
+  targovishte: 'Targovishte',
+  haskovo: 'Haskovo',
+  shumen: 'Shumen',
+  yambol: 'Yambol',
 }
 
 function splitLabelLines(name: string) {
@@ -71,6 +103,7 @@ export function BulgariaMap({
   atmospheric = false,
 }: Props) {
   const navigate = useNavigate()
+  const { language, t } = useI18n()
   const wrapRef = useRef<HTMLDivElement>(null)
   const badgeRef = useRef<HTMLDivElement>(null)
   const pathRefs = useRef(new Map<string, SVGPathElement>())
@@ -93,13 +126,19 @@ export function BulgariaMap({
         if (!cancelled) setFc(data)
       })
       .catch(() => {
-        if (!cancelled) setLoadError('Картата не може да се зареди.')
+        if (!cancelled) {
+          setLoadError(
+            language === 'en'
+              ? 'The map could not be loaded.'
+              : 'Картата не може да се зареди.',
+          )
+        }
       })
 
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [language])
 
   useEffect(() => {
     const el = wrapRef.current
@@ -156,7 +195,9 @@ export function BulgariaMap({
       if (!center) continue
 
       const raw =
-        feature.properties?.nameBg ?? feature.properties?.name ?? feature.properties?.slug
+        language === 'en'
+          ? MAP_REGION_NAMES_EN[slug] ?? slug
+          : feature.properties?.nameBg ?? feature.properties?.name ?? feature.properties?.slug
       const clean = raw.replace(' област', '')
       const override = LABEL_OVERRIDES[slug]
 
@@ -171,7 +212,7 @@ export function BulgariaMap({
     }
 
     return { pathGen, features, labels, nameBySlug }
-  }, [fc, size.w, size.h])
+  }, [fc, language, size.w, size.h])
 
   const setPathState = (node: SVGPathElement | undefined, state: 'idle' | 'active') => {
     if (!node) return
@@ -282,18 +323,20 @@ export function BulgariaMap({
           <div className="mb-4 flex flex-col gap-3 md:mb-6 md:flex-row md:items-end md:justify-between md:gap-4">
             <div className="max-w-2xl">
               <h2 className="font-display text-xl font-semibold text-[var(--forest-deep)] md:text-3xl">
-                Карта на България
+                {language === 'en' ? 'Map of Bulgaria' : 'Карта на България'}
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-[var(--muted)] md:text-base">
-                Избери си област и разгледай местата в нея.
+                {language === 'en'
+                  ? 'Choose a region and explore the places in it.'
+                  : 'Избери си област и разгледай местата в нея.'}
               </p>
             </div>
             <div
               ref={badgeRef}
-              data-default-label="28 области"
+              data-default-label={language === 'en' ? '28 regions' : '28 области'}
               className="w-fit rounded-full border border-[var(--border)] bg-white/84 px-3 py-1.5 text-xs font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)] md:px-4 md:py-2 md:text-sm"
             >
-              28 области
+              {language === 'en' ? '28 regions' : '28 области'}
             </div>
           </div>
         )}
@@ -313,7 +356,7 @@ export function BulgariaMap({
 
           {!loadError && (!fc || !pathGen) && (
             <p className="py-16 text-center text-sm text-[var(--muted)]">
-              Зареждане на картата...
+              {t('loading')}
             </p>
           )}
 
@@ -322,7 +365,11 @@ export function BulgariaMap({
               viewBox={`0 0 ${size.w} ${size.h}`}
               className="h-auto w-full max-w-full select-none"
               role="img"
-              aria-label="Карта на България с 28 области"
+              aria-label={
+                language === 'en'
+                  ? 'Map of Bulgaria with 28 regions'
+                  : 'Карта на България с 28 области'
+              }
               onPointerLeave={() => updateHovered(null)}
             >
               <defs>
@@ -388,7 +435,9 @@ export function BulgariaMap({
                     }}
                     tabIndex={0}
                     role="button"
-                    aria-label={`Област ${feature.properties?.nameBg ?? slug}`}
+                    aria-label={`${language === 'en' ? 'Region' : 'Област'} ${
+                      feature.properties?.nameBg ?? slug
+                    }`}
                   />
                 )
               })}

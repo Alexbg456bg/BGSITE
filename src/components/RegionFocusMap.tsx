@@ -7,6 +7,7 @@ import type { Destination } from '../types'
 import { loadBulgariaGeoJson } from '../data/bulgariaGeoJson'
 import { GEOCODED_COORDS } from '../data/geocodedCoords'
 import { SmartImage } from './SmartImage'
+import { useI18n } from '../i18n/LanguageContext'
 
 const PAD = 2
 const FOCUS_EXPAND = 0.06
@@ -103,6 +104,7 @@ function expandedBoundsFeature(feature: OblastFeature): Feature {
 
 export function RegionFocusMap({ slug, regionName, destinations }: Props) {
   const navigate = useNavigate()
+  const { language, t } = useI18n()
   const wrapRef = useRef<HTMLDivElement>(null)
   const wheelUnlockRef = useRef<number | null>(null)
   const isWheelLockedRef = useRef(false)
@@ -170,7 +172,9 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
 
   const loadError =
     fetchError || (geoData && !regionFeature)
-      ? 'Картата на областта не е налична в момента.'
+      ? language === 'en'
+        ? 'The region map is not available right now.'
+        : 'Картата на областта не е налична в момента.'
       : null
 
   const { backgroundPaths, pathD, markers } = useMemo<FocusResult>(() => {
@@ -264,15 +268,16 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
           <h2 className="font-display text-2xl font-semibold text-[var(--forest-deep)] md:text-3xl">
-            Карта на {regionName}
+            {language === 'en' ? `Map of ${regionName}` : `Карта на ${regionName}`}
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[var(--muted)] md:text-base">
-            Областта е изведена в контекст, а туристическите места са поставени
-            директно върху нея.
+            {language === 'en'
+              ? 'The region is shown in context, with tourist places placed directly on it.'
+              : 'Областта е изведена в контекст, а туристическите места са поставени директно върху нея.'}
           </p>
         </div>
         <div className="rounded-full border border-[var(--border)] bg-white/84 px-4 py-2 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)]">
-          {`${markers.length} точки`}
+          {`${markers.length} ${language === 'en' ? 'points' : 'точки'}`}
         </div>
       </div>
 
@@ -287,7 +292,7 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
 
           {!loadError && !regionFeature && (
             <p className="py-16 text-center text-sm text-[var(--muted)]">
-              Зареждане на картата...
+              {t('loading')}
             </p>
           )}
 
@@ -296,7 +301,11 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
               viewBox={`0 0 ${size.w} ${size.h}`}
               className="h-auto w-full max-w-full"
               role="img"
-              aria-label={`Карта на ${regionName} с туристически обекти`}
+              aria-label={
+                language === 'en'
+                  ? `Map of ${regionName} with tourist places`
+                  : `Карта на ${regionName} с туристически обекти`
+              }
             >
               <defs>
                 <linearGradient id={waterId} x1="0%" y1="0%" x2="100%" y2="100%">

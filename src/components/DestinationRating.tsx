@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useDestinationRatings } from '../hooks/useDestinationRatings'
+import { useI18n } from '../i18n/LanguageContext'
 
 type Props = {
   destinationId: string
@@ -25,6 +26,7 @@ function StarIcon({ filled }: { filled: boolean }) {
 
 export function DestinationRating({ destinationId, compact = false }: Props) {
   const { getRating, hasUserRated, submitRating } = useDestinationRatings()
+  const { t, language } = useI18n()
   const rating = getRating(destinationId)
   const alreadyRated = hasUserRated(destinationId)
   const [hovered, setHovered] = useState(0)
@@ -55,12 +57,14 @@ export function DestinationRating({ destinationId, compact = false }: Props) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
-            Оценка
+            {t('rating')}
           </p>
           <p className="mt-1 text-sm text-[var(--muted)]">
             {rating?.count
-              ? `${rating.average.toFixed(1)} от 5 · ${rating.count} оценки`
-              : 'Все още няма оценки'}
+              ? `${rating.average.toFixed(1)} ${language === 'en' ? 'out of' : 'от'} 5 · ${rating.count} ${
+                  language === 'en' ? 'ratings' : 'оценки'
+                }`
+              : t('noRatings')}
           </p>
         </div>
         <div
@@ -84,7 +88,7 @@ export function DestinationRating({ destinationId, compact = false }: Props) {
                 setIsSubmitting(true)
                 try {
                   await submitRating(destinationId, value)
-                  setStatus('Благодарим за оценката!')
+                  setStatus(t('thanksForRating'))
                 } catch (error) {
                   const { code, retryAfterSeconds } = error as Error & {
                     code?: string
@@ -92,17 +96,23 @@ export function DestinationRating({ destinationId, compact = false }: Props) {
                   }
                   setStatus(
                     code === 'already_rated'
-                      ? 'Вече си оценил тази дестинация.'
+                      ? t('alreadyRated')
                       : code === 'rating_cooldown'
-                        ? `Може да оцениш друга дестинация след ${retryAfterSeconds ?? 60} сек.`
-                        : 'Оценката не беше записана. Опитай пак след малко.',
+                        ? language === 'en'
+                          ? `You can rate another destination after ${retryAfterSeconds ?? 60} sec.`
+                          : `Може да оцениш друга дестинация след ${retryAfterSeconds ?? 60} сек.`
+                        : t('rateAgainLater'),
                   )
                 } finally {
                   setIsSubmitting(false)
                 }
               }}
-              aria-label={`Оцени с ${value} от 5`}
-              title={`Оцени с ${value} от 5`}
+              aria-label={
+                language === 'en' ? `Rate ${value} out of 5` : `Оцени с ${value} от 5`
+              }
+              title={
+                language === 'en' ? `Rate ${value} out of 5` : `Оцени с ${value} от 5`
+              }
             >
               <StarIcon filled={value <= displayValue} />
             </button>
@@ -114,7 +124,7 @@ export function DestinationRating({ destinationId, compact = false }: Props) {
       )}
       {!status && alreadyRated && (
         <p className="mt-3 text-sm font-medium text-[var(--forest)]">
-          Вече си оценил тази дестинация.
+          {t('alreadyRated')}
         </p>
       )}
     </section>

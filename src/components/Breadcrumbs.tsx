@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useI18n } from '../i18n/LanguageContext'
 
 export type Crumb = { label: string; to?: string }
 
@@ -10,6 +11,7 @@ type Props = {
 
 export function Breadcrumbs({ items, variant = 'default' }: Props) {
   const onDark = variant === 'onDark'
+  const { language } = useI18n()
 
   return (
     <motion.nav
@@ -20,7 +22,7 @@ export function Breadcrumbs({ items, variant = 'default' }: Props) {
           ? 'text-white/86 drop-shadow-[0_2px_8px_rgba(0,0,0,0.72)]'
           : 'text-[var(--muted)]'
       }`}
-      aria-label="Пътека"
+      aria-label={language === 'en' ? 'Breadcrumb' : 'Пътека'}
     >
       <ol className="flex flex-wrap items-center gap-2">
         {items.map((item, i) => (

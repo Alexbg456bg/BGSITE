@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion'
 import { useTheme } from '../contexts/ThemeContext'
+import { useI18n } from '../i18n/LanguageContext'
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme()
+  const { language } = useI18n()
 
   return (
     <motion.button
@@ -10,7 +12,7 @@ export function ThemeToggle() {
       className="relative p-2 rounded-xl transition-all duration-300 hover:bg-[var(--surface-2)]"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      aria-label="Промени тема"
+      aria-label={language === 'en' ? 'Change theme' : 'Промени тема'}
     >
       <div className="relative w-6 h-6">
         {/* Sun icon for light mode */}
