@@ -18,26 +18,192 @@
     --border: #d0ddd3;
     --border-strong: #9eb4a7;
     --shadow-soft: 0 30px 70px -28px rgba(15, 61, 46, 0.34);
+    --map-section-bg: linear-gradient(180deg, rgba(244, 246, 242, 0.94), rgba(227, 238, 230, 0.6) 42%, rgba(244, 246, 242, 0.96));
+    --map-section-overlay: radial-gradient(circle at 44% 40%, rgba(236, 216, 164, 0.08), transparent 28%);
+    --map-field-bg:
+      linear-gradient(135deg, rgba(15, 61, 46, 0.22), rgba(79, 140, 171, 0.5) 46%, rgba(236, 216, 164, 0.42)),
+      radial-gradient(circle at 18% 30%, rgba(45, 106, 79, 0.72), transparent 30%),
+      radial-gradient(circle at 84% 42%, rgba(79, 140, 171, 0.5), transparent 32%);
+    --map-card-bg:
+      linear-gradient(135deg, rgba(45, 106, 79, 0.72), rgba(79, 140, 171, 0.5) 46%, rgba(236, 216, 164, 0.42)),
+      radial-gradient(circle at 26% 22%, rgba(236, 216, 164, 0.42), transparent 28%),
+      radial-gradient(circle at 80% 74%, rgba(45, 106, 79, 0.72), transparent 34%);
+    --map-panel-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(231, 240, 234, 0.56));
+    --map-panel-border: rgba(255, 255, 255, 0.64);
+    --map-panel-shadow: none;
+    --map-inner-bg: rgba(214, 230, 220, 0.18);
+    --map-inner-border: rgba(255, 255, 255, 0.7);
+    --map-inner-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    --map-water-start: rgba(238, 246, 242, 0.72);
+    --map-water-end: rgba(220, 235, 226, 0.62);
+    --map-badge-bg: rgba(255, 255, 255, 0.84);
+    --map-badge-border: var(--border);
+    --map-badge-text: var(--forest-deep);
+    --map-heading-text: var(--forest-deep);
+    --map-copy-text: var(--muted);
+    --destination-card-bg: #ffffff;
+    --destination-card-border: var(--border);
+    --destination-card-shadow: 0 2px 8px rgba(15, 61, 46, 0.08);
+    --destination-card-shadow-hover: 0 10px 24px rgba(15, 61, 46, 0.14);
+    --destination-card-chip-bg: rgba(255, 255, 255, 0.95);
+    --destination-card-chip-text: var(--forest-deep);
+    --destination-card-icon-bg: rgba(255, 255, 255, 0.95);
+    --destination-card-icon-text: var(--ink-soft);
+    --destination-card-eyebrow: rgba(45, 106, 79, 0.75);
+    --destination-card-title: var(--ink);
+    --destination-card-location: var(--forest);
+    --destination-card-body: var(--muted);
+    --destination-card-secondary-border: var(--border);
+    --destination-card-secondary-text: var(--ink-soft);
+    --destination-card-secondary-hover-bg: transparent;
+    --destination-card-secondary-hover-border: var(--forest);
+    --destination-card-secondary-hover-text: var(--forest);
+    --region-card-bg: rgba(255, 255, 255, 0.96);
+    --region-card-border: var(--border);
+    --region-card-shadow: 0 18px 34px rgba(15, 61, 46, 0.08);
+    --region-card-shadow-strong: 0 30px 70px rgba(15, 61, 46, 0.12);
+    --region-card-focus-shadow: 0 0 0 3px rgba(15, 91, 63, 0.16);
+    --region-card-overlay: linear-gradient(to top, rgba(15, 61, 46, 0.45), rgba(15, 61, 46, 0.12), transparent);
+    --region-card-badge-bg: rgba(255, 255, 255, 0.92);
+    --region-card-badge-text: var(--forest-deep);
+    --region-card-title: var(--forest-deep);
+    --region-card-body: var(--muted);
+    --region-card-chip-bg: var(--surface-2);
+    --region-card-chip-border: var(--border);
+    --region-card-chip-text: var(--ink-soft);
+    --region-card-chip-hover-border: var(--border-strong);
+    --region-card-divider: var(--border);
+    --region-card-count: var(--forest);
+    --region-card-cta-bg: var(--forest-deep);
+    --region-card-cta-hover-bg: var(--forest);
+    --home-section-kicker: var(--forest);
+    --home-section-heading: var(--forest-deep);
+    --footer-bg: linear-gradient(180deg, rgba(237, 242, 235, 0.86), rgba(255, 255, 255, 0.98));
+    --footer-border: var(--border);
+    --footer-heading: var(--forest-deep);
+    --footer-body: var(--muted);
+    --footer-link: var(--forest);
+    --footer-link-hover: var(--forest-deep);
+    --footer-stat-bg: rgba(255, 255, 255, 0.7);
+    --footer-stat-text: var(--forest-deep);
+    --footer-note-bg: rgba(255, 255, 255, 0.64);
+    --footer-note-text: var(--ink-soft);
+    --footer-divider: var(--border);
+    --footer-meta: var(--muted);
+    --nav-surface: rgba(255, 255, 255, 0.54);
+    --nav-surface-strong: rgba(255, 255, 255, 0.88);
+    --nav-border: rgba(255, 255, 255, 0.45);
+    --nav-glow: linear-gradient(to bottom, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.14), transparent);
+    --nav-shadow: 0 10px 36px rgba(15, 61, 46, 0.1);
+    --nav-text: var(--forest-deep);
+    --nav-text-shadow: 0 1px 10px rgba(255, 255, 255, 0.72);
+    --nav-hover-bg: rgba(255, 255, 255, 0.48);
+    --nav-search-bg: rgba(255, 255, 255, 0.62);
+    --nav-search-bg-focus: rgba(255, 255, 255, 0.82);
+    --nav-search-border: rgba(255, 255, 255, 0.6);
+    --nav-search-placeholder: var(--muted);
+    --nav-search-results-bg: #ffffff;
+    --nav-search-results-hover: var(--mist);
   }
 
   /* Dark theme colors */
   .dark {
-    --bg: #0f0f0f;
-    --surface: #1a1a1a;
-    --surface-2: #262626;
-    --mist: #14532d;
-    --forest-deep: #16a34a;
-    --forest: #22c55e;
-    --sky-deep: #1e3a8a;
-    --sky: #3b82f6;
-    --sky-pale: #1e3a8a;
-    --sand: #713f12;
-    --ink: #ffffff;
-    --ink-soft: #e5e5e5;
-    --muted: #a3a3a3;
-    --border: #404040;
-    --border-strong: #6b7280;
-    --shadow-soft: 0 30px 70px -28px rgba(0, 0, 0, 0.5);
+    --bg: #1f1f1f;
+    --surface: #ffffff;
+    --surface-2: #edf2eb;
+    --mist: #e3eee6;
+    --forest-deep: #0f3d2e;
+    --forest: #2d6a4f;
+    --sky-deep: #1f5973;
+    --sky: #4f8cab;
+    --sky-pale: #d1e7f0;
+    --sand: #ecd8a4;
+    --ink: #17281f;
+    --ink-soft: #40574b;
+    --muted: #5f7066;
+    --border: #d0ddd3;
+    --border-strong: #9eb4a7;
+    --shadow-soft: 0 30px 70px -28px rgba(15, 61, 46, 0.34);
+    --map-section-bg: #1f1f1f;
+    --map-section-overlay: none;
+    --map-field-bg: #1f1f1f;
+    --map-card-bg: #1f1f1f;
+    --map-panel-bg: linear-gradient(180deg, rgba(51, 68, 96, 0.94), rgba(43, 60, 88, 0.9));
+    --map-panel-border: rgba(255, 255, 255, 0.52);
+    --map-panel-shadow: 0 28px 70px rgba(9, 46, 32, 0.42);
+    --map-inner-bg: rgba(70, 93, 126, 0.32);
+    --map-inner-border: rgba(255, 255, 255, 0.48);
+    --map-inner-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --map-water-start: rgba(68, 91, 123, 0.98);
+    --map-water-end: rgba(54, 75, 105, 0.98);
+    --map-badge-bg: rgba(40, 55, 79, 0.9);
+    --map-badge-border: rgba(154, 184, 214, 0.14);
+    --map-badge-text: #dce7f4;
+    --map-heading-text: #ffffff;
+    --map-copy-text: rgba(255, 255, 255, 0.76);
+    --destination-card-bg: #222d3d;
+    --destination-card-border: rgba(255, 255, 255, 0.52);
+    --destination-card-shadow: 0 10px 26px rgba(0, 0, 0, 0.2);
+    --destination-card-shadow-hover: 0 18px 40px rgba(5, 26, 43, 0.34);
+    --destination-card-chip-bg: rgba(40, 58, 82, 0.92);
+    --destination-card-chip-text: #ecf3fb;
+    --destination-card-icon-bg: rgba(40, 58, 82, 0.92);
+    --destination-card-icon-text: #edf5ff;
+    --destination-card-eyebrow: rgba(198, 216, 239, 0.7);
+    --destination-card-title: #f6f9ff;
+    --destination-card-location: #d4e2f6;
+    --destination-card-body: rgba(223, 233, 246, 0.78);
+    --destination-card-secondary-border: rgba(171, 192, 221, 0.2);
+    --destination-card-secondary-text: #dbe7f7;
+    --destination-card-secondary-hover-bg: rgba(255, 255, 255, 0.06);
+    --destination-card-secondary-hover-border: rgba(171, 192, 221, 0.4);
+    --destination-card-secondary-hover-text: #f6f9ff;
+    --region-card-bg: #222d3d;
+    --region-card-border: rgba(255, 255, 255, 0.52);
+    --region-card-shadow: 0 18px 34px rgba(0, 0, 0, 0.2);
+    --region-card-shadow-strong: 0 30px 70px rgba(5, 26, 43, 0.34);
+    --region-card-focus-shadow: 0 0 0 3px rgba(171, 192, 221, 0.18);
+    --region-card-overlay: linear-gradient(to top, rgba(15, 24, 39, 0.36), rgba(15, 24, 39, 0.1), transparent);
+    --region-card-badge-bg: rgba(255, 255, 255, 0.92);
+    --region-card-badge-text: #23354b;
+    --region-card-title: #f6f9ff;
+    --region-card-body: rgba(223, 233, 246, 0.78);
+    --region-card-chip-bg: rgba(255, 255, 255, 0.08);
+    --region-card-chip-border: rgba(171, 192, 221, 0.2);
+    --region-card-chip-text: #dbe7f7;
+    --region-card-chip-hover-border: rgba(171, 192, 221, 0.38);
+    --region-card-divider: rgba(171, 192, 221, 0.16);
+    --region-card-count: #d4e2f6;
+    --region-card-cta-bg: var(--forest-deep);
+    --region-card-cta-hover-bg: var(--forest);
+    --home-section-kicker: #ffffff;
+    --home-section-heading: #ffffff;
+    --footer-bg: linear-gradient(180deg, rgba(11, 44, 31, 0.52) 0%, rgba(31, 31, 31, 0.98) 22%, #1f1f1f 100%);
+    --footer-border: rgba(255, 255, 255, 0.12);
+    --footer-heading: #ffffff;
+    --footer-body: rgba(223, 233, 246, 0.76);
+    --footer-link: #d7e6f8;
+    --footer-link-hover: #ffffff;
+    --footer-stat-bg: rgba(255, 255, 255, 0.08);
+    --footer-stat-text: #ffffff;
+    --footer-note-bg: rgba(255, 255, 255, 0.06);
+    --footer-note-text: rgba(223, 233, 246, 0.8);
+    --footer-divider: rgba(255, 255, 255, 0.12);
+    --footer-meta: rgba(223, 233, 246, 0.62);
+    --nav-surface: rgba(31, 31, 31, 0.74);
+    --nav-surface-strong: rgba(31, 31, 31, 0.82);
+    --nav-border: rgba(255, 255, 255, 0.08);
+    --nav-glow: none;
+    --nav-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    --nav-text: #f4f6f2;
+    --nav-text-shadow: none;
+    --nav-hover-bg: rgba(255, 255, 255, 0.08);
+    --nav-search-bg: rgba(255, 255, 255, 0.9);
+    --nav-search-bg-focus: #ffffff;
+    --nav-search-border: rgba(208, 221, 211, 0.9);
+    --nav-search-placeholder: rgba(23, 40, 31, 0.5);
+    --nav-search-results-bg: #ffffff;
+    --nav-search-results-hover: var(--mist);
   }
 
   html {
@@ -136,11 +302,11 @@
 
   /* Static CSS for 360 FPS performance */
   .hero-background {
-    background: linear-gradient(180deg, rgba(244,246,242,0.94), rgba(227,238,230,0.6) 42%, rgba(244,246,242,0.96));
+    background: var(--map-section-bg);
   }
 
   .hero-radial-overlay {
-    background: radial-gradient(circle at 44% 40%, rgba(236,216,164,0.08), transparent 28%);
+    background: var(--map-section-overlay);
   }
 
   .bottom-fade {
@@ -195,21 +361,13 @@
   }
 
   .map-color-field {
-    background:
-      linear-gradient(135deg, rgba(15, 61, 46, 0.24), rgba(31, 89, 115, 0.2) 46%, rgba(236, 216, 164, 0.24)),
-      radial-gradient(circle at 18% 30%, rgba(45, 106, 79, 0.66), transparent 30%),
-      radial-gradient(circle at 84% 42%, rgba(79, 140, 171, 0.56), transparent 32%),
-      radial-gradient(circle at 48% 76%, rgba(236, 216, 164, 0.58), transparent 28%);
+    background: var(--map-field-bg);
     background-size: 160% 160%, 140% 140%, 150% 150%, 140% 140%;
     animation: map-color-drift 11s ease-in-out infinite alternate;
   }
 
   .map-card-color-field {
-    background:
-      linear-gradient(135deg, rgba(15, 61, 46, 0.42), rgba(79, 140, 171, 0.34) 46%, rgba(236, 216, 164, 0.4)),
-      radial-gradient(circle at 26% 22%, rgba(236, 216, 164, 0.62), transparent 28%),
-      radial-gradient(circle at 80% 74%, rgba(45, 106, 79, 0.52), transparent 34%),
-      radial-gradient(circle at 58% 42%, rgba(79, 140, 171, 0.36), transparent 30%);
+    background: var(--map-card-bg);
     background-size: 170% 170%, 140% 140%, 150% 150%, 130% 130%;
     animation: map-card-color-drift 8s ease-in-out infinite alternate;
   }
@@ -247,6 +405,61 @@
     left: -3.25rem;
     right: -3.25rem;
     margin-top: 0.65rem;
+  }
+
+  .navbar-shell {
+    background: var(--nav-surface);
+    box-shadow: var(--nav-shadow);
+  }
+
+  .navbar-glow {
+    background: var(--nav-glow);
+  }
+
+  .navbar-brand,
+  .navbar-link {
+    color: var(--nav-text);
+    text-shadow: var(--nav-text-shadow);
+  }
+
+  .navbar-link:hover {
+    background: var(--nav-hover-bg);
+    color: var(--nav-text);
+  }
+
+  .navbar-menu-toggle,
+  .navbar-panel {
+    border-color: var(--nav-border);
+    background: var(--nav-surface-strong);
+    color: var(--nav-text);
+  }
+
+  .site-search-input {
+    border-color: var(--nav-search-border);
+    background: var(--nav-search-bg);
+    color: var(--ink);
+  }
+
+  .site-search-input::placeholder {
+    color: var(--nav-search-placeholder);
+  }
+
+  .site-search-input:focus {
+    border-color: var(--forest);
+    background: var(--nav-search-bg-focus);
+  }
+
+  .site-search-icon {
+    color: var(--nav-search-placeholder);
+  }
+
+  .site-search-results {
+    border-color: var(--nav-border);
+    background: var(--nav-search-results-bg);
+  }
+
+  .site-search-result:hover {
+    background: var(--nav-search-results-hover);
   }
 }
 

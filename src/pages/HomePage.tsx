@@ -91,9 +91,6 @@ export function HomePage() {
   const featuredRegions = regions.filter((region) =>
     featuredRegionSlugs.includes(region.slug),
   )
-  // Static values for 360 FPS performance - no scroll animations
-  const mapFieldBackground = 'linear-gradient(135deg, rgba(15,61,46,0.22), rgba(79,140,171,0.5) 46%, rgba(236,216,164,0.42)), radial-gradient(circle at 18% 30%, rgba(45,106,79,0.72), transparent 30%), radial-gradient(circle at 84% 42%, rgba(79,140,171,0.5), transparent 32%)'
-  const mapCardBackground = 'linear-gradient(135deg, rgba(45,106,79,0.72), rgba(79,140,171,0.5) 46%, rgba(236,216,164,0.42)), radial-gradient(circle at 26% 22%, rgba(236,216,164,0.42), transparent 28%), radial-gradient(circle at 80% 74%, rgba(45,106,79,0.72), transparent 34%)'
 
   return (
     <>
@@ -114,9 +111,6 @@ export function HomePage() {
       >
         <motion.div
           className="map-color-field absolute inset-x-0 top-0 -z-20 h-full min-h-[560px] md:min-h-[820px]"
-          style={{
-            background: mapFieldBackground,
-          }}
           aria-hidden
         />
                 <div
@@ -127,14 +121,6 @@ export function HomePage() {
           className="absolute inset-0 -z-10 hero-radial-overlay"
           aria-hidden
         />
-        <motion.div
-          className="absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-t from-white/5 via-white/3 via-white/1 to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
-          aria-hidden
-        />
-
         <div className="mx-auto max-w-6xl px-4">
           <motion.div 
             className="relative" 
@@ -145,8 +131,7 @@ export function HomePage() {
             }}
           >
             <div
-              className="map-card-color-field pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] shadow-[0_44px_110px_rgba(15,61,46,0.18)]"
-              style={{ background: mapCardBackground }}
+              className="map-card-color-field pointer-events-none absolute -inset-10 -z-10 rounded-[3rem]"
               aria-hidden
             />
             <BulgariaMap id="home-map" large atmospheric />
@@ -169,10 +154,10 @@ export function HomePage() {
           variants={headingReveal}
         >
           <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--forest)] md:tracking-[0.3em]">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--home-section-kicker)] md:tracking-[0.3em]">
               {t('navRegions')}
             </p>
-              <h2 className="mt-3 font-display text-2xl font-semibold text-[var(--forest-deep)] md:text-4xl">
+              <h2 className="mt-3 font-display text-2xl font-semibold text-[var(--home-section-heading)] md:text-4xl">
               {language === 'en' ? 'Explore the regions' : 'Разгледай регионите'}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] md:text-base">

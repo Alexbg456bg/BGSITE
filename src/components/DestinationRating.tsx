@@ -40,11 +40,11 @@ export function DestinationRating({ destinationId, compact = false }: Props) {
 
   if (compact) {
     return (
-      <div className="mt-2 flex items-center gap-1.5 text-xs text-[var(--muted)]">
+      <div className="mt-2 flex items-center gap-1.5 text-xs text-[var(--destination-card-body)]">
         <span className="text-[var(--sand)]">
           <StarIcon filled={Boolean(rating?.count)} />
         </span>
-        <span className="font-semibold text-[var(--forest-deep)]">
+        <span className="font-semibold text-[var(--destination-card-title)]">
           {rating?.count ? rating.average.toFixed(1) : '0.0'}
         </span>
         <span>({rating?.count ?? 0})</span>

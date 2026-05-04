@@ -8,10 +8,10 @@ import { useI18n } from '../i18n/LanguageContext'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
-    'rounded-full px-3 py-2 text-sm font-medium transition lg:px-4',
+    'navbar-link rounded-full px-3 py-2 text-sm font-medium transition lg:px-4',
     isActive
       ? 'bg-[var(--forest)] text-white shadow-sm'
-      : 'text-[var(--forest-deep)] [text-shadow:0_1px_10px_rgba(255,255,255,0.72)] hover:bg-white/48 hover:text-[var(--forest-deep)]',
+      : '',
   ].join(' ')
 
 export function Navbar() {
@@ -28,22 +28,22 @@ export function Navbar() {
 
   return (
     <header
-      className={`top-0 z-50 bg-white/54 shadow-[0_10px_36px_rgba(15,61,46,0.1)] backdrop-blur-2xl ${
+      className={`navbar-shell top-0 z-50 backdrop-blur-2xl ${
         isHome
           ? 'fixed left-0 right-0'
-          : 'sticky border-b border-white/45'
+          : 'sticky border-b border-[var(--nav-border)]'
       }`}
     >
       {isHome && (
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-[-24px] h-6 bg-gradient-to-b from-white/36 via-white/14 to-transparent"
+          className="navbar-glow pointer-events-none absolute inset-x-0 bottom-[-24px] h-6"
           aria-hidden
         />
       )}
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 md:gap-4 md:py-4">
         <Link
           to="/"
-          className="group flex shrink-0 items-center gap-2 font-display text-lg font-semibold tracking-tight text-[var(--forest-deep)] [text-shadow:0_1px_10px_rgba(255,255,255,0.72)]"
+          className="navbar-brand group flex shrink-0 items-center gap-2 font-display text-lg font-semibold tracking-tight"
         >
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--forest)] to-[var(--sky-deep)] text-sm text-white shadow-md">
             BG
@@ -80,7 +80,7 @@ export function Navbar() {
           
           <button
             type="button"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-white text-[var(--ink)] shadow-sm lg:hidden"
+            className="navbar-menu-toggle flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border shadow-sm lg:hidden"
             aria-expanded={open}
             aria-label={open ? t('closeMenu') : t('openMenu')}
             onClick={() => setOpen((o) => !o)}
@@ -101,7 +101,7 @@ export function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="max-h-[calc(100svh-4rem)] overflow-auto border-t border-white/45 bg-white/88 backdrop-blur-2xl lg:hidden"
+            className="navbar-panel max-h-[calc(100svh-4rem)] overflow-auto border-t backdrop-blur-2xl lg:hidden"
           >
             <div className="flex flex-col gap-2 px-4 py-4">
               <div className="flex items-center justify-end gap-2">

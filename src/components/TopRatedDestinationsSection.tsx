@@ -39,10 +39,10 @@ export function TopRatedDestinationsSection({
         <div className="mx-auto max-w-md">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--home-section-kicker)]">
                 {language === 'en' ? 'Top rated' : 'Най-добре оценени'}
               </p>
-              <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--forest-deep)]">
+              <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--home-section-heading)]">
                 {language === 'en' ? 'Visitor favorites' : 'Любими на посетителите'}
               </h2>
             </div>
@@ -97,10 +97,10 @@ export function TopRatedDestinationsSection({
     <section className="relative mx-auto max-w-6xl px-4 py-10 md:py-18">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--forest)] md:tracking-[0.3em]">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--home-section-kicker)] md:tracking-[0.3em]">
             {language === 'en' ? 'Top rated' : 'Най-добре оценени'}
           </p>
-          <h2 className="mt-3 font-display text-2xl font-semibold text-[var(--forest-deep)] md:text-4xl">
+          <h2 className="mt-3 font-display text-2xl font-semibold text-[var(--home-section-heading)] md:text-4xl">
             {language === 'en' ? 'Visitor favorites' : 'Любими на посетителите'}
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] md:text-base">

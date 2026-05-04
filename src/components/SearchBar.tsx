@@ -61,7 +61,7 @@ export function SearchBar({ className = '' }: Props) {
       </label>
       <div className="relative">
         <span
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]"
+          className="site-search-icon pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"
           aria-hidden
         >
           ⌕
@@ -77,7 +77,7 @@ export function SearchBar({ className = '' }: Props) {
             setOpen(true)
           }}
           onFocus={() => setOpen(true)}
-          className="w-full rounded-2xl border border-white/60 bg-white/62 py-2.5 pl-10 pr-4 text-sm text-[var(--ink)] shadow-sm outline-none ring-[var(--forest)]/25 backdrop-blur-xl transition placeholder:text-[var(--muted)] focus:border-[var(--forest)] focus:bg-white/82 focus:ring-4"
+          className="site-search-input w-full rounded-2xl border py-2.5 pl-10 pr-4 text-sm shadow-sm outline-none ring-[var(--forest)]/25 backdrop-blur-xl transition focus:ring-4"
         />
       </div>
 
@@ -87,7 +87,7 @@ export function SearchBar({ className = '' }: Props) {
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-auto rounded-2xl border border-[var(--border)] bg-white py-2 shadow-xl"
+            className="site-search-results absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-auto rounded-2xl border py-2 shadow-xl"
             role="listbox"
           >
             {results.length === 0 ? (
@@ -105,7 +105,7 @@ export function SearchBar({ className = '' }: Props) {
                         setOpen(false)
                         setQ('')
                       }}
-                      className="flex flex-col gap-0.5 px-4 py-2.5 transition hover:bg-[var(--mist)]"
+                      className="site-search-result flex flex-col gap-0.5 px-4 py-2.5 transition"
                     >
                       <span className="font-medium text-[var(--ink)]">
                         {d.name}

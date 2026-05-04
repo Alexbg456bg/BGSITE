@@ -20,7 +20,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
   const fav = isFavorite(d.id)
 
   return (
-    <article className="content-card h-full overflow-hidden rounded-[1.35rem] border border-[var(--border)] bg-white shadow-sm [contain-intrinsic-size:430px] [content-visibility:auto] md:rounded-2xl md:transition md:hover:shadow-md">
+    <article className="content-card h-full overflow-hidden rounded-[1.35rem] border border-[var(--destination-card-border)] bg-[var(--destination-card-bg)] shadow-[var(--destination-card-shadow)] [contain-intrinsic-size:430px] [content-visibility:auto] md:rounded-2xl md:transition md:hover:shadow-[var(--destination-card-shadow-hover)]">
       <Link
         to={`/destination/${d.id}`}
         state={{ fromRegion: regionSlug }}
@@ -38,7 +38,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
             className="h-full w-full"
             imgClassName="md:transition md:duration-700 md:hover:scale-105"
           />
-          <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-medium text-[var(--forest-deep)] shadow-sm md:px-3 md:text-xs md:backdrop-blur">
+          <span className="absolute left-3 top-3 rounded-full bg-[var(--destination-card-chip-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--destination-card-chip-text)] shadow-sm md:px-3 md:text-xs md:backdrop-blur">
             {labels[d.category]}
           </span>
           <button
@@ -48,7 +48,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
               event.stopPropagation()
               toggleFavorite(d.id)
             }}
-            className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-lg shadow-sm md:backdrop-blur md:transition md:hover:scale-105"
+            className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--destination-card-icon-bg)] text-[var(--destination-card-icon-text)] text-lg shadow-sm md:backdrop-blur md:transition md:hover:scale-105"
             aria-label={fav ? t('removeFavorite') : t('addFavorite')}
             title={fav ? t('inFavorites') : t('saved')}
           >
@@ -62,17 +62,17 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
         </div>
 
         <div className="flex flex-1 flex-col p-4 md:p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--forest)]/75 md:text-[11px] md:tracking-[0.22em]">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--destination-card-eyebrow)] md:text-[11px] md:tracking-[0.22em]">
             {t('featuredPlace')}
           </p>
-          <h3 className="font-display text-[1.05rem] font-semibold leading-snug text-[var(--ink)] md:text-lg">
+          <h3 className="font-display text-[1.05rem] font-semibold leading-snug text-[var(--destination-card-title)] md:text-lg">
             {d.name}
           </h3>
-          <p className="mt-1 text-xs font-medium text-[var(--forest)]">
+          <p className="mt-1 text-xs font-medium text-[var(--destination-card-location)]">
             {d.location}
           </p>
           <DestinationRating destinationId={d.id} compact />
-          <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-[var(--muted)]">
+          <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-[var(--destination-card-body)]">
             {d.shortDescription}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -85,7 +85,7 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
                 target="_blank"
                 rel="noreferrer"
                 onClick={(event) => event.stopPropagation()}
-                className="inline-flex flex-1 items-center justify-center rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--ink-soft)] transition hover:border-[var(--forest)] hover:text-[var(--forest)] sm:flex-none"
+                className="inline-flex flex-1 items-center justify-center rounded-xl border border-[var(--destination-card-secondary-border)] bg-[var(--destination-card-secondary-hover-bg)] px-4 py-2.5 text-sm font-medium text-[var(--destination-card-secondary-text)] transition hover:border-[var(--destination-card-secondary-hover-border)] hover:bg-[var(--destination-card-secondary-hover-bg)] hover:text-[var(--destination-card-secondary-hover-text)] sm:flex-none"
               >
                 {t('map')}
               </a>

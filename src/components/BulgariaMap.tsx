@@ -307,25 +307,50 @@ export function BulgariaMap({
     updateHovered(slug)
   }
 
+  const panelStyle = atmospheric
+    ? {
+        background: 'var(--map-panel-bg)',
+        borderColor: 'var(--map-panel-border)',
+        boxShadow: 'var(--map-panel-shadow)',
+      }
+    : undefined
+
+  const badgeStyle = atmospheric
+    ? {
+        background: 'var(--map-badge-bg)',
+        borderColor: 'var(--map-badge-border)',
+        color: 'var(--map-badge-text)',
+      }
+    : undefined
+
+  const wrapStyle = atmospheric
+    ? {
+        background: 'var(--map-inner-bg)',
+        borderColor: 'var(--map-inner-border)',
+        boxShadow: 'var(--map-inner-shadow)',
+      }
+    : undefined
+
   return (
     <section id={id} className="scroll-mt-24">
       <motion.div
         initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
-        className={`overflow-hidden rounded-[1.45rem] border p-3 shadow-[0_34px_70px_rgba(15,61,46,0.10)] md:rounded-[2.2rem] md:p-8 ${
+        className={`overflow-hidden rounded-[1.45rem] border p-3 md:rounded-[2.2rem] md:p-8 ${
           atmospheric
-            ? 'border-white/64 bg-[linear-gradient(180deg,rgba(255,255,255,0.76),rgba(231,240,234,0.56))] backdrop-blur-xl'
+            ? 'backdrop-blur-xl'
             : 'border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(231,240,234,0.92))]'
         }`}
+        style={panelStyle}
       >
         {!compact && (
           <div className="mb-4 flex flex-col gap-3 md:mb-6 md:flex-row md:items-end md:justify-between md:gap-4">
             <div className="max-w-2xl">
-              <h2 className="font-display text-xl font-semibold text-[var(--forest-deep)] md:text-3xl">
+              <h2 className="font-display text-xl font-semibold text-[var(--map-heading-text)] md:text-3xl">
                 {language === 'en' ? 'Map of Bulgaria' : 'Карта на България'}
               </h2>
-              <p className="mt-2 text-sm leading-relaxed text-[var(--muted)] md:text-base">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--map-copy-text)] md:text-base">
                 {language === 'en'
                   ? 'Choose a region and explore the places in it.'
                   : 'Избери си област и разгледай местата в нея.'}
@@ -335,6 +360,7 @@ export function BulgariaMap({
               ref={badgeRef}
               data-default-label={language === 'en' ? '28 regions' : '28 области'}
               className="w-fit rounded-full border border-[var(--border)] bg-white/84 px-3 py-1.5 text-xs font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)] md:px-4 md:py-2 md:text-sm"
+              style={badgeStyle}
             >
               {language === 'en' ? '28 regions' : '28 области'}
             </div>
@@ -345,9 +371,10 @@ export function BulgariaMap({
           ref={wrapRef}
           className={`overflow-hidden rounded-[1.2rem] border border-white/70 p-1.5 md:rounded-[1.8rem] md:p-4 ${
             atmospheric
-              ? 'bg-[rgba(214,230,220,0.18)] shadow-[inset_0_1px_0_rgba(255,255,255,0.42)]'
+              ? ''
               : 'bg-[rgba(214,230,220,0.36)]'
           }`}
+          style={wrapStyle}
           onWheelCapture={handleWheelActivity}
         >
           {loadError && (
@@ -376,11 +403,11 @@ export function BulgariaMap({
                 <linearGradient id={waterId} x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop
                     offset="0%"
-                    stopColor={atmospheric ? 'rgba(238,246,242,0.72)' : '#eef6f2'}
+                    stopColor={atmospheric ? 'var(--map-water-start)' : '#eef6f2'}
                   />
                   <stop
                     offset="100%"
-                    stopColor={atmospheric ? 'rgba(220,235,226,0.62)' : '#dcebe2'}
+                    stopColor={atmospheric ? 'var(--map-water-end)' : '#dcebe2'}
                   />
                 </linearGradient>
                 <linearGradient id={activeId} x1="0%" y1="0%" x2="100%" y2="100%">
