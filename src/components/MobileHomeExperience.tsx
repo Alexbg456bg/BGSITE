@@ -254,18 +254,6 @@ export function MobileHomeExperience() {
           className="relative z-10 flex min-h-[400px] flex-col justify-end lg:mx-auto lg:min-h-[500px] lg:max-w-7xl lg:flex-row lg:items-center lg:justify-between lg:gap-12 xl:gap-16"
         >
           <div className="flex flex-col justify-center px-4 lg:flex-1 lg:px-0 lg:pr-8">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="w-fit rounded-full border border-white/50 bg-black/30 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md"
-            >
-              <span className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-white"></span>
-                {language === 'en' ? 'Guide to Bulgaria' : 'Пътеводител за България'}
-              </span>
-            </motion.div>
-
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -295,6 +283,7 @@ export function MobileHomeExperience() {
                 ? 'Regions, categories and selected places in a structure made for mobile.'
                 : 'Области, категории и подбрани места в структура, направена за телефон.'}
             </motion.p>
+
           </div>
 
           <div className="flex flex-col justify-center px-4 lg:flex-1 lg:max-w-md lg:px-0">

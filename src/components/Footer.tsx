@@ -137,7 +137,6 @@ export function Footer() {
                     {language === 'en' ? 'Find us online' : 'Намери ни онлайн'}
                   </h3>
                 </div>
-                <div className="hidden h-14 w-14 rounded-2xl bg-[radial-gradient(circle_at_30%_30%,rgba(236,216,164,0.9),rgba(45,106,79,0.9))] shadow-[0_18px_32px_rgba(15,61,46,0.18)] md:block" />
               </div>
 
               <p className="mt-3 max-w-md text-sm leading-relaxed text-[var(--footer-body)]">

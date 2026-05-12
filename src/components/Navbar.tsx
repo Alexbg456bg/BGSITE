@@ -15,6 +15,49 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       : '',
   ].join(' ')
 
+const mobileSocialLinks = [
+  {
+    href: 'https://www.tiktok.com/@izgubisebg',
+    label: 'TikTok',
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden className="h-4.5 w-4.5 fill-current">
+        <path d="M14.2 3c.2 1.7 1.2 3.3 2.8 4.2 1 .6 2 .9 3.1.9v3.2c-1.4 0-2.8-.4-4-1.1v5.6c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6c.3 0 .7 0 1 .1V13a3.3 3.3 0 0 0-1-.2 3.1 3.1 0 1 0 3.1 3.1V3h3Z" />
+      </svg>
+    ),
+  },
+  {
+    href: 'https://www.instagram.com/izgubisebg/',
+    label: 'Instagram',
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden
+        className="h-4.5 w-4.5 fill-none stroke-current"
+        strokeWidth="1.8"
+      >
+        <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
+        <circle cx="12" cy="12" r="4.1" />
+        <circle cx="17.4" cy="6.6" r="0.9" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+  },
+  {
+    href: 'mailto:izgubisebg@gmail.com',
+    label: 'Email',
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden
+        className="h-4.5 w-4.5 fill-none stroke-current"
+        strokeWidth="1.8"
+      >
+        <rect x="3.5" y="5.5" width="17" height="13" rx="2.5" />
+        <path d="m5 7 7 5 7-5" />
+      </svg>
+    ),
+  },
+]
+
 export function Navbar() {
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
@@ -104,6 +147,20 @@ export function Navbar() {
           >
             <div className="flex flex-col gap-2 px-4 py-4">
               <div className="flex items-center justify-end gap-2">
+                <div className="mr-auto flex items-center gap-2">
+                  {mobileSocialLinks.map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      target={item.href.startsWith('http') ? '_blank' : undefined}
+                      rel={item.href.startsWith('http') ? 'noreferrer' : undefined}
+                      aria-label={item.label}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[var(--nav-border)] bg-[var(--nav-surface)] text-[var(--nav-text)] shadow-sm backdrop-blur-sm transition active:scale-[0.96]"
+                    >
+                      {item.icon}
+                    </a>
+                  ))}
+                </div>
                 <LanguageToggle />
                 <ThemeToggle />
               </div>
