@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { SearchBar } from './SearchBar'
 import { ThemeToggle } from './ThemeToggle'
 import { LanguageToggle } from './LanguageToggle'
+import { BrandMark } from './BrandMark'
 import { useI18n } from '../i18n/LanguageContext'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -45,9 +46,7 @@ export function Navbar() {
           to="/"
           className="navbar-brand group flex shrink-0 items-center gap-2 font-display text-lg font-semibold tracking-tight"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--forest)] to-[var(--sky-deep)] text-sm text-white shadow-md">
-            BG
-          </span>
+          <BrandMark />
           <span className="hidden sm:inline">{t('brand')}</span>
         </Link>
 

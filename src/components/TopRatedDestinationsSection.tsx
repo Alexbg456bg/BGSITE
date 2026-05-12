@@ -113,7 +113,7 @@ export function TopRatedDestinationsSection({
           to="/destinations"
           className="text-sm font-semibold text-[var(--forest)] hover:underline"
         >
-          {language === 'en' ? 'All destinations ->' : 'Всички дестинации →'}
+          {language === 'en' ? 'All destinations ->' : 'Всички дестинации ->'}
         </Link>
       </div>
 
@@ -126,17 +126,17 @@ export function TopRatedDestinationsSection({
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {topRated.map((destination, index) => {
-          const region = regionByDestinationId.get(destination.id)
-          if (!region) return null
+            const region = regionByDestinationId.get(destination.id)
+            if (!region) return null
 
-          return (
-            <DestinationCard
-              key={destination.id}
-              destination={destination}
-              regionSlug={region.slug}
-              index={index}
-            />
-          )
+            return (
+              <DestinationCard
+                key={destination.id}
+                destination={destination}
+                regionSlug={region.slug}
+                index={index}
+              />
+            )
           })}
         </div>
       )}
