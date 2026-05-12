@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { SmartImage } from './SmartImage'
+import { useSiteData } from '../hooks/useSiteData'
 import { useI18n } from '../i18n/LanguageContext'
 
 const heroImages = [
@@ -38,16 +39,27 @@ function shuffledHeroImages() {
   return [...heroImages].sort(() => Math.random() - 0.5)
 }
 
-const highlights = [
-  { value: '28', label: 'области' },
-  { value: '160+', label: 'места за откриване' },
-]
-
 export function HeroSection() {
   const { language } = useI18n()
+  const { regions, allDestinations } = useSiteData()
   const sectionRef = useRef<HTMLElement>(null)
   const candidates = useMemo(() => shuffledHeroImages(), [])
   const [heroImage, setHeroImage] = useState(candidates[0])
+  const highlights = useMemo(
+    () => [
+      {
+        value: String(regions.length),
+        labelBg: 'области',
+        labelEn: 'regions',
+      },
+      {
+        value: String(allDestinations.length),
+        labelBg: 'места за откриване',
+        labelEn: 'places to discover',
+      },
+    ],
+    [allDestinations.length, regions.length],
+  )
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end start'],
@@ -116,11 +128,11 @@ export function HeroSection() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
       />
-      
+
       <motion.div
         className="relative mx-auto flex min-h-[640px] max-w-6xl items-end px-4 pb-14 pt-24 md:min-h-[760px] md:pb-28"
-        style={{ 
-          y: contentY, 
+        style={{
+          y: contentY,
           opacity: contentOpacity,
           transform: 'translateZ(0)',
           willChange: 'transform, opacity',
@@ -174,18 +186,14 @@ export function HeroSection() {
           >
             {highlights.map((item) => (
               <div
-                key={item.label}
+                key={item.labelEn}
                 className="rounded-[1.35rem] border border-white/16 bg-white/10 px-4 py-3 backdrop-blur-md md:rounded-[1.7rem] md:px-5 md:py-4"
               >
                 <p className="font-display text-2xl font-semibold text-white md:text-3xl">
                   {item.value}
                 </p>
                 <p className="mt-1 text-sm text-white/72">
-                  {language === 'en'
-                    ? item.value === '28'
-                      ? 'regions'
-                      : 'places to discover'
-                    : item.label}
+                  {language === 'en' ? item.labelEn : item.labelBg}
                 </p>
               </div>
             ))}

@@ -22,21 +22,16 @@ export function Footer() {
           aria-hidden
         />
 
-        <div className="relative mt-8 grid gap-7 md:mt-10 md:grid-cols-[1.4fr_0.8fr_1fr] md:gap-8">
+        <div className="relative mt-8 grid gap-7 md:mt-10 md:grid-cols-[1.4fr_0.8fr] md:gap-8">
           <div>
             <Link
               to="/"
-            className="font-display text-xl font-semibold text-[var(--footer-heading)] transition hover:text-[var(--footer-link-hover)] md:text-2xl"
+              className="font-display text-xl font-semibold text-[var(--footer-heading)] transition hover:text-[var(--footer-link-hover)] md:text-2xl"
             >
               {t('brand')}
             </Link>
-            <p className="mt-3 max-w-md text-sm leading-relaxed text-[var(--footer-body)]">
-              {language === 'en'
-                ? 'A travel portal with 28 regions, a real map of Bulgaria and a focus on places worth discovering.'
-                : 'Туристически портал с 28 области, реална карта на България и фокус върху места, които си заслужава да бъдат открити.'}
-            </p>
 
-            <div className="mt-5 grid max-w-md grid-cols-3 gap-2 md:gap-3">
+            <div className="mt-5 grid max-w-md grid-cols-2 gap-2 md:gap-3">
               <div className="rounded-2xl border border-[var(--footer-border)] bg-[var(--footer-stat-bg)] px-2.5 py-3 md:px-3">
                 <p className="font-display text-lg font-semibold text-[var(--footer-stat-text)] md:text-xl">
                   28
@@ -51,14 +46,6 @@ export function Footer() {
                 </p>
                 <p className="mt-1 text-xs text-[var(--footer-body)]">
                   {language === 'en' ? 'places' : 'места'}
-                </p>
-              </div>
-              <div className="rounded-2xl border border-[var(--footer-border)] bg-[var(--footer-stat-bg)] px-2.5 py-3 md:px-3">
-                <p className="font-display text-base font-semibold text-[var(--footer-stat-text)] md:text-xl">
-                  {language === 'en' ? 'map' : 'карта'}
-                </p>
-                <p className="mt-1 text-xs text-[var(--footer-body)]">
-                  {language === 'en' ? 'navigation' : 'навигация'}
                 </p>
               </div>
             </div>
@@ -80,31 +67,6 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
-
-          <div>
-            <p className="text-sm font-semibold text-[var(--footer-heading)]">
-              {t('footerSources')}
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-[var(--footer-body)]">
-              {language === 'en'
-                ? 'Photos: Unsplash and Wikimedia Commons. Regional borders: '
-                : 'Снимки: Unsplash и Wikimedia Commons. Областни граници: '}
-              <a
-                href="https://www.naturalearthdata.com/"
-                className="text-[var(--footer-link)] underline"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Natural Earth
-              </a>
-              .
-            </p>
-            <p className="mt-4 rounded-2xl border border-[var(--footer-border)] bg-[var(--footer-note-bg)] p-4 text-sm leading-relaxed text-[var(--footer-note-text)]">
-              {language === 'en'
-                ? 'Tip: add contact details, social profiles and a short suggestion form to make the site feel more complete.'
-                : 'Съвет: добави контакт, социални профили и кратка форма за предложения, за да изглежда сайтът по-завършен.'}
-            </p>
           </div>
         </div>
 

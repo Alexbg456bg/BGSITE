@@ -1,5 +1,4 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Breadcrumbs } from '../components/Breadcrumbs'
@@ -72,19 +71,9 @@ const cardReveal: Variants = {
 }
 
 export function RegionsPage() {
-  const collectionRef = useRef<HTMLDivElement>(null)
   const { regions } = useSiteData()
   const { language, t } = useI18n()
-  const { scrollYProgress: collectionScroll } = useScroll({
-    target: collectionRef,
-    offset: ['start 86%', 'end 18%'],
-  })
-  const collectionGlowOpacity = useTransform(
-    collectionScroll,
-    [0, 0.45, 1],
-    [0, 0.24, 0.08],
-  )
-  const collectionRailScale = useTransform(collectionScroll, [0, 1], [0, 1])
+  const prefersReducedMotion = useReducedMotion()
 
   return (
     <div className="pb-14 md:pb-20">
@@ -188,12 +177,10 @@ export function RegionsPage() {
       </section>
 
       <motion.div
-        ref={collectionRef}
         className="relative mx-auto hidden max-w-6xl px-4 py-9 md:block md:py-14"
         variants={sectionReveal}
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.16 }}
+        animate="visible"
       >
         <motion.div className="mb-6 md:mb-8" variants={heroItemReveal}>
           <div>
@@ -209,13 +196,20 @@ export function RegionsPage() {
         <motion.div className="relative">
           <motion.div
             className="pointer-events-none absolute -inset-x-4 -top-8 h-56 bg-[radial-gradient(circle_at_28%_45%,rgba(236,216,164,0.34),transparent_46%),radial-gradient(circle_at_78%_32%,rgba(79,140,171,0.18),transparent_44%)] blur-2xl md:-inset-x-8 md:-top-12 md:h-80"
-            style={{ opacity: collectionGlowOpacity }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: prefersReducedMotion ? 0.12 : 0.18 }}
+            transition={{ duration: 0.45, ease: smoothEase }}
             aria-hidden
           />
           <div className="pointer-events-none absolute -left-4 top-2 hidden h-[calc(100%-1rem)] w-px bg-[var(--border)] md:block">
             <motion.span
               className="block h-full origin-top bg-[linear-gradient(180deg,var(--sand),var(--forest),var(--sky))]"
-              style={{ scaleY: collectionRailScale }}
+              initial={{ scaleY: 0 }}
+              animate={{ scaleY: 1 }}
+              transition={{
+                duration: prefersReducedMotion ? 0.01 : 0.5,
+                ease: smoothEase,
+              }}
             />
           </div>
 
@@ -223,17 +217,19 @@ export function RegionsPage() {
             className="grid gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4"
             variants={gridReveal}
             style={{ perspective: 1200 }}
+            initial="hidden"
+            animate="visible"
           >
             {regions.map((region, index) => (
               <motion.div
                 key={region.id}
                 custom={index}
-                initial="hidden"
-                whileInView="visible"
                 variants={cardReveal}
-                viewport={{ once: false, amount: 0.24 }}
-                whileHover={{ y: -6, scale: 1.01 }}
-                transition={{ duration: 0.24, ease: smoothEase }}
+                whileHover={prefersReducedMotion ? undefined : { y: -6, scale: 1.01 }}
+                transition={{
+                  duration: prefersReducedMotion ? 0.01 : 0.24,
+                  ease: smoothEase,
+                }}
               >
                 <RegionCard region={region} index={index} priority={index < 4} />
               </motion.div>

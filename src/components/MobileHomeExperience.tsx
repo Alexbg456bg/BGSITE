@@ -6,7 +6,7 @@ import { TopRatedDestinationsSection } from './TopRatedDestinationsSection'
 import { getCategoryLabels } from '../data/categoryLabels'
 import { useSiteData } from '../hooks/useSiteData'
 import { useI18n } from '../i18n/LanguageContext'
-import type { DestinationCategory, Region } from '../types'
+import type { DestinationCategory } from '../types'
 
 // Hero rotation images array
 const heroImages = [
@@ -20,15 +20,6 @@ const heroImages = [
   '/images/hero-rotation/image8.jpg',
   '/images/hero-rotation/image9.jpg',
   '/images/hero-rotation/image10.jpg',
-]
-
-const featureRegionSlugs = [
-  'sofia-grad',
-  'plovdiv',
-  'varna',
-  'veliko-tarnovo',
-  'smolyan',
-  'burgas',
 ]
 
 const categoryOrder: DestinationCategory[] = [
@@ -63,9 +54,17 @@ export function MobileHomeExperience() {
   const { language, t } = useI18n()
   const labels = getCategoryLabels(language)
   const currentHeroImage = heroImages[0]
-  const featuredRegions = featureRegionSlugs
-    .map((slug) => regions.find((region) => region.slug === slug))
-    .filter((region): region is Region => Boolean(region))
+  const featuredRegions = useMemo(
+    () =>
+      [...regions]
+        .sort((a, b) => {
+          const difference = b.destinations.length - a.destinations.length
+          if (difference !== 0) return difference
+          return a.name.localeCompare(b.name, language === 'en' ? 'en' : 'bg')
+        })
+        .slice(0, 6),
+    [language, regions],
+  )
   const featuredDestinations = allDestinations.slice(0, 6)
   const categoryCounts = useMemo(() => {
     const counts = new Map<DestinationCategory, number>()
@@ -177,7 +176,7 @@ export function MobileHomeExperience() {
                   to="/regions"
                   className="block rounded-2xl border border-white/50 bg-white/18 px-3 py-4 text-center text-white backdrop-blur-sm transition-colors active:bg-white/24"
                 >
-                  <span className="relative z-10 block font-display text-2xl font-black drop-shadow-xl">28</span>
+                  <span className="relative z-10 block font-display text-2xl font-black drop-shadow-xl">{regions.length}</span>
                   <span className="relative z-10 mt-1 block text-[11px] font-bold text-white uppercase tracking-[0.05em]">{language === 'en' ? 'regions' : 'области'}</span>
                 </Link>
               </motion.div>

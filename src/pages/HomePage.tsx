@@ -12,17 +12,6 @@ import { TopRatedDestinationsSection } from '../components/TopRatedDestinationsS
 import { useSiteData } from '../hooks/useSiteData'
 import { useI18n } from '../i18n/LanguageContext'
 
-const featuredRegionSlugs = [
-  'sofia-grad',
-  'plovdiv',
-  'veliko-tarnovo',
-  'varna',
-  'smolyan',
-  'burgas',
-  'blagoevgrad',
-  'ruse',
-]
-
 const smoothEase = [0.22, 1, 0.36, 1] as const
 
 const sectionReveal: Variants = {
@@ -88,9 +77,13 @@ export function HomePage() {
   const regionsSectionRef = useRef<HTMLElement>(null)
   const { regions } = useSiteData()
   const { language, t } = useI18n()
-  const featuredRegions = regions.filter((region) =>
-    featuredRegionSlugs.includes(region.slug),
-  )
+  const featuredRegions = [...regions]
+    .sort((a, b) => {
+      const difference = b.destinations.length - a.destinations.length
+      if (difference !== 0) return difference
+      return a.name.localeCompare(b.name, language === 'en' ? 'en' : 'bg')
+    })
+    .slice(0, 8)
 
   return (
     <>
