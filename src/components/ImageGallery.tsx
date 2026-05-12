@@ -14,7 +14,7 @@ export function ImageGallery({ images, alt, className = '' }: ImageGalleryProps)
   if (images.length === 0) return null
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`min-w-0 space-y-4 ${className}`}>
       {/* Main image */}
       <motion.div
         key={selectedIndex}
@@ -35,7 +35,7 @@ export function ImageGallery({ images, alt, className = '' }: ImageGalleryProps)
 
       {/* Thumbnails */}
       {images.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="flex min-w-0 gap-2 overflow-x-auto pb-2">
           {images.map((img, index) => (
             <button
               key={index}
