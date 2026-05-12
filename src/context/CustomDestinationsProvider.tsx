@@ -34,6 +34,24 @@ function normalizeEntries(value: unknown): CustomDestinationEntry[] {
   return Array.isArray(value) ? value.filter(isCustomDestinationEntry) : []
 }
 
+async function extractApiError(response: Response, fallback: string) {
+  const details = await response.json().catch(() => null)
+  const text =
+    typeof details?.error === 'string'
+      ? details.error
+      : typeof details?.message === 'string'
+        ? details.message
+        : ''
+
+  if (text) return text
+
+  if (response.status === 413) {
+    return 'Качените снимки са твърде големи за онлайн записа. Намали броя им или размера им.'
+  }
+
+  return `${fallback} (${response.status})`
+}
+
 const bundledDestinations = normalizeEntries(adminDestinations)
 
 export function CustomDestinationsProvider({
@@ -70,8 +88,7 @@ export function CustomDestinationsProvider({
         })
 
         if (!response.ok) {
-          const details = await response.json().catch(() => null)
-          throw new Error(details?.error ?? 'Admin server save failed')
+          throw new Error(await extractApiError(response, 'Admin server save failed'))
         }
 
         const saved = (await response.json()) as CustomDestinationEntry[]
@@ -92,8 +109,7 @@ export function CustomDestinationsProvider({
         })
 
         if (!response.ok) {
-          const details = await response.json().catch(() => null)
-          throw new Error(details?.error ?? 'Admin server delete failed')
+          throw new Error(await extractApiError(response, 'Admin server delete failed'))
         }
 
         const saved = (await response.json()) as CustomDestinationEntry[]
