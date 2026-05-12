@@ -93,7 +93,7 @@ export function MobileHomeExperience() {
             backgroundRepeat: 'no-repeat',
           }}
         >
-        {/* Smart gradient overlays for perfect text readability */}
+                {/* Smart gradient overlays for perfect text readability */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-transparent via-transparent to-[var(--forest)]/25" />
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.15),rgba(0,0,0,0.4)_40%,rgba(0,0,0,0.7)_80%,rgba(0,0,0,0.85)_100%)]" />
         
@@ -141,7 +141,10 @@ export function MobileHomeExperience() {
             >
               {language === 'en' ? 'Discover' : 'Откривай'}
               <br />
-              <span className="text-white">
+              <span className="text-white" style={{
+                fontFamily: 'DM Sans, sans-serif',
+                opacity: 0.98,
+              }}>
                 {language === 'en' ? 'places more easily' : 'места по-лесно'}
               </span>
             </motion.h1>
@@ -321,7 +324,7 @@ export function MobileHomeExperience() {
               
               {/* Multi-layered gradient overlays */}
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--forest-deep)]/95 via-[var(--forest-deep)]/40 to-transparent" />
-              
+                            
               {/* Enhanced badge with animation */}
               <div className="absolute left-4 top-4 rounded-full border border-white/20 bg-white/20 backdrop-blur-sm px-4 py-2 text-xs font-bold text-white shadow-[0_8px_20px_rgba(0,0,0,0.18)]">
                 <span className="flex items-center gap-1">

@@ -21,21 +21,21 @@
     --map-section-bg: linear-gradient(180deg, rgba(244, 246, 242, 0.94), rgba(227, 238, 230, 0.6) 42%, rgba(244, 246, 242, 0.96));
     --map-section-overlay: radial-gradient(circle at 44% 40%, rgba(236, 216, 164, 0.08), transparent 28%);
     --map-field-bg:
-      linear-gradient(135deg, rgba(15, 61, 46, 0.22), rgba(79, 140, 171, 0.5) 46%, rgba(236, 216, 164, 0.42)),
-      radial-gradient(circle at 18% 30%, rgba(45, 106, 79, 0.72), transparent 30%),
-      radial-gradient(circle at 84% 42%, rgba(79, 140, 171, 0.5), transparent 32%);
+      linear-gradient(135deg, rgba(15, 61, 46, 0.22), rgba(79, 140, 171, 0) 46%, rgba(236, 216, 164, 0)),
+      radial-gradient(circle at 18% 30%, rgba(45, 106, 79, 0), transparent 30%),
+      radial-gradient(circle at 84% 42%, rgba(79, 140, 171, 0), transparent 32%);
     --map-card-bg:
-      linear-gradient(135deg, rgba(45, 106, 79, 0.72), rgba(79, 140, 171, 0.5) 46%, rgba(236, 216, 164, 0.42)),
-      radial-gradient(circle at 26% 22%, rgba(236, 216, 164, 0.42), transparent 28%),
-      radial-gradient(circle at 80% 74%, rgba(45, 106, 79, 0.72), transparent 34%);
-    --map-panel-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(231, 240, 234, 0.56));
-    --map-panel-border: rgba(255, 255, 255, 0.64);
+      linear-gradient(135deg, rgba(45, 106, 79, 0), rgba(79, 140, 171, 0) 46%, rgba(236, 216, 164, 0)),
+      radial-gradient(circle at 26% 22%, rgba(236, 216, 164, 0), transparent 28%),
+      radial-gradient(circle at 80% 74%, rgba(45, 106, 79, 0), transparent 34%);
+    --map-panel-bg: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(231, 240, 234, 0));
+    --map-panel-border: rgba(255, 255, 255, 0);
     --map-panel-shadow: none;
-    --map-inner-bg: rgba(214, 230, 220, 0.18);
-    --map-inner-border: rgba(255, 255, 255, 0.7);
-    --map-inner-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
-    --map-water-start: rgba(238, 246, 242, 0.72);
-    --map-water-end: rgba(220, 235, 226, 0.62);
+    --map-inner-bg: rgba(214, 230, 220, 0);
+    --map-inner-border: rgba(255, 255, 255, 0);
+    --map-inner-shadow: inset 0 1px 0 rgba(255, 255, 255, 0);
+    --map-water-start: rgba(238, 246, 242, 0);
+    --map-water-end: rgba(220, 235, 226, 0);
     --map-badge-bg: rgba(255, 255, 255, 0.84);
     --map-badge-border: var(--border);
     --map-badge-text: var(--forest-deep);

@@ -72,8 +72,14 @@ export function MobileBottomNav() {
               ].join(' ')
             }
           >
-            <span className="mb-1">{item.icon}</span>
-            <span>{t(item.labelKey)}</span>
+            <span className="mb-1" style={{
+                fontFamily: 'DM Sans, sans-serif',
+                opacity: 0.98,
+              }}>{item.icon}</span>
+            <span style={{
+                fontFamily: 'DM Sans, sans-serif',
+                opacity: 0.98,
+              }}>{t(item.labelKey)}</span>
           </NavLink>
         ))}
       </div>

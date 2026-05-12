@@ -38,7 +38,10 @@ function DestinationCardComponent({ destination: d, regionSlug }: Props) {
             className="h-full w-full"
             imgClassName="md:transition md:duration-700 md:hover:scale-105"
           />
-          <span className="absolute left-3 top-3 rounded-full bg-[var(--destination-card-chip-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--destination-card-chip-text)] shadow-sm md:px-3 md:text-xs md:backdrop-blur">
+          <span className="absolute left-3 top-3 rounded-full bg-[var(--destination-card-chip-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--destination-card-chip-text)] shadow-sm md:px-3 md:text-xs md:backdrop-blur" style={{
+            fontFamily: 'DM Sans, sans-serif',
+            opacity: 0.98,
+          }}>
             {labels[d.category]}
           </span>
           <button

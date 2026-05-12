@@ -18,9 +18,9 @@ const LABEL_OVERRIDES: Record<
   'sofia-grad': {
     dx: -16,
     fontSize: {
-      compact: 7.2,
-      default: 9,
-      large: 9.5,
+      compact: 11.5,
+      default: 15.0,
+      large: 16.5,
     },
   },
 }
@@ -236,12 +236,14 @@ export function BulgariaMap({
 
     if (state === 'active') {
       node.setAttribute('fill', '#ffffff')
+      node.setAttribute('stroke', '#1F1F1F')
       node.setAttribute('font-weight', '700')
       node.style.opacity = '1'
       return
     }
 
     node.setAttribute('fill', '#0f1720')
+    node.setAttribute('stroke', 'rgba(255,255,255,0.92)')
     node.setAttribute('font-weight', '700')
     node.style.opacity = '0.98'
   }
@@ -487,10 +489,10 @@ export function BulgariaMap({
                   fill="#0f1720"
                   fontSize={
                     compact
-                      ? (label.fontSize?.compact ?? 8.2)
+                      ? (label.fontSize?.compact ?? 11.5)
                       : large
-                        ? (label.fontSize?.large ?? 11.8)
-                        : (label.fontSize?.default ?? 10.4)
+                        ? (label.fontSize?.large ?? 16.5)
+                        : (label.fontSize?.default ?? 15.0)
                   }
                   fontWeight={700}
                   stroke="rgba(255,255,255,0.92)"

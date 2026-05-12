@@ -114,7 +114,7 @@ export function HomePage() {
           className="absolute inset-0 -z-10 hero-radial-overlay"
           aria-hidden
         />
-        <div className="mx-auto max-w-6xl px-4">
+                <div className="mx-auto max-w-6xl px-4">
           <motion.div 
             className="relative" 
             variants={mapReveal}

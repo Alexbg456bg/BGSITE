@@ -47,7 +47,10 @@ export function Breadcrumbs({ items, variant = 'default' }: Props) {
                 {item.label}
               </Link>
             ) : (
-              <span className={`font-medium ${onDark ? 'text-white' : 'text-[var(--ink)]'}`}>
+              <span className={`font-medium ${onDark ? 'text-white' : 'text-[var(--ink)]'}`} style={{
+            fontFamily: 'DM Sans, sans-serif',
+            opacity: 0.98,
+          }}>
                 {item.label}
               </span>
             )}

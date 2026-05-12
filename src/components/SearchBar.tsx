@@ -107,10 +107,16 @@ export function SearchBar({ className = '' }: Props) {
                       }}
                       className="site-search-result flex flex-col gap-0.5 px-4 py-2.5 transition"
                     >
-                      <span className="font-medium text-[var(--ink)]">
+                      <span className="font-medium text-[var(--ink)]" style={{
+                        fontFamily: 'DM Sans, sans-serif',
+                        opacity: 0.98,
+                      }}>
                         {d.name}
                       </span>
-                      <span className="text-xs text-[var(--muted)]">
+                      <span className="text-xs text-[var(--muted)]" style={{
+                        fontFamily: 'DM Sans, sans-serif',
+                        opacity: 0.98,
+                      }}>
                         {region?.name} · {labels[d.category]}
                       </span>
                     </Link>

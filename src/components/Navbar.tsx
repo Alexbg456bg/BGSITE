@@ -45,10 +45,16 @@ export function Navbar() {
           to="/"
           className="navbar-brand group flex shrink-0 items-center gap-2 font-display text-lg font-semibold tracking-tight"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--forest)] to-[var(--sky-deep)] text-sm text-white shadow-md">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--forest)] to-[var(--sky-deep)] text-sm text-white shadow-md" style={{
+            fontFamily: 'DM Sans, sans-serif',
+            opacity: 0.98,
+          }}>
             BG
           </span>
-          <span className="hidden sm:inline">{t('brand')}</span>
+          <span className="hidden sm:inline" style={{
+            fontFamily: 'DM Sans, sans-serif',
+            opacity: 0.98,
+          }}>{t('brand')}</span>
         </Link>
 
         <div className="min-w-0 flex-1 md:max-w-sm lg:hidden">

@@ -41,7 +41,10 @@ function RegionCardComponent({ region, priority = false }: Props) {
           <h3 className="font-display text-[1.28rem] font-semibold leading-tight text-[var(--region-card-title)] md:text-[1.45rem]">
             {region.name}
           </h3>
-          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[var(--region-card-body)] md:mt-3">
+          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[var(--region-card-body)] md:mt-3" style={{
+            fontFamily: 'DM Sans, sans-serif',
+            opacity: 0.98,
+          }}>
             {region.description}
           </p>
 
