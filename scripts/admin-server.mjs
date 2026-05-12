@@ -304,7 +304,7 @@ function extensionFromDataUrl(dataUrl) {
   return null
 }
 
-async function saveImage(id, index, value) {
+async function saveImage(id, index, value, version) {
   if (typeof value !== 'string') return null
   if (!value.startsWith('data:image/')) return value
 
@@ -315,7 +315,7 @@ async function saveImage(id, index, value) {
   if (!encoded) return null
 
   await mkdir(imagesDir, { recursive: true })
-  const suffix = index === 0 ? '' : `-${index}`
+  const suffix = index === 0 ? `-${version}` : `-${version}-${index}`
   const fileName = `${id}${suffix}${ext}`
   const target = path.join(imagesDir, fileName)
   await writeFile(target, Buffer.from(encoded, 'base64'))
@@ -347,9 +347,10 @@ async function normalizeEntry(entry) {
     ? destination.images
     : [destination.image].filter(Boolean)
   const savedImages = []
+  const imageVersion = Date.now()
 
   for (let index = 0; index < sourceImages.length; index += 1) {
-    const saved = await saveImage(cleanId, index, sourceImages[index])
+    const saved = await saveImage(cleanId, index, sourceImages[index], imageVersion)
     if (saved) savedImages.push(saved)
   }
 

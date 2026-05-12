@@ -8,12 +8,16 @@ import {
 const ADMIN_API = '/api/admin/destinations'
 export const ADMIN_PASSWORD_STORAGE_KEY = 'bg_admin_password'
 
+export function adminPasswordHeaderValue(password: string) {
+  return encodeURIComponent(password)
+}
+
 function adminHeaders() {
   const password = sessionStorage.getItem(ADMIN_PASSWORD_STORAGE_KEY)
 
   return {
     'content-type': 'application/json',
-    ...(password ? { 'x-admin-password': password } : {}),
+    ...(password ? { 'x-admin-password': adminPasswordHeaderValue(password) } : {}),
   }
 }
 

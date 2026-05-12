@@ -55,7 +55,16 @@ export function sendJson(res, status, value) {
 
 export function requireAdmin(req) {
   const expected = process.env.ADMIN_PASSWORD
-  const provided = req.headers['x-admin-password']
+  const rawProvided = req.headers['x-admin-password']
+  let provided = rawProvided
+
+  if (typeof rawProvided === 'string') {
+    try {
+      provided = decodeURIComponent(rawProvided)
+    } catch {
+      provided = rawProvided
+    }
+  }
 
   if (!expected) {
     throw new Error('Missing ADMIN_PASSWORD')
@@ -140,7 +149,7 @@ async function supabaseFetchText(path, options = {}) {
   return response.text()
 }
 
-async function uploadImage(config, id, index, value) {
+async function uploadImage(config, id, index, value, version) {
   if (typeof value !== 'string') return null
   if (!value.startsWith('data:image/')) return value
 
@@ -150,7 +159,7 @@ async function uploadImage(config, id, index, value) {
   const encoded = value.split(',')[1]
   if (!encoded) return null
 
-  const suffix = index === 0 ? '' : `-${index}`
+  const suffix = index === 0 ? `-${version}` : `-${version}-${index}`
   const fileName = `${id}${suffix}${ext}`
   const contentType = contentTypeFromDataUrl(value)
   const response = await fetch(
@@ -200,9 +209,16 @@ async function normalizeEntry(entry) {
     ? destination.images
     : [destination.image].filter(Boolean)
   const savedImages = []
+  const imageVersion = Date.now()
 
   for (let index = 0; index < sourceImages.length; index += 1) {
-    const saved = await uploadImage(config, cleanId, index, sourceImages[index])
+    const saved = await uploadImage(
+      config,
+      cleanId,
+      index,
+      sourceImages[index],
+      imageVersion,
+    )
     if (saved) savedImages.push(saved)
   }
 

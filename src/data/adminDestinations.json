@@ -1,5 +1,51 @@
 [
   {
+    "regionSlug": "pleven",
+    "destination": {
+      "id": "dest-kaylaka",
+      "name": "Парк „Кайлъка“",
+      "category": "natural",
+      "shortDescription": "Каньон с езеро, алеи и скали — зелена зона за разходка в града.",
+      "location": "Плевен",
+      "image": "/images/destinations/dest-kaylaka-1778588416561.jpg",
+      "images": [
+        "/images/destinations/dest-kaylaka-1778588416561.jpg",
+        "/images/destinations/dest-kaylaka-1778588416561-1.jpg",
+        "/images/destinations/dest-kaylaka-1778588416561-2.jpg",
+        "/images/destinations/dest-kaylaka-1778588416561-3.jpg",
+        "/images/destinations/dest-kaylaka-1778588416561-4.jpg",
+        "/images/destinations/dest-kaylaka-1778588416561-5.jpg"
+      ],
+      "mapsUrl": "https://maps.google.com/?q=Kaylaka+Park+Pleven",
+      "coords": {
+        "lat": 43.395,
+        "lng": 24.595
+      }
+    }
+  },
+  {
+    "regionSlug": "pleven",
+    "destination": {
+      "id": "dest-pleven-panorama",
+      "name": "Панорама „Плевенска епопея 1877 г.“",
+      "category": "museum",
+      "shortDescription": "Диорама и експозиции за обсадата на Плевен — впечатляваща историческа атракция.",
+      "location": "Плевен",
+      "image": "/images/destinations/dest-pleven-panorama.jpg",
+      "images": [
+        "/images/destinations/dest-pleven-panorama.jpg",
+        "/images/destinations/dest-pleven-panorama-1.jpg",
+        "/images/destinations/dest-pleven-panorama-2.jpg",
+        "/images/destinations/dest-pleven-panorama-3.jpg"
+      ],
+      "mapsUrl": "https://maps.google.com/?q=Pleven+Panorama",
+      "coords": {
+        "lat": 43.417,
+        "lng": 24.608
+      }
+    }
+  },
+  {
     "regionSlug": "shumen",
     "destination": {
       "id": "dest-pliska",

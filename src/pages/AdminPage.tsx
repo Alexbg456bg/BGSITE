@@ -13,7 +13,10 @@ import { SmartImage } from '../components/SmartImage'
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../data/categoryLabels'
 import { regions as staticRegions } from '../data/regions'
 import { TRAIL_DETAILS } from '../data/trailDetails'
-import { ADMIN_PASSWORD_STORAGE_KEY } from '../context/CustomDestinationsProvider'
+import {
+  ADMIN_PASSWORD_STORAGE_KEY,
+  adminPasswordHeaderValue,
+} from '../context/CustomDestinationsProvider'
 import { useCustomDestinations } from '../context/customDestinationsContext'
 import { useDestinationRatings } from '../hooks/useDestinationRatings'
 import { useSiteData } from '../hooks/useSiteData'
@@ -289,7 +292,7 @@ export function AdminPage() {
     async function loadAnalytics() {
       try {
         const response = await fetch('/api/analytics', {
-          headers: { 'x-admin-password': adminPassword },
+          headers: { 'x-admin-password': adminPasswordHeaderValue(adminPassword) },
         })
         if (!response.ok) return
         const data = await response.json()
@@ -368,7 +371,7 @@ export function AdminPage() {
     try {
       await reloadCustomDestinations()
       const response = await fetch('/api/analytics', {
-        headers: { 'x-admin-password': adminPassword },
+        headers: { 'x-admin-password': adminPasswordHeaderValue(adminPassword) },
       })
       if (response.ok) {
         const data = await response.json()
