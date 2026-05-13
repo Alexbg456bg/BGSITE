@@ -6,8 +6,8 @@ export function LanguageToggle() {
   const options: Language[] = ['bg', 'en']
 
   return (
-<div
-      className="inline-flex items-center rounded-2xl border border-[var(--border)] bg-white/90 p-1 shadow-sm backdrop-blur-sm"
+    <div
+      className="inline-flex items-center rounded-2xl border border-[var(--toggle-border)] bg-[var(--toggle-bg)] p-1 shadow-sm backdrop-blur-sm"
       role="group"
       aria-label={t('language')}
       title={t('language')}

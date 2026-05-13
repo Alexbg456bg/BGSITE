@@ -242,7 +242,7 @@ export function MobileHomeExperience() {
         <div className="hidden lg:absolute lg:inset-0 lg:-z-10 lg:bg-gradient-to-r lg:from-black/40 lg:via-black/25 lg:to-transparent" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-28 bg-[linear-gradient(180deg,transparent,rgba(244,246,242,0.22)_46%,var(--bg)_100%)]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-28 bg-[var(--mobile-hero-bottom-fade)]"
           aria-hidden
         />
         <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
@@ -327,16 +327,16 @@ export function MobileHomeExperience() {
 
       <section className="relative z-20 -mt-px bg-[var(--bg)] pb-6 pt-6">
         <div
-          className="pointer-events-none absolute inset-x-0 -top-16 h-16 bg-[linear-gradient(180deg,transparent,rgba(244,246,242,0.58)_62%,var(--bg)_100%)]"
+          className="pointer-events-none absolute inset-x-0 -top-16 h-16 bg-[var(--mobile-section-fade)]"
           aria-hidden
         />
         <div className="relative z-10 mx-auto max-w-md">
           <div className="flex items-end justify-between gap-4 px-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--home-section-kicker)]">
                 {t('categories')}
               </p>
-              <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--forest-deep)]">
+              <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--home-section-heading)]">
                 {language === 'en' ? 'Choose an experience' : 'Избери преживяване'}
               </h2>
             </div>
@@ -390,7 +390,7 @@ export function MobileHomeExperience() {
             <div className="mt-4 px-4">
               <button
                 onClick={() => setShowAllCategories(!showAllCategories)}
-                className="w-full rounded-2xl border border-[var(--border)] bg-white px-4 py-3 text-xs font-bold text-[var(--ink-soft)] shadow-sm active:scale-[0.99]"
+                className="w-full rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-4 py-3 text-xs font-bold text-[var(--ink)] shadow-sm active:scale-[0.99]"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {showAllCategories
@@ -419,10 +419,10 @@ export function MobileHomeExperience() {
         <div className="mx-auto max-w-md px-4">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--home-section-kicker)]">
                 {t('navRegions')}
               </p>
-              <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--forest-deep)]">
+              <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--home-section-heading)]">
                 {language === 'en' ? 'Choose a region' : 'Избери област'}
               </h2>
             </div>

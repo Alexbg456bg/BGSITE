@@ -127,7 +127,7 @@ export function Footer() {
           </div>
 
           <div className="order-1 md:order-3 md:min-w-0">
-            <div className="rounded-[1.75rem] border border-white/55 bg-white/78 p-4 shadow-[0_24px_50px_rgba(15,61,46,0.12)] backdrop-blur-xl md:rounded-[2rem] md:p-5">
+            <div className="rounded-[1.75rem] border border-[var(--footer-card-border)] bg-[var(--footer-card-bg)] p-4 shadow-[0_24px_50px_rgba(15,61,46,0.12)] backdrop-blur-xl md:rounded-[2rem] md:p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--forest)]">
@@ -152,11 +152,11 @@ export function Footer() {
                     href={item.href}
                     target={item.href.startsWith('http') ? '_blank' : undefined}
                     rel={item.href.startsWith('http') ? 'noreferrer' : undefined}
-                    className="group relative overflow-hidden rounded-[1.35rem] border border-white/60 bg-white/84 px-4 py-3.5 shadow-[0_12px_24px_rgba(15,61,46,0.08)] transition active:scale-[0.99] md:rounded-[1.5rem] md:hover:-translate-y-0.5 md:hover:shadow-[0_18px_34px_rgba(15,61,46,0.14)]"
+                    className="group relative overflow-hidden rounded-[1.35rem] border border-[var(--footer-linkcard-border)] bg-[var(--footer-linkcard-bg)] px-4 py-3.5 shadow-[0_12px_24px_rgba(15,61,46,0.08)] transition active:scale-[0.99] md:rounded-[1.5rem] md:hover:-translate-y-0.5 md:hover:shadow-[0_18px_34px_rgba(15,61,46,0.14)]"
                   >
                     <div className={`absolute inset-y-0 left-0 w-1 bg-gradient-to-b ${item.accent}`} />
                     <div className="flex items-center gap-3">
-                      <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--surface-2)] text-[var(--forest-deep)] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] transition md:group-hover:scale-105">
+                      <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--footer-icon-chip-bg)] text-[var(--footer-heading)] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition md:group-hover:scale-105">
                         {item.icon}
                       </span>
                       <div className="min-w-0 flex-1">

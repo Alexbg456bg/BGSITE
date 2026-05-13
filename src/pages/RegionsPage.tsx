@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { RegionCard } from '../components/RegionCard'
 import { SmartImage } from '../components/SmartImage'
+import { useTheme } from '../contexts/ThemeContext'
 import { useSiteData } from '../hooks/useSiteData'
 import { useI18n } from '../i18n/LanguageContext'
 
@@ -73,16 +74,18 @@ const cardReveal: Variants = {
 export function RegionsPage() {
   const { regions } = useSiteData()
   const { language, t } = useI18n()
+  const { theme } = useTheme()
   const prefersReducedMotion = useReducedMotion()
 
   return (
     <div className="pb-14 md:pb-20">
-      <section className="relative overflow-hidden border-b border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(236,242,235,0.76))] py-8 md:py-14">
+      <section className="relative overflow-hidden border-b border-[var(--border)] bg-[var(--mobile-hero-panel-bg)] py-8 md:py-14">
         <div className="hero-orb hero-orb-left" />
         <div className="hero-orb hero-orb-right" />
 
         <div className="mx-auto max-w-6xl px-4">
           <Breadcrumbs
+            variant={theme === 'dark' ? 'onDark' : 'default'}
             items={[
               { label: t('navHome'), to: '/' },
               { label: t('navRegions') },
@@ -97,21 +100,21 @@ export function RegionsPage() {
           >
             <motion.p
               variants={heroItemReveal}
-              className="w-fit rounded-full border border-[var(--border)] bg-white/80 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--forest)] shadow-sm md:px-4 md:text-[11px] md:tracking-[0.22em]"
+              className="w-fit rounded-full border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--forest)] shadow-sm md:px-4 md:text-[11px] md:tracking-[0.22em]"
             >
               {language === 'en' ? 'Guide to Bulgaria' : 'Пътеводител по България'}
             </motion.p>
 
             <motion.h1
               variants={heroItemReveal}
-              className="mt-4 max-w-3xl font-display text-3xl font-semibold leading-[0.95] text-[var(--forest-deep)] md:text-5xl"
+              className="mt-4 max-w-3xl font-display text-3xl font-semibold leading-[0.95] text-[var(--mobile-hero-title)] drop-shadow-[0_8px_22px_rgba(0,0,0,0.18)] md:text-5xl md:drop-shadow-none"
             >
               {language === 'en' ? 'All regions' : 'Всички области'}
             </motion.h1>
 
             <motion.p
               variants={heroItemReveal}
-              className="mt-4 max-w-2xl text-sm leading-relaxed text-[var(--muted)] md:text-lg"
+              className="mt-4 max-w-2xl text-sm leading-relaxed text-[var(--mobile-hero-copy)] drop-shadow-[0_4px_14px_rgba(0,0,0,0.14)] md:text-lg md:drop-shadow-none"
             >
               {language === 'en'
                 ? 'Choose a region and open its page with places, highlights and photos. The cards are arranged for easier browsing.'
@@ -128,11 +131,11 @@ export function RegionsPage() {
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
                 {language === 'en' ? 'Popular regions' : 'Популярни области'}
               </p>
-              <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--forest-deep)]">
+              <h2 className="mt-2 font-display text-2xl font-semibold text-[var(--home-section-heading)]">
                 {language === 'en' ? 'Start here' : 'Започни оттук'}
               </h2>
             </div>
-            <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[var(--muted)] shadow-sm">
+            <span className="rounded-full border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-3 py-1 text-xs font-semibold text-[var(--muted)] shadow-sm">
               {regions.length}
             </span>
           </div>
@@ -142,7 +145,7 @@ export function RegionsPage() {
               <Link
                 key={region.id}
                 to={`/region/${region.slug}`}
-                className="group grid grid-cols-[7rem_1fr] gap-3 rounded-[1.35rem] border border-[var(--border)] bg-white/90 p-2 shadow-[0_16px_38px_rgba(15,61,46,0.08)] transition active:scale-[0.99]"
+                className="group grid grid-cols-[7rem_1fr] gap-3 rounded-[1.35rem] border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] p-2 shadow-[var(--mobile-panel-shadow)] transition active:scale-[0.99]"
               >
                 <div className="relative aspect-square overflow-hidden rounded-[1.1rem] bg-[var(--mist)]">
                   <SmartImage

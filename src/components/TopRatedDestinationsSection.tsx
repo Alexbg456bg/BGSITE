@@ -53,7 +53,7 @@ export function TopRatedDestinationsSection({
 
           <div className="mt-4 space-y-3">
             {topRated.length === 0 ? (
-              <div className="rounded-[1.25rem] border border-[var(--border)] bg-white/88 p-4 text-sm leading-relaxed text-[var(--muted)] shadow-[0_14px_32px_rgba(15,61,46,0.06)]">
+              <div className="rounded-[1.25rem] border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] p-4 text-sm leading-relaxed text-[var(--muted)] shadow-[var(--mobile-panel-shadow)]">
                 {language === 'en'
                   ? 'No ratings yet. The most liked places will appear here after the first votes.'
                   : 'Още няма оценки. След първите гласове тук ще се покажат най-харесваните места.'}
@@ -62,7 +62,7 @@ export function TopRatedDestinationsSection({
               <Link
                 key={destination.id}
                 to={`/destination/${destination.id}`}
-                className="grid grid-cols-[6rem_1fr] gap-3 rounded-[1.25rem] border border-[var(--border)] bg-white/88 p-2 shadow-[0_14px_32px_rgba(15,61,46,0.06)] transition active:scale-[0.99]"
+                className="grid grid-cols-[6rem_1fr] gap-3 rounded-[1.25rem] border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] p-2 shadow-[var(--mobile-panel-shadow)] transition active:scale-[0.99]"
               >
                 <SmartImage
                   src={destination.image}
