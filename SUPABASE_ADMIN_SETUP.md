@@ -25,6 +25,7 @@ admin-data/admin-destinations.json
 Destination ratings are stored in:
 
 ```text
+
 admin-data/destination-ratings.json
 ```
 
