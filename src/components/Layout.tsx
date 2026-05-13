@@ -6,11 +6,13 @@ import { MobileBottomNav } from './MobileBottomNav'
 export function Layout() {
   const { pathname } = useLocation()
   const isAdminPage = pathname.startsWith('/admin')
+  const usesDesktopNavOverlay =
+    pathname === '/' || pathname.startsWith('/region/') || pathname.startsWith('/destination/')
 
   return (
     <div className="flex min-h-svh flex-col overflow-x-hidden bg-[var(--bg)] pb-16 lg:pb-0">
       <Navbar />
-      <main className="flex-1">
+      <main className={`flex-1 ${!isAdminPage && !usesDesktopNavOverlay ? 'lg:pt-28' : ''}`}>
         <Outlet />
       </main>
       {!isAdminPage && <Footer />}

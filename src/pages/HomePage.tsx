@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import {
   motion,
+  AnimatePresence,
 } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import { HeroSection } from '../components/HeroSection'
@@ -77,6 +78,7 @@ export function HomePage() {
   const regionsSectionRef = useRef<HTMLElement>(null)
   const { regions } = useSiteData()
   const { language, t } = useI18n()
+  const [isMapOpen, setIsMapOpen] = useState(false)
   const featuredRegions = [...regions]
     .sort((a, b) => {
       const difference = b.destinations.length - a.destinations.length
@@ -126,20 +128,55 @@ export function HomePage() {
           }}
           aria-hidden
         />
-                <div className="mx-auto max-w-6xl px-4">
-          <motion.div 
-            className="relative" 
+        <div className="mx-auto max-w-6xl px-4">
+          <motion.div
+            className="relative"
             variants={mapReveal}
-            style={{ 
+            style={{
               transform: 'translateZ(0)',
               willChange: 'transform, opacity',
             }}
           >
-            <div
-              className="map-card-color-field pointer-events-none absolute -inset-10 -z-10 rounded-[3rem]"
-              aria-hidden
-            />
-            <BulgariaMap id="home-map" large atmospheric />
+            <div className="mb-6 flex justify-center md:mb-8">
+              <button
+                type="button"
+                onClick={() => setIsMapOpen((current) => !current)}
+                className="inline-flex items-center rounded-full border border-white/70 bg-white/84 px-6 py-3 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_18px_36px_rgba(15,61,46,0.12)] backdrop-blur-sm transition hover:bg-white"
+                aria-expanded={isMapOpen}
+                aria-controls="home-map-panel"
+              >
+                {isMapOpen
+                  ? (language === 'en' ? 'Hide map' : 'Скрий картата')
+                  : (language === 'en' ? 'Open map of Bulgaria' : 'Отвори картата на България')}
+              </button>
+            </div>
+
+            <AnimatePresence initial={false}>
+              {isMapOpen && (
+                <motion.div
+                  id="home-map-panel"
+                  initial={{ opacity: 0, height: 0, y: -10 }}
+                  animate={{ opacity: 1, height: 'auto', y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -10 }}
+                  transition={{ duration: 0.35, ease: smoothEase }}
+                  className="overflow-hidden"
+                >
+                  <div
+                    className="map-card-color-field pointer-events-none absolute -inset-10 -z-10 rounded-[3rem]"
+                    aria-hidden
+                  />
+                  <BulgariaMap
+                    id="home-map"
+                    large
+                    atmospheric
+                    headerClassName="md:mt-12 md:mb-2"
+                    centeredHeader
+                    largeDesktopRatio={0.64}
+                    largeDesktopMinHeight={520}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
       </motion.section>

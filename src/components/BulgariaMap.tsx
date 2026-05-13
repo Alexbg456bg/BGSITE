@@ -94,6 +94,10 @@ type Props = {
   compact?: boolean
   large?: boolean
   atmospheric?: boolean
+  headerClassName?: string
+  centeredHeader?: boolean
+  largeDesktopRatio?: number
+  largeDesktopMinHeight?: number
 }
 
 export function BulgariaMap({
@@ -101,6 +105,10 @@ export function BulgariaMap({
   compact = false,
   large = false,
   atmospheric = false,
+  headerClassName = '',
+  centeredHeader = false,
+  largeDesktopRatio,
+  largeDesktopMinHeight,
 }: Props) {
   const navigate = useNavigate()
   const { language, t } = useI18n()
@@ -147,8 +155,16 @@ export function BulgariaMap({
     const measure = () => {
       const w = Math.max(320, el.clientWidth)
       const isMobile = w < 640
-      const ratio = compact ? 0.58 : large ? (isMobile ? 0.92 : 0.82) : 0.72
-      const minHeight = compact ? 360 : large ? (isMobile ? 380 : 680) : 540
+      const ratio = compact
+        ? 0.58
+        : large
+          ? (isMobile ? 0.92 : (largeDesktopRatio ?? 0.82))
+          : 0.72
+      const minHeight = compact
+        ? 360
+        : large
+          ? (isMobile ? 380 : (largeDesktopMinHeight ?? 680))
+          : 540
       const h = Math.max(minHeight, w * ratio)
       setSize((current) => (current.w === w && current.h === h ? current : { w, h }))
     }
@@ -347,8 +363,18 @@ export function BulgariaMap({
         style={panelStyle}
       >
         {!compact && (
-          <div className="mb-4 flex flex-col gap-3 md:mb-6 md:flex-row md:items-end md:justify-end md:gap-4">
-            <div className="max-w-2xl ml-3 md:ml-8 -mt-4">
+          <div
+            className={`mb-4 flex flex-col gap-3 md:mb-6 ${
+              centeredHeader
+                ? 'md:items-center md:justify-center'
+                : 'md:flex-row md:items-end md:justify-end md:gap-4'
+            } ${headerClassName}`.trim()}
+          >
+            <div
+              className={`max-w-2xl -mt-4 ${
+                centeredHeader ? 'mx-auto text-center' : 'ml-3 md:ml-8'
+              }`.trim()}
+            >
               <h2 className="font-display text-xl font-semibold text-[var(--map-heading-text)] md:text-3xl">
                 {language === 'en' ? 'Map of Bulgaria' : 'Карта на България'}
               </h2>
@@ -361,7 +387,9 @@ export function BulgariaMap({
             <div
               ref={badgeRef}
               data-default-label={language === 'en' ? '28 regions' : '28 области'}
-              className="w-fit rounded-full border border-[var(--border)] bg-white/84 px-3 py-1.5 text-xs font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)] md:px-4 md:py-2 md:text-sm"
+              className={`w-fit rounded-full border border-[var(--border)] bg-white/84 px-3 py-1.5 text-xs font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)] md:px-4 md:py-2 md:text-sm ${
+                centeredHeader ? 'mx-auto' : ''
+              }`.trim()}
               style={badgeStyle}
             >
               {language === 'en' ? '28 regions' : '28 области'}
