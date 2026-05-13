@@ -103,7 +103,7 @@ export function DestinationPage() {
           <DestinationRating destinationId={d.id} />
           {trailDetails && (
             <section className="mt-5 space-y-3 md:mt-6">
-              <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
+              <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-4 py-4 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
                   {language === 'en' ? 'What you will see' : 'Какво ще видиш'}
                 </p>
@@ -111,7 +111,7 @@ export function DestinationPage() {
                   {trailDetails.sights}
                 </p>
               </div>
-              <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
+              <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-4 py-4 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
                   {language === 'en' ? 'What the trail is like' : 'Каква е пътеката'}
                 </p>
@@ -119,7 +119,7 @@ export function DestinationPage() {
                   {trailDetails.route}
                 </p>
               </div>
-              <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
+              <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-4 py-4 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
                   {language === 'en' ? 'Suitable for' : 'Подходящо за'}
                 </p>
@@ -131,7 +131,7 @@ export function DestinationPage() {
           )}
           <DestinationWeather destination={d} />
           <div className="mt-5 grid gap-3 sm:grid-cols-2 md:mt-6">
-            <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
+            <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-4 py-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
                 {t('category')}
               </p>
@@ -139,7 +139,7 @@ export function DestinationPage() {
                 {labels[d.category]}
               </p>
             </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm">
+            <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-4 py-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
                 {t('region')}
               </p>
@@ -153,7 +153,7 @@ export function DestinationPage() {
             <button
               type="button"
               onClick={() => toggleFavorite(d.id)}
-              className="inline-flex w-full items-center justify-center rounded-xl border-2 border-[var(--forest)] bg-white px-5 py-3 text-sm font-semibold text-[var(--forest)] transition hover:bg-[var(--mist)] sm:w-auto"
+              className="inline-flex w-full items-center justify-center rounded-xl border-2 border-[var(--forest)] bg-[var(--surface)] px-5 py-3 text-sm font-semibold text-[var(--forest)] transition hover:bg-[var(--mist)] sm:w-auto"
             >
               <span className="flex items-center gap-2">
                 {fav ? 

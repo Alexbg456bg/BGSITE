@@ -16,7 +16,10 @@ export function BrandMark({ className = '' }: BrandMarkProps) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <circle cx="43" cy="17" r="5.25" fill="#F3D48B" />
+        <path
+          d="M47.8 17.2a6.2 6.2 0 1 1-7.6-6 5.4 5.4 0 1 0 7.6 6Z"
+          fill="#F3D48B"
+        />
         <path
           d="M11.5 44.5C18.5 37 23.5 29 28.5 21.5C31.2 27 34.3 31.6 38.3 36.3C40.8 39.3 43 41.9 46 44.5"
           stroke="#F8FBF7"

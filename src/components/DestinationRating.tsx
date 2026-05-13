@@ -59,7 +59,7 @@ export function DestinationRating({ destinationId, compact = false }: Props) {
   }
 
   return (
-    <section className="mt-5 rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm md:mt-6">
+    <section className="mt-5 rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-4 py-4 shadow-sm md:mt-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">

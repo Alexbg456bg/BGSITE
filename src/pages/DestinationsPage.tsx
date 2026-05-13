@@ -82,7 +82,7 @@ export function DestinationsPage() {
 
   return (
     <div className="pb-14 md:pb-20">
-      <div className="relative overflow-hidden border-b border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(227,238,230,0.78))] py-7 md:bg-[var(--surface-2)] md:py-10">
+      <div className="relative overflow-hidden border-b border-[var(--border)] bg-[linear-gradient(180deg,var(--mobile-panel-bg),rgba(227,238,230,0.18))] py-7 md:bg-[var(--surface-2)] md:py-10">
         <div
           className="pointer-events-none absolute -right-16 top-2 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(79,140,171,0.18),transparent_70%)] blur-2xl md:hidden"
           aria-hidden
@@ -94,34 +94,34 @@ export function DestinationsPage() {
           <motion.h1
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 font-display text-[1.9rem] font-semibold leading-tight text-[var(--forest-deep)] md:text-4xl"
+            className="mt-4 font-display text-[1.9rem] font-semibold leading-tight text-[var(--mobile-hero-title)] md:text-4xl"
           >
             {language === 'en' ? 'All destinations' : 'Всички дестинации'}
           </motion.h1>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted)] md:text-base">
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--mobile-hero-copy)] md:text-base">
             {language === 'en'
               ? 'Filter by category and region, then open a specific place with descriptions and photos.'
               : 'Филтрирай по категория и област, после отвори конкретно място с описание и снимки.'}
           </p>
           <div className="mt-5 grid grid-cols-3 gap-2 md:hidden">
-            <div className="rounded-2xl border border-white/70 bg-white/72 px-3 py-3 shadow-sm">
-              <p className="font-display text-xl font-semibold text-[var(--forest-deep)]">
+            <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-3 py-3 shadow-sm">
+              <p className="font-display text-xl font-semibold text-[var(--mobile-hero-title)]">
                 {allDestinations.length}
               </p>
               <p className="text-[11px] text-[var(--muted)]">
                 {language === 'en' ? 'total' : 'общо'}
               </p>
             </div>
-            <div className="rounded-2xl border border-white/70 bg-white/72 px-3 py-3 shadow-sm">
-              <p className="font-display text-xl font-semibold text-[var(--forest-deep)]">
+            <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-3 py-3 shadow-sm">
+              <p className="font-display text-xl font-semibold text-[var(--mobile-hero-title)]">
                 {filtered.length}
               </p>
               <p className="text-[11px] text-[var(--muted)]">
                 {language === 'en' ? 'shown' : 'показани'}
               </p>
             </div>
-            <div className="rounded-2xl border border-white/70 bg-white/72 px-3 py-3 shadow-sm">
-              <p className="font-display text-xl font-semibold text-[var(--forest-deep)]">
+            <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-3 py-3 shadow-sm">
+              <p className="font-display text-xl font-semibold text-[var(--mobile-hero-title)]">
                 28
               </p>
               <p className="text-[11px] text-[var(--muted)]">
@@ -146,7 +146,7 @@ export function DestinationsPage() {
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-[var(--muted)]">
-            <span className="font-semibold text-[var(--forest-deep)]">
+            <span className="font-semibold text-[var(--mobile-hero-title)]">
               {filtered.length}
             </span>{' '}
             {language === 'en' ? 'places' : 'обекта'} · {activeCategoryLabel}
@@ -154,7 +154,7 @@ export function DestinationsPage() {
           {regionSlug !== 'all' && (
             <button
               type="button"
-              className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-[var(--forest)] shadow-sm"
+              className="rounded-full border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--forest)] shadow-sm"
               onClick={() => navigate(`/region/${regionSlug}`)}
             >
               {language === 'en' ? 'Open region' : 'Отвори областта'}

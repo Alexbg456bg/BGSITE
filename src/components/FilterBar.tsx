@@ -39,7 +39,7 @@ export function FilterBar({
   )
 
   return (
-    <div className="flex flex-col gap-5 rounded-[1.45rem] border border-[var(--border)] bg-white/92 p-3 shadow-[0_18px_44px_rgba(15,61,46,0.08)] backdrop-blur md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6 md:rounded-2xl md:bg-[var(--surface)] md:p-5 md:shadow-none">
+    <div className="flex flex-col gap-5 rounded-[1.45rem] border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] p-3 shadow-[var(--mobile-panel-shadow)] backdrop-blur md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6 md:rounded-2xl md:bg-[var(--surface)] md:p-5 md:shadow-none">
       <div className="min-w-0 flex-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
           {t('category')}
@@ -53,7 +53,7 @@ export function FilterBar({
               'min-h-11 rounded-2xl px-3 py-2 text-left text-xs font-bold transition active:scale-[0.98]',
               category === 'all'
                 ? 'bg-[var(--forest-deep)] text-white shadow-[0_10px_22px_rgba(15,61,46,0.2)]'
-                : 'border border-[var(--border)] bg-white text-[var(--ink-soft)] shadow-sm',
+                : 'border border-[var(--mobile-panel-border)] bg-[var(--surface)] text-[var(--ink-soft)] shadow-sm',
             ].join(' ')}
           >
             <span className="flex items-center gap-1.5">
@@ -74,7 +74,7 @@ export function FilterBar({
                   'min-h-11 rounded-2xl px-3 py-2 text-left text-xs font-bold leading-tight transition active:scale-[0.98]',
                   active
                     ? 'border border-[var(--forest-deep)] bg-[var(--forest-deep)] text-white shadow-[0_10px_22px_rgba(15,61,46,0.2)]'
-                    : 'border border-[var(--border)] bg-white text-[var(--ink-soft)] shadow-sm',
+                    : 'border border-[var(--mobile-panel-border)] bg-[var(--surface)] text-[var(--ink-soft)] shadow-sm',
                 ].join(' ')}
               >
                 <span className="flex items-center gap-1.5">
@@ -94,7 +94,7 @@ export function FilterBar({
               'group relative shrink-0 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all duration-300 md:py-2 md:font-semibold',
               category === 'all'
                 ? 'scale-105 bg-gradient-to-r from-[var(--forest-deep)] to-[var(--forest)] text-white shadow-[0_8px_20px_rgba(15,61,46,0.25)]'
-                : 'border border-[var(--border)]/50 bg-white/80 text-[var(--ink-soft)] hover:bg-gradient-to-r hover:from-[var(--mist)] hover:to-white hover:text-[var(--forest-deep)] hover:shadow-[0_6px_16px_rgba(15,61,46,0.12)]',
+                : 'border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] text-[var(--ink-soft)] hover:bg-[var(--mist)] hover:text-[var(--forest-deep)] hover:shadow-[0_6px_16px_rgba(15,61,46,0.12)]',
             ].join(' ')}
           >
             {t('all')}
@@ -109,7 +109,7 @@ export function FilterBar({
                 'group relative shrink-0 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all duration-300 md:py-2 md:font-semibold',
                 category === key
                   ? 'scale-105 bg-gradient-to-r from-[var(--forest-deep)] to-[var(--forest)] text-white shadow-[0_8px_20px_rgba(15,61,46,0.25)]'
-                  : 'border border-[var(--border)]/50 bg-white/80 text-[var(--ink-soft)] hover:bg-gradient-to-r hover:from-[var(--mist)] hover:to-white hover:text-[var(--forest-deep)] hover:shadow-[0_6px_16px_rgba(15,61,46,0.12)]',
+                  : 'border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] text-[var(--ink-soft)] hover:bg-[var(--mist)] hover:text-[var(--forest-deep)] hover:shadow-[0_6px_16px_rgba(15,61,46,0.12)]',
               ].join(' ')}
             >
               {label}
@@ -120,7 +120,7 @@ export function FilterBar({
             <button
               type="button"
               onClick={() => setShowAllCategories(!showAllCategories)}
-              className="group relative shrink-0 rounded-2xl border border-[var(--border)]/50 bg-white/80 px-4 py-2.5 text-xs font-bold text-[var(--ink-soft)] transition-all duration-300 hover:bg-[var(--mist)] md:py-2 md:font-semibold"
+              className="group relative shrink-0 rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-4 py-2.5 text-xs font-bold text-[var(--ink-soft)] transition-all duration-300 hover:bg-[var(--mist)] md:py-2 md:font-semibold"
             >
               {showAllCategories ? t('less') : t('more')}
             </button>
@@ -140,7 +140,7 @@ export function FilterBar({
             id="filter-region"
             value={regionSlug}
             onChange={(e) => onRegionChange(e.target.value as string | 'all')}
-            className="mt-2 w-full rounded-2xl border border-[var(--border)] bg-white px-3 py-3 text-sm font-medium text-[var(--ink)] outline-none ring-[var(--forest)]/20 focus:ring-4 md:rounded-xl md:py-2.5"
+            className="mt-2 w-full rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--surface)] px-3 py-3 text-sm font-medium text-[var(--ink)] outline-none ring-[var(--forest)]/20 focus:ring-4 md:rounded-xl md:py-2.5"
           >
             <option value="all">{t('allRegions')}</option>
             {regions.map((r) => (

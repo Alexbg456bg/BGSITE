@@ -206,7 +206,7 @@ export function DestinationWeather({ destination }: Props) {
 
   if (!coords) {
     return (
-      <section className="mt-5 rounded-2xl border border-[var(--border)] bg-white px-4 py-4 shadow-sm md:mt-6">
+      <section className="mt-5 rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-4 py-4 shadow-sm md:mt-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--forest)]">
@@ -232,7 +232,7 @@ export function DestinationWeather({ destination }: Props) {
   }
 
   return (
-    <section className="mt-5 overflow-hidden rounded-2xl border border-[var(--border)] bg-[linear-gradient(135deg,rgba(255,255,255,0.98),rgba(227,238,230,0.86))] shadow-sm md:mt-6">
+    <section className="mt-5 overflow-hidden rounded-2xl border border-[var(--mobile-panel-border)] bg-[linear-gradient(135deg,var(--mobile-panel-bg),rgba(23,35,31,0.82))] shadow-sm md:mt-6">
       <div className="relative p-4 md:p-5">
         <div
           className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-[radial-gradient(circle,rgba(79,140,171,0.18),transparent_68%)]"
@@ -258,24 +258,24 @@ export function DestinationWeather({ destination }: Props) {
             href={forecastUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex w-fit items-center justify-center rounded-xl border border-[var(--border)] bg-white/84 px-3 py-2 text-xs font-semibold text-[var(--forest-deep)] shadow-sm transition hover:border-[var(--forest)] hover:text-[var(--forest)]"
+            className="inline-flex w-fit items-center justify-center rounded-xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-3 py-2 text-xs font-semibold text-[var(--forest-deep)] shadow-sm transition hover:border-[var(--forest)] hover:text-[var(--forest)]"
           >
             {detailsLabel}
           </a>
         </div>
 
         {status === 'loading' || status === 'idle' ? (
-          <div className="mt-5 grid gap-3 md:grid-cols-[1.1fr_1.4fr]">
-            <div className="h-28 animate-pulse rounded-2xl bg-white/70" />
-            <div className="grid grid-cols-3 gap-2">
-              <div className="h-28 animate-pulse rounded-2xl bg-white/70" />
-              <div className="h-28 animate-pulse rounded-2xl bg-white/70" />
-              <div className="h-28 animate-pulse rounded-2xl bg-white/70" />
-            </div>
-            <div className="h-32 animate-pulse rounded-2xl bg-white/70 md:col-span-2" />
+            <div className="mt-5 grid gap-3 md:grid-cols-[1.1fr_1.4fr]">
+            <div className="h-28 animate-pulse rounded-2xl bg-[var(--mobile-panel-bg)]" />
+              <div className="grid grid-cols-3 gap-2">
+              <div className="h-28 animate-pulse rounded-2xl bg-[var(--mobile-panel-bg)]" />
+              <div className="h-28 animate-pulse rounded-2xl bg-[var(--mobile-panel-bg)]" />
+              <div className="h-28 animate-pulse rounded-2xl bg-[var(--mobile-panel-bg)]" />
+              </div>
+            <div className="h-32 animate-pulse rounded-2xl bg-[var(--mobile-panel-bg)] md:col-span-2" />
           </div>
         ) : status === 'error' || !current ? (
-          <div className="mt-5 rounded-2xl border border-dashed border-[var(--border)] bg-white/70 px-4 py-5 text-sm text-[var(--muted)]">
+          <div className="mt-5 rounded-2xl border border-dashed border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-4 py-5 text-sm text-[var(--muted)]">
             {language === 'en'
               ? 'The weather could not be loaded right now. Use the forecast link for more details.'
               : 'Времето не може да се зареди в момента. Използвай линка за подробна прогноза.'}
@@ -283,7 +283,7 @@ export function DestinationWeather({ destination }: Props) {
         ) : (
           <div className="mt-5 space-y-3">
             <div className="grid gap-3 md:grid-cols-[1.1fr_1.4fr]">
-              <div className="rounded-2xl border border-white/70 bg-white/82 p-4 shadow-[0_14px_32px_rgba(15,61,46,0.06)]">
+              <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] p-4 shadow-[0_14px_32px_rgba(15,61,46,0.06)]">
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="font-display text-5xl font-semibold leading-none text-[var(--forest-deep)]">
@@ -335,7 +335,7 @@ export function DestinationWeather({ destination }: Props) {
             </div>
 
             {forecastDays.length > 0 && (
-              <div className="rounded-2xl border border-white/70 bg-white/72 p-3 shadow-[0_14px_32px_rgba(15,61,46,0.05)] md:p-4">
+              <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] p-3 shadow-[0_14px_32px_rgba(15,61,46,0.05)] md:p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--forest)]">
                     {forecastTitle}
@@ -396,8 +396,8 @@ function ForecastDay({
         }).format(new Date(day.time))
 
   return (
-    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border border-[var(--border)]/70 bg-white/84 px-3 py-3 sm:block sm:min-h-36">
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--mist)] text-2xl text-[var(--forest-deep)] sm:mb-3">
+    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-3 py-3 sm:block sm:min-h-36">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--footer-icon-chip-bg)] text-2xl text-[var(--forest-deep)] sm:mb-3">
         {weatherIcon(day.code, 1)}
       </div>
       <div className="min-w-0">
@@ -420,7 +420,7 @@ function ForecastDay({
 
 function WeatherMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-h-24 rounded-2xl border border-white/70 bg-white/76 px-3 py-4 shadow-[0_14px_32px_rgba(15,61,46,0.05)]">
+    <div className="min-h-24 rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-3 py-4 shadow-[0_14px_32px_rgba(15,61,46,0.05)]">
       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--forest)]">
         {label}
       </p>
