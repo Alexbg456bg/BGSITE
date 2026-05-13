@@ -114,6 +114,18 @@ export function HomePage() {
           className="absolute inset-0 -z-10 hero-radial-overlay"
           aria-hidden
         />
+        <div
+          className="absolute inset-0 -z-5 pointer-events-none"
+          style={{
+            backgroundImage: `
+              repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0px, transparent 1px, transparent 39px, rgba(0,0,0,0.2) 40px),
+              repeating-linear-gradient(90deg, rgba(0,0,0,0.2) 0px, transparent 1px, transparent 39px, rgba(0,0,0,0.2) 40px)
+            `,
+            mask: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), radial-gradient(circle at 85% 75%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 60%, transparent 30%)',
+            WebkitMask: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), radial-gradient(circle at 85% 75%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 60%, transparent 30%)'
+          }}
+          aria-hidden
+        />
                 <div className="mx-auto max-w-6xl px-4">
           <motion.div 
             className="relative" 
@@ -133,6 +145,13 @@ export function HomePage() {
       </motion.section>
 
       <TopRatedDestinationsSection variant="desktop" />
+
+      <div className="relative">
+        <div 
+          className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/20 to-transparent pointer-events-none"
+          aria-hidden
+        />
+      </div>
 
       <motion.section
         ref={regionsSectionRef}

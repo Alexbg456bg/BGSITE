@@ -347,8 +347,8 @@ export function BulgariaMap({
         style={panelStyle}
       >
         {!compact && (
-          <div className="mb-4 flex flex-col gap-3 md:mb-6 md:flex-row md:items-end md:justify-between md:gap-4">
-            <div className="max-w-2xl">
+          <div className="mb-4 flex flex-col gap-3 md:mb-6 md:flex-row md:items-end md:justify-end md:gap-4">
+            <div className="max-w-2xl ml-3 md:ml-8 -mt-4">
               <h2 className="font-display text-xl font-semibold text-[var(--map-heading-text)] md:text-3xl">
                 {language === 'en' ? 'Map of Bulgaria' : 'Карта на България'}
               </h2>
