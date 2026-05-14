@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
 import { SmartImage } from './SmartImage'
 import { useSiteData } from '../hooks/useSiteData'
 import { useI18n } from '../i18n/LanguageContext'
+
+const HERO_ROTATION_INTERVAL_MS = 7000
 
 const heroImages = [
   {
@@ -44,7 +46,10 @@ export function HeroSection() {
   const { regions, allDestinations } = useSiteData()
   const sectionRef = useRef<HTMLElement>(null)
   const candidates = useMemo(() => shuffledHeroImages(), [])
-  const [heroImage, setHeroImage] = useState(candidates[0])
+  const [heroIndex, setHeroIndex] = useState(0)
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window === 'undefined' ? false : window.matchMedia('(min-width: 768px)').matches,
+  )
   const highlights = useMemo(
     () => [
       {
@@ -69,53 +74,62 @@ export function HeroSection() {
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -40])
   const contentOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0])
   const shadeOpacity = useTransform(scrollYProgress, [0, 1], [0.08, 0.25])
+  const heroImage = candidates[heroIndex] ?? candidates[0]
 
   useEffect(() => {
-    let cancelled = false
+    const media = window.matchMedia('(min-width: 768px)')
+    const onChange = () => setIsDesktop(media.matches)
 
-    const loadCandidate = (index: number) => {
-      const candidate = candidates[index]
-      if (!candidate) return
+    onChange()
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
+  }, [])
 
+  useEffect(() => {
+    candidates.forEach((candidate) => {
       const image = new Image()
-      image.onload = () => {
-        if (!cancelled) setHeroImage(candidate)
-      }
-      image.onerror = () => loadCandidate(index + 1)
       image.src = candidate.src
-    }
-
-    loadCandidate(0)
-
-    return () => {
-      cancelled = true
-    }
+    })
   }, [candidates])
+
+  useEffect(() => {
+    if (!isDesktop || candidates.length < 2) return
+
+    const intervalId = window.setInterval(() => {
+      setHeroIndex((current) => (current + 1) % candidates.length)
+    }, HERO_ROTATION_INTERVAL_MS)
+
+    return () => window.clearInterval(intervalId)
+  }, [candidates.length, isDesktop])
 
   return (
     <section
       ref={sectionRef}
       className="relative isolate min-h-[640px] overflow-hidden md:min-h-[760px]"
     >
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-        style={{ y: imageY, scale: imageScale }}
-        className="absolute inset-0 will-change-transform"
-        aria-hidden
-      >
-        <SmartImage
-          src={heroImage.src}
-          alt={heroImage.alt}
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-          maxWidth={1600}
-          className="h-full w-full"
-          imgClassName="object-center brightness-[0.92] saturate-[1.08]"
-        />
-      </motion.div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={heroImage.src}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+          style={{ y: imageY, scale: imageScale }}
+          className="absolute inset-0 will-change-transform"
+          aria-hidden
+        >
+          <SmartImage
+            src={heroImage.src}
+            alt={heroImage.alt}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            maxWidth={1600}
+            className="h-full w-full"
+            imgClassName="object-center brightness-[0.92] saturate-[1.08]"
+          />
+        </motion.div>
+      </AnimatePresence>
       <div className="absolute inset-0 bg-gradient-to-r from-[var(--forest-deep)]/90 via-[var(--forest-deep)]/46 to-[var(--sky-deep)]/16" />
       <motion.div
         className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0),rgba(15,61,46,0.72))]"
@@ -169,7 +183,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.24, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="mt-7 flex flex-wrap gap-3 md:mt-9 md:gap-4"
+            className="mt-7 flex flex-wrap gap-3 md:mt-9 md:gap-4 md:hidden"
           >
             <a
               href="#home-map"
