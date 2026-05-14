@@ -4,7 +4,8 @@ import { SmartImage } from './SmartImage'
 import { useSiteData } from '../hooks/useSiteData'
 import { useI18n } from '../i18n/LanguageContext'
 
-const HERO_ROTATION_INTERVAL_MS = 7000
+const HERO_ROTATION_INTERVAL_MS = 12000
+const HERO_FADE_DURATION_S = 1.8
 
 const heroImages = [
   {
@@ -86,11 +87,15 @@ export function HeroSection() {
   }, [])
 
   useEffect(() => {
-    candidates.forEach((candidate) => {
+    const current = candidates[heroIndex]
+    const next = candidates[(heroIndex + 1) % candidates.length]
+
+    for (const candidate of [current, next]) {
+      if (!candidate) continue
       const image = new Image()
       image.src = candidate.src
-    })
-  }, [candidates])
+    }
+  }, [candidates, heroIndex])
 
   useEffect(() => {
     if (!isDesktop || candidates.length < 2) return
@@ -107,13 +112,13 @@ export function HeroSection() {
       ref={sectionRef}
       className="relative isolate min-h-[640px] overflow-hidden md:min-h-[760px]"
     >
-      <AnimatePresence mode="wait">
+      <AnimatePresence initial={false}>
         <motion.div
           key={heroImage.src}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, scale: 1.015 }}
+          animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: HERO_FADE_DURATION_S, ease: [0.25, 0.46, 0.45, 0.94] }}
           style={{ y: imageY, scale: imageScale }}
           className="absolute inset-0 will-change-transform"
           aria-hidden

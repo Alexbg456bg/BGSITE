@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { DestinationCard } from '../components/DestinationCard'
 import { FilterBar } from '../components/FilterBar'
+import { useTheme } from '../contexts/ThemeContext'
 import { useSiteData } from '../hooks/useSiteData'
 import type { DestinationCategory } from '../types'
 import { ALL_CATEGORIES, getCategoryLabels } from '../data/categoryLabels'
@@ -24,6 +25,7 @@ export function DestinationsPage() {
   const { allDestinations, destinationIdsByRegionSlug, regionByDestinationId } =
     useSiteData()
   const { language, t } = useI18n()
+  const { theme } = useTheme()
   const labels = getCategoryLabels(language)
   const [category, setCategoryState] = useState<DestinationCategory | 'all'>(
     () => parseCategory(searchParams.get('category')),
@@ -32,10 +34,13 @@ export function DestinationsPage() {
     () => searchParams.get('region') || 'all',
   )
 
-  const updateFilters = (next: {
-    category?: DestinationCategory | 'all'
-    regionSlug?: string | 'all'
-  }, scrollToResults = false) => {
+  const updateFilters = (
+    next: {
+      category?: DestinationCategory | 'all'
+      regionSlug?: string | 'all'
+    },
+    scrollToResults = false,
+  ) => {
     const nextCategory = next.category ?? category
     const nextRegionSlug = next.regionSlug ?? regionSlug
     const params = new URLSearchParams()
@@ -82,27 +87,31 @@ export function DestinationsPage() {
 
   return (
     <div className="pb-14 md:pb-20">
-      <div className="relative overflow-hidden border-b border-[var(--border)] bg-[linear-gradient(180deg,var(--mobile-panel-bg),rgba(227,238,230,0.18))] py-7 md:bg-[var(--surface-2)] md:py-10">
-        <div
-          className="pointer-events-none absolute -right-16 top-2 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(79,140,171,0.18),transparent_70%)] blur-2xl md:hidden"
-          aria-hidden
-        />
+      <section className="relative overflow-hidden border-b border-[var(--border)] bg-[var(--mobile-hero-panel-bg)] py-8 md:py-14">
+        <div className="hero-orb hero-orb-left" />
+        <div className="hero-orb hero-orb-right" />
+
         <div className="mx-auto max-w-6xl px-4">
           <Breadcrumbs
+            variant={theme === 'dark' ? 'onDark' : 'default'}
             items={[{ label: t('navHome'), to: '/' }, { label: t('navDestinations') }]}
           />
-          <motion.h1
+
+          <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 font-display text-[1.9rem] font-semibold leading-tight text-[var(--mobile-hero-title)] md:text-4xl"
+            className="mt-5 md:mt-6"
           >
-            {language === 'en' ? 'All destinations' : 'Всички дестинации'}
-          </motion.h1>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--mobile-hero-copy)] md:text-base">
-            {language === 'en'
-              ? 'Filter by category and region, then open a specific place with descriptions and photos.'
-              : 'Филтрирай по категория и област, после отвори конкретно място с описание и снимки.'}
-          </p>
+            <motion.h1 className="max-w-3xl font-display text-[1.9rem] font-semibold leading-[0.95] text-[var(--mobile-hero-title)] drop-shadow-[0_8px_22px_rgba(0,0,0,0.18)] md:text-5xl md:drop-shadow-none">
+              {language === 'en' ? 'All destinations' : 'Всички дестинации'}
+            </motion.h1>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[var(--mobile-hero-copy)] drop-shadow-[0_4px_14px_rgba(0,0,0,0.14)] md:text-lg md:drop-shadow-none">
+              {language === 'en'
+                ? 'Filter by category and region, then open a specific place with descriptions and photos.'
+                : 'Филтрирай по категория и област, после отвори конкретно място с описание и снимки.'}
+            </p>
+          </motion.div>
+
           <div className="mt-5 grid grid-cols-3 gap-2 md:hidden">
             <div className="rounded-2xl border border-[var(--mobile-panel-border)] bg-[var(--mobile-panel-bg)] px-3 py-3 shadow-sm">
               <p className="font-display text-xl font-semibold text-[var(--mobile-hero-title)]">
@@ -130,7 +139,7 @@ export function DestinationsPage() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
         <div className="sticky top-[4.4rem] z-30 -mx-1 rounded-[1.5rem] bg-[var(--bg)]/82 p-1 backdrop-blur-xl md:static md:mx-0 md:bg-transparent md:p-0 md:backdrop-blur-0">

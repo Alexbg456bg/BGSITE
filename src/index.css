@@ -144,10 +144,10 @@
     --border: rgba(199, 220, 210, 0.14);
     --border-strong: rgba(199, 220, 210, 0.28);
     --shadow-soft: 0 30px 70px -28px rgba(15, 61, 46, 0.34);
-    --map-section-bg: #1f1f1f;
+    --map-section-bg: #091311;
     --map-section-overlay: none;
-    --map-field-bg: #1f1f1f;
-    --map-card-bg: #1f1f1f;
+    --map-field-bg: #091311;
+    --map-card-bg: #091311;
     --map-panel-bg: linear-gradient(180deg, rgba(51, 68, 96, 0.94), rgba(43, 60, 88, 0.9));
     --map-panel-border: rgba(255, 255, 255, 0.52);
     --map-panel-shadow: 0 28px 70px rgba(9, 46, 32, 0.42);

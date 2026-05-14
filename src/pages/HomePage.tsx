@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import {
   motion,
   AnimatePresence,
@@ -8,10 +8,13 @@ import type { Variants } from 'framer-motion'
 import { HeroSection } from '../components/HeroSection'
 import { BulgariaMap } from '../components/BulgariaMap'
 import { RegionCard } from '../components/RegionCard'
-import { MobileHomeExperience } from '../components/MobileHomeExperience'
 import { TopRatedDestinationsSection } from '../components/TopRatedDestinationsSection'
 import { useSiteData } from '../hooks/useSiteData'
 import { useI18n } from '../i18n/LanguageContext'
+
+const MobileHomeExperience = lazy(async () => ({
+  default: (await import('../components/MobileHomeExperience')).MobileHomeExperience,
+}))
 
 const smoothEase = [0.22, 1, 0.36, 1] as const
 
@@ -79,26 +82,45 @@ export function HomePage() {
   const { regions } = useSiteData()
   const { language, t } = useI18n()
   const [isMapOpen, setIsMapOpen] = useState(false)
-  const featuredRegions = [...regions]
-    .sort((a, b) => {
-      const difference = b.destinations.length - a.destinations.length
-      if (difference !== 0) return difference
-      return a.name.localeCompare(b.name, language === 'en' ? 'en' : 'bg')
-    })
-    .slice(0, 8)
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window === 'undefined' ? false : window.matchMedia('(min-width: 768px)').matches,
+  )
+  const featuredRegions = useMemo(
+    () =>
+      [...regions]
+        .sort((a, b) => {
+          const difference = b.destinations.length - a.destinations.length
+          if (difference !== 0) return difference
+          return a.name.localeCompare(b.name, language === 'en' ? 'en' : 'bg')
+        })
+        .slice(0, 8),
+    [language, regions],
+  )
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 768px)')
+    const onChange = () => setIsDesktop(media.matches)
+
+    onChange()
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
+  }, [])
 
   return (
     <>
-      <div className="md:hidden">
-        <MobileHomeExperience />
-      </div>
+      {!isDesktop && (
+        <Suspense fallback={null}>
+          <MobileHomeExperience />
+        </Suspense>
+      )}
 
-      <div className="hidden md:block">
+      {isDesktop && (
+      <div>
         <HeroSection />
 
       <motion.section
         ref={mapSectionRef}
-        className="relative isolate overflow-hidden pb-10 pt-8 md:pb-20 md:pt-12"
+        className="relative isolate overflow-hidden pb-6 pt-8 md:pb-12 md:pt-14"
         variants={sectionReveal}
         initial="hidden"
         whileInView="visible"
@@ -116,18 +138,21 @@ export function HomePage() {
           className="absolute inset-0 -z-10 hero-radial-overlay"
           aria-hidden
         />
-        <div
-          className="absolute inset-0 -z-5 pointer-events-none"
-          style={{
-            backgroundImage: `
-              repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0px, transparent 1px, transparent 39px, rgba(0,0,0,0.2) 40px),
-              repeating-linear-gradient(90deg, rgba(0,0,0,0.2) 0px, transparent 1px, transparent 39px, rgba(0,0,0,0.2) 40px)
-            `,
-            mask: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), radial-gradient(circle at 85% 75%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 60%, transparent 30%)',
-            WebkitMask: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), radial-gradient(circle at 85% 75%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 60%, transparent 30%)'
-          }}
-          aria-hidden
-        />
+        {isMapOpen && (
+          <div
+            className="absolute inset-0 -z-5 pointer-events-none"
+            style={{
+              backgroundImage: `
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0px, transparent 1px, transparent 39px, rgba(0,0,0,0.2) 40px),
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.2) 0px, transparent 1px, transparent 39px, rgba(0,0,0,0.2) 40px)
+              `,
+              mask: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), radial-gradient(circle at 85% 75%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 60%, transparent 30%)',
+              WebkitMask:
+                'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.3) 60%, transparent 100%), radial-gradient(circle at 85% 75%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.3) 60%, transparent 30%)',
+            }}
+            aria-hidden
+          />
+        )}
         <div className="mx-auto max-w-6xl px-4">
           <motion.div
             className="relative"
@@ -247,6 +272,7 @@ export function HomePage() {
         </motion.div>
       </motion.section>
       </div>
+      )}
     </>
   )
 }

@@ -524,7 +524,7 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
           <h2 className="font-display text-2xl font-semibold text-[var(--forest-deep)] md:text-3xl">
-            {language === 'en' ? `Map of ${regionName}` : `Карта на ${regionName}`}
+            {language === 'en' ? `Map of ${regionName} Region` : `Карта на област ${regionName}`}
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[var(--muted)] md:text-base">
             {language === 'en'
@@ -535,7 +535,7 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
 
         <div className="flex items-center gap-3">
           <div className="rounded-full border border-[var(--border)] bg-white/84 px-4 py-2 text-sm font-semibold text-[var(--forest-deep)] shadow-[0_10px_20px_rgba(15,61,46,0.06)]">
-            {`${markers.length} ${language === 'en' ? 'points' : 'точки'}`}
+            {`${markers.length} ${language === 'en' ? 'points' : 'обекта'}`}
           </div>
           <div className="flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-white/84 p-1.5 shadow-[0_10px_20px_rgba(15,61,46,0.06)]">
             <button
@@ -543,7 +543,7 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
               className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold text-[var(--forest-deep)] transition hover:bg-[var(--mist)] disabled:cursor-not-allowed disabled:opacity-45"
               onClick={() => setZoomWithAnchor(zoom - ZOOM_STEP)}
               disabled={zoom <= MIN_ZOOM}
-              aria-label={language === 'en' ? 'Zoom out' : 'Отдалечи'}
+              aria-label={language === 'en' ? 'Zoom out' : 'Намали'}
             >
               -
             </button>
@@ -555,7 +555,7 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
               className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold text-[var(--forest-deep)] transition hover:bg-[var(--mist)] disabled:cursor-not-allowed disabled:opacity-45"
               onClick={() => setZoomWithAnchor(zoom + ZOOM_STEP)}
               disabled={zoom >= MAX_ZOOM}
-              aria-label={language === 'en' ? 'Zoom in' : 'Приближи'}
+              aria-label={language === 'en' ? 'Zoom in' : 'Увеличи'}
             >
               +
             </button>
@@ -586,8 +586,8 @@ export function RegionFocusMap({ slug, regionName, destinations }: Props) {
               role="img"
               aria-label={
                 language === 'en'
-                  ? `Map of ${regionName} with tourist places`
-                  : `Карта на ${regionName} с туристически обекти`
+                  ? `Map of ${regionName} Region with tourist places`
+                  : `Карта на област ${regionName} с туристически обекти`
               }
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}

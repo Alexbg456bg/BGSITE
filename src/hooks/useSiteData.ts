@@ -7,11 +7,29 @@ import { useI18n } from '../i18n/LanguageContext'
 import { localizeDestination, localizeRegion } from '../i18n/localize'
 import type { Destination, Region } from '../types'
 
+type SiteDataResult = {
+  regions: Region[]
+  regionBySlug: Map<string, Region>
+  regionByDestinationId: Map<string, Region>
+  destinationIdsByRegionSlug: Map<string, Set<string>>
+  allDestinations: Destination[]
+  getRegionBySlug: (slug: string) => Region | undefined
+  getDestinationWithRegion: (
+    id: string,
+  ) => { destination: Destination; region: Region } | undefined
+}
+
+const siteDataCache = new WeakMap<object, Map<string, SiteDataResult>>()
+
 export function useSiteData() {
   const { customDestinations } = useCustomDestinations()
   const { language } = useI18n()
 
   return useMemo(() => {
+    const cachedByLanguage = siteDataCache.get(customDestinations as object)
+    const cached = cachedByLanguage?.get(language)
+    if (cached) return cached
+
     const customByRegion = new Map<string, Destination[]>()
     const customById = new Map<string, Destination>()
     const deletedIds = new Set<string>()
@@ -71,7 +89,7 @@ export function useSiteData() {
 
     const allDestinations = regions.flatMap((region) => region.destinations)
 
-    return {
+    const result: SiteDataResult = {
       regions,
       regionBySlug,
       regionByDestinationId,
@@ -83,5 +101,13 @@ export function useSiteData() {
       ): { destination: Destination; region: Region } | undefined =>
         destinationWithRegionById.get(id),
     }
+
+    const nextCachedByLanguage = cachedByLanguage ?? new Map<string, SiteDataResult>()
+    nextCachedByLanguage.set(language, result)
+    if (!cachedByLanguage) {
+      siteDataCache.set(customDestinations as object, nextCachedByLanguage)
+    }
+
+    return result
   }, [customDestinations, language])
 }
